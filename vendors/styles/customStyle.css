@@ -1,0 +1,76 @@
+.user-profile{
+    width:52px;
+    height:52px;
+    font-size:24px;
+    background:#ebeff3;
+    color:#1b00ff;
+    line-height:52px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    border-radius:100%;
+    -webkit-box-shadow:0 0 10px rgba(0,0,0,.18);
+    box-shadow:0 0 10px rgba(0,0,0,.18)
+}
+.user-profile img{
+    border-radius:100%
+}
+html, body { 
+    height: 100%; 
+}
+
+.main-container { 
+    position: relative; 
+    /* updated to support footer push */
+    min-height: 100%;
+    padding-bottom: 60px; /* must be the same as footer height */
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+/* #below { 
+    height: 500px; 
+} or no height, or whatever */
+
+/* changing mouse pointer to point for icons indise the discussion */
+.fa-thumbs-o-up, .fa-thumbs-up, .fa-thumbs-o-down, .fa-thumbs-down, 
+.fa-ellipsis-v{
+    cursor: pointer;
+}
+
+footer { 
+    position: absolute;
+    bottom: 0;
+    height: 60px;
+    width: 100%;
+} /* as it's absolute, you should give it a specific height, or let it be as wide as its content */
+
+/* CSS FOR PROFILE IMAGE REMOVAL */
+.profile-photo{
+  width:160px;
+  height:160px;
+  margin:0 auto 15px;
+  position:relative
+}
+.profile-photo .remove-avatar{
+  position:absolute;
+  right:-50px;
+  top:0;
+  width:30px;
+  height:30px;
+  line-height:30px;
+  font-size:14px;
+  text-align:center;
+  -webkit-box-shadow:0 2px 4px rgba(0,0,0,.4);
+  box-shadow:0 2px 4px rgba(0,0,0,.4)
+}
+.profile-photo .remove-avatar{
+  border-radius:100%
+}
+
+/* CSS for protal logo image */
+.brand-logo a img {
+    max-width: 150px;
+    display: block;
+    height: auto;
+}
+
