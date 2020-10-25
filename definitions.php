@@ -21,8 +21,8 @@
     define('LI_REDIRECT_URI', BASE_URL.'index.php/?page=linkedinLogin');
     
     //Google API
-    define('G_CLIENT_ID', '694832865050-98h9qvmvptukjps9ilsibcqn05ar3q2e.apps.googleusercontent.com');
-    define('G_CLIENT_SECRET', 'qSMzeV0pPyoNFEIl6SatEyFE');
+    define('G_CLIENT_ID', '596896576065-653ltud64kjh511et7bnpji20m5ps68t.apps.googleusercontent.com');
+    define('G_CLIENT_SECRET', '_-fHqm6MGJAWxJkn7YQ_ApVf');
     define('G_REDIRECT_URI_REG', BASE_URL.'index.php/?page=register&registerBy=google');
     define('G_REDIRECT_URI_SIGN', BASE_URL.'index.php/?page=signIn&signInBy=google');
 
