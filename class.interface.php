@@ -1921,6 +1921,7 @@ class Ui {
                                 <h3 class="text-center">Registration Form</h3>
                             </div>
                             <div class="card-body">
+                                '.($data['message'] ?? '').'
 
                                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                     <li class="nav-item">
@@ -1940,6 +1941,7 @@ class Ui {
                                     </div>
                                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                                         <form action="'.BASE_URL.'" method="post">
+                                            <input type="hidden" name="api" value="'.(isset($data['api']) ?? 0).'">
                                             <input type="hidden" name="action" value="registration">
                                             <!--<div class="or-seperator d-flex justify-content-center justify-content-md-start">
                                                 <i class="">Are you a Mentor or Mentee?</i>

@@ -155,8 +155,6 @@
                 }else if (isset($_GET['signInBy']) && $_GET['signInBy'] == 'google'){
                     
                     $data = array();
-                        echo '<br><br><br><br>';
-            
 
                     try{
                         //If client reloads page an exception will be thrown 
@@ -205,15 +203,26 @@
             }else if($_GET['page'] == 'register'){
                 
                 $currentPage = 'registration';
+                $data['fbAuthLink'] = $fb->getFacebookLoginUrl(FB_REDIRECT_URI_REG);
+                $data['googleAuthLink'] = $google->getGoogleAuthUrl(G_REDIRECT_URI_REG);
 
                 if (isset($_GET['registerBy']) && $_GET['registerBy'] == 'facebook'){
                     //registration using facebook
                     
                     $result = $fb->tryAndLoginWithFacebook($_GET, FB_REDIRECT_URI_REG);
 
-                    $data['firstName'] = $result['fb_user_info']['first_name'] ?? '';
-                    $data['lastName'] = $result['fb_user_info']['last_name'] ?? '';
-                    $data['email'] = $result['fb_user_info']['email'] ?? '';
+                    if (!empty($result['fb_user_info'])){
+
+                        $data['firstName'] = $result['fb_user_info']['first_name'] ?? '';
+                        $data['lastName'] = $result['fb_user_info']['last_name'] ?? '';
+                        $data['email'] = $result['fb_user_info']['email'] ?? '';
+                        
+
+                    }else{
+
+                        header('Location: '.BASE_URL.'index.php/?page=register&error=facebook');
+
+                    }
                     
                     $pageContent = $view->preFilledRegistration($data);
 
@@ -221,7 +230,7 @@
                     //registration using google
 
                     $data = array();
-
+                    
                     if (isset($_GET['code'])){
 
                         try{
@@ -235,12 +244,14 @@
                                 $data['firstName'] = $name[0] ?? '';
                                 $data['lastName'] = $name[1] ?? '';
                                 $data['email'] = $result['email'] ?? '';
+                                $data['api'] = 1;//register with api is true 
 
                             }
 
                         }catch(GuzzleHttp\Exception\ClientException $e){
                             //Rerequest triggers a clientexception logging error
-
+                                
+                            header('Location: '.BASE_URL.'index.php/?page=register&error=google');
                         }
 
                     }
@@ -250,10 +261,18 @@
 
                 }else{
                     //regular registration
-                    $links['fbAuthLink'] = $fb->getFacebookLoginUrl(FB_REDIRECT_URI_REG);
-                    $links['googleAuthLink'] = $google->getGoogleAuthUrl(G_REDIRECT_URI_REG);
+                    if (isset($_GET['error'])){
+                        if ($_GET['error'] == 'facebook' || $_GET['error'] == 'google'){
+                            $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <strong>Oops!</strong> We could not get your '.(($_GET['error'] == 'facebook')? 'facebook email' : 'Gmail').' address. Please try again.
+                                </div> 
+                            ';
+                        }
+                    }
 
-                    $pageContent = $view->registration($links);
+                    $pageContent = $view->registration($data);
 
                 }
 

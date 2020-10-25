@@ -5,6 +5,10 @@
     // DEFINE('DB_HOST', 'localhost');
     // DEFINE('DB_NAME', 'fep');
     define('BASE_URL', 'https://femaleentrepreneurs.bz/fep/');
+<<<<<<< HEAD
+=======
+    // define('BASE_URL', 'https://localhost/fep/');
+>>>>>>> ui
     
     // fb defines
     define('FB_APP_ID', '719611568906304');
