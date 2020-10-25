@@ -19,7 +19,7 @@
     //variables will determine if the public or portal website view
     $header = '';
     $topbar = '';
-    $sideBar = '';
+    $sidebar = '';
     $pageContent = '';
     $footer = '';
     $currentPage = '';
@@ -122,7 +122,7 @@
         //Portal website structure
         $header =  $view->portalHeader();
         $topbar = $view->portalTopBar();
-        $sideBar = $view->portalSideBar($data);
+        $sidebar = $view->portalSideBar($data);
         $footer = $view->portalFooter();
 
 
@@ -330,7 +330,7 @@
         //Public Website structure
         $header = $view->header();
         $topbar =  $view->topBar($currentPage);
-        $sideBar = '';
+        $sidebar = '';
         $footer =  $view->footer();
     }
 
@@ -338,8 +338,8 @@
         
         //Displaying webpage structure 
         echo $header;
-        echo $topBar;
-        echo $sideBar;
+        echo $topbar;
+        echo $sidebar;
         echo $pageContent;
         echo $footer;
 
