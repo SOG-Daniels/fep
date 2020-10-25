@@ -4,7 +4,7 @@
     // DEFINE('DB_PASS', '');
     // DEFINE('DB_HOST', 'localhost');
     // DEFINE('DB_NAME', 'fep');
-    define('BASE_URL', 'https://femaleentrepreneurs.bz');
+    define('BASE_URL', 'https://localhost/fep/');
     
     // fb defines
     define('FB_APP_ID', '719611568906304');
