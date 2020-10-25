@@ -211,9 +211,18 @@
                     
                     $result = $fb->tryAndLoginWithFacebook($_GET, FB_REDIRECT_URI_REG);
 
-                    $data['firstName'] = $result['fb_user_info']['first_name'] ?? '';
-                    $data['lastName'] = $result['fb_user_info']['last_name'] ?? '';
-                    $data['email'] = $result['fb_user_info']['email'] ?? '';
+                    if (!empty($result['fb_user_info'])){
+
+                        $data['firstName'] = $result['fb_user_info']['first_name'] ?? '';
+                        $data['lastName'] = $result['fb_user_info']['last_name'] ?? '';
+                        $data['email'] = $result['fb_user_info']['email'] ?? '';
+                        
+
+                    }else{
+
+                        header('Location: '.BASE_URL.'index.php/?page=register&error=facebook');
+
+                    }
                     
                     $pageContent = $view->preFilledRegistration($data);
 
