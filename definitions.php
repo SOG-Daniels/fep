@@ -1,10 +1,12 @@
 <?php 
     //constant variable uses throughout the php scripts
-    // DEFINE('DB_USER', 'root');
-    // DEFINE('DB_PASS', '');
-    // DEFINE('DB_HOST', 'localhost');
-    // DEFINE('DB_NAME', 'fep');
-    define('BASE_URL', 'https://femaleentrepreneurs.bz/fep/');
+    define('DB_USER', 'fepbelize');
+    define('DB_PASS', '2DsM-3=5L7Nj');
+    define('DB_HOST', '107.180.54.183');
+    define('DB_NAME', 'fepbelize');
+
+    // define('BASE_URL', 'https://femaleentrepreneurs.bz/fep/');
+    define('BASE_URL', 'https://localhost/fep/');
     
     // fb defines
     define('FB_APP_ID', '719611568906304');
@@ -15,10 +17,10 @@
 	define('FB_GRAPH_DOMAIN', 'https://graph.facebook.com/' ); // base domain for api
     define('FB_APP_STATE', 'fepSignup');//verify state
 
-    //LinkedIn API
-    define('LI_CLIENT_ID', '770rgs4favjvpm');
-    define('LI_CLIENT_SECRET', 'aJ2SKRLJ39ur2nRg');
-    define('LI_REDIRECT_URI', BASE_URL.'index.php/?page=linkedinLogin');
+    //LinkedIn API - NOT USED 
+    // define('LI_CLIENT_ID', '770rgs4favjvpm');
+    // define('LI_CLIENT_SECRET', 'aJ2SKRLJ39ur2nRg');
+    // define('LI_REDIRECT_URI', BASE_URL.'index.php/?page=linkedinLogin');
     
     //Google API
     define('G_CLIENT_ID', '694832865050-98h9qvmvptukjps9ilsibcqn05ar3q2e.apps.googleusercontent.com');
@@ -26,5 +28,24 @@
     define('G_REDIRECT_URI_REG', BASE_URL.'index.php/?page=register&registerBy=google');
     define('G_REDIRECT_URI_SIGN', BASE_URL.'index.php/?page=signIn&signInBy=google');
 
+    //Encryption 
+    define ('CIPHER_TYPE', 'AES-128-CTR');// Store the cipher method 
+    define ('CIPHER_KEY','H45@#T3p&GP$%d6@_ptr_D@4MUagfsH');// Store the encryption key 
+    define ('CIPHER_OPTIONS', 0);
+    define ('ENCRYPTION_IV','7145432623623413');// Non-NULL Initialization Vector for encryption 
+    define ('DECRYPTION_IV','7145432623623413');// Non-NULL Initialization Vector for decryption 
+    // 1234567891011121
+
+    //GOOGLE recaptcha
+    define ('RECAPTCHA_SITE_KEY', '6LdEydsZAAAAALftKWNkhrAi6cv301CXjM4WivvV');
+    define ('RECAPTCHA_SITE_SECRET', '6LdEydsZAAAAAIhaus2epSGOzP45ZjCBPti9lZdB');
+
+    //FEP domain email 
+    define('EMAIL_SENDER_NAME', 'Female Entrepreneurs Belize');
+    define('EMAIL_SENDER', 'beltraide.software.developer@gmail.com');//noreply@femaleentrepreneurs.bz');
+    define('EMAIL_SENDER_PASS', 'cgjwpvmobzidmmbk');//'B37tr41d3D3v');//'*FC8VV7p5$PEXp@');
+    
+    //Unit email incharge of FEP
+    define('EMAIL_RECEIVER', 'beltraide.software.developer@gmail.com');
 
 ?>

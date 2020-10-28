@@ -41,7 +41,10 @@ class Ui {
                 <link href="'.BASE_URL.'assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
                 <link href="'.BASE_URL.'assets/vendor/animate.css/animate.min.css" rel="stylesheet">
                 <link href="'.BASE_URL.'assets/vendor/aos/aos.css" rel="stylesheet">
-               
+            
+                <!-- CSS for Autocomplete-->
+                <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+                <link rel="stylesheet" href="/resources/demos/style.css">
 
                 <!-- FontAwesome v4.7.0--> 
                 <link href="'.BASE_URL.'css/font-awesome.min.css" rel="stylesheet">
@@ -65,7 +68,13 @@ class Ui {
                 
                 <!-- JS SET and GET functioins for global variables-->
                 <script src="'.BASE_URL.'assets/js/globalVariables.js"></script>
-                
+
+                <script>
+                    BASE_URL = "'.BASE_URL.'";
+                </script>
+                <!-- GOOGLE reCaptcha script-->
+                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                    
                 </head>
 
                 <body>
@@ -124,6 +133,89 @@ class Ui {
     } 
     // return the home page
     public function home($data = array()){
+        
+        $courses = '';
+        $topPrograms = '';
+        $topMentors = '';
+        
+        for($num = 0; $num < 8; $num++){
+
+            $courses .= '
+                <div class="col-lg-3 col-md-4 mt-2">
+                    <div class="icon-box">
+                    <i class="ri-book-2-line" style="color: #272727;"></i>
+                    <h3><a href="">Program 1</a></h3>
+                    </div>
+                </div>
+            ';
+        }
+        for ($num = 0; $num < 3; $num++){
+            
+            $topPrograms .= '
+                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3 mt-md-0">
+                    <div class="course-item">
+                        <a href="'.BASE_URL.'index.php/?page=mentorProgramDetails">
+                            <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
+                        </a>
+                        <div class="course-content">
+                            <div class="row d-flex justify-content-between align-items-center mb-3">
+                                <a href="'.BASE_URL.'index.php/?page=signIn" class="text-light"><h4><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h4></a>
+                                <p class="price pr-1" data-toggle="tooltip" data-placement="top" title="4.0">
+                                    <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
+                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                </p>
+                            </div>
+            
+                            <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h3>
+                            <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
+                            <div class="trainer d-flex justify-content-between align-items-center">
+                                <div class="trainer-profile d-flex align-items-center">
+                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
+                                    <span><a href="'.BASE_URL.'index.php/?page=mentorCourseDetails">Antonio</a></span>
+                                </div>
+                                <div class="trainer-rank d-flex align-items-center">
+                                    <span data-toggle="tooltip" data-placement="top" title="Number of Mentees"><i class="fa fa-user-o"></i>&nbsp;50</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ';
+        }
+        for ($num = 0; $num < 3; $num++){
+            
+            $topMentors .= '
+                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3 mt-md-0">
+                    <div class="member">
+                        <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
+                        <div class="member-content">
+                            <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
+                            <span>Marketing</span>
+                            <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
+                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
+                            </span>
+                            <p>
+                            Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
+                            </p>
+                            <div class="social">
+                            <a href=""><i class="icofont-twitter"></i></a>
+                            <a href=""><i class="icofont-facebook"></i></a>
+                            <a href=""><i class="icofont-instagram"></i></a>
+                            <a href=""><i class="icofont-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>              
+            ';
+        }
+
         
         $html = '
             <!-- ======= Hero Section ======= -->
@@ -188,22 +280,22 @@ class Ui {
                         <div class="row counters">
 
                         <div class="col-lg-3 col-6 text-center">
-                            <span data-toggle="counter-up">7</span>
+                            <span data-toggle="counter-up">'.($data['mentorCount'] ?? 0).'</span>
                             <p>Mentors</p>
                         </div>
 
                         <div class="col-lg-3 col-6 text-center">
-                            <span data-toggle="counter-up">100</span>
+                            <span data-toggle="counter-up">'.($data['menteeCount'] ?? 0).'</span>
                             <p>Mentees</p>
                         </div>
 
                         <div class="col-lg-3 col-6 text-center">
-                            <span data-toggle="counter-up">4</span>
+                            <span data-toggle="counter-up">'.($data['courseCount'] ?? 0).'</span>
                             <p>Courses</p>
                         </div>
 
                         <div class="col-lg-3 col-6 text-center">
-                            <span data-toggle="counter-up">3</span>
+                            <span data-toggle="counter-up">'.($data['upcomingEventCount'] ?? 0).'</span>
                             <p> Upcoming Events</p>
                         </div>
 
@@ -242,14 +334,14 @@ class Ui {
                                 <div class="icon-box mt-4 mt-xl-0">
                                     <i class="bx bx-check"></i>
                                     <h4>Step 2</h4>
-                                    <p>Wait a day for your account to be approved.</p>
+                                    <p>Wait for your account to be approved for mentoring.</p>
                                 </div>
                                 </div>
                                 <div class="col-xl-4 d-flex align-items-stretch">
                                 <div class="icon-box mt-4 mt-xl-0">
-                                    <i class="bx bx-images"></i>
+                                    <i class="bx bx-chalkboard"></i>
                                     <h4>Step 3</h4>
-                                    <p>Access your mentor profile and start sharing your skills.</p>
+                                    <p><a href="'.BASE_URL.'index.php/?page=signIn">Sign In</a> to your mentor profile and start sharing your skills.</p>
                                 </div>
                                 </div>
                             </div>
@@ -265,6 +357,10 @@ class Ui {
                     <div class="container" data-aos="fade-up">
 
                         <div class="row" data-aos="zoom-in" data-aos-delay="100">
+
+                        '.$courses.'
+
+                        <!--
                             <div class="col-lg-3 col-md-4">
                                 <div class="icon-box">
                                 <i class="ri-store-line" style="color: #ffbb2c;"></i>
@@ -313,7 +409,7 @@ class Ui {
                                 <h3><a href="">Program 8</a></h3>
                                 </div>
                             </div>
-                            
+                        -->
                         </div>
 
                     </div>
@@ -329,102 +425,9 @@ class Ui {
                         </div>
 
                         <div class="row" data-aos="zoom-in" data-aos-delay="100">
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                <div class="course-item">
-                                    <a href="'.BASE_URL.'index.php/?page=mentorProgramDetails">
-                                        <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
-                                    </a>
-                                    <div class="course-content">
-                                        <div class="row d-flex justify-content-between align-items-center mb-3">
-                                            <a href="'.BASE_URL.'index.php/?page=" class="text-light"><h4><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h4></a>
-                                            <p class="price pr-1" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                            </p>
-                                        </div>
-                        
-                                        <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h3>
-                                        <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                        <div class="trainer d-flex justify-content-between align-items-center">
-                                            <div class="trainer-profile d-flex align-items-center">
-                                                <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
-                                                <span><a href="'.BASE_URL.'index.php/?page=mentorCourseDetails">Antonio</a></span>
-                                            </div>
-                                            <div class="trainer-rank d-flex align-items-center">
-                                                <span data-toggle="tooltip" data-placement="top" title="Number of Mentees"><i class="fa fa-user-o"></i>&nbsp;50</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> <!-- End Course Item-->
 
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-                                <div class="course-item">
-                                    <a href="'.BASE_URL.'index.php/?page=mentorProgramDetails">
-                                        <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
-                                    </a>
-                                    <div class="course-content">
-                                        <div class="row d-flex justify-content-between align-items-center mb-3">
-                                            <a href="'.BASE_URL.'index.php/?page=" class="text-light"><h4><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h4></a>
-                                            <p class="price pr-1" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                            </p>
-                                        </div>
-                        
-                                        <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h3>
-                                        <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                        <div class="trainer d-flex justify-content-between align-items-center">
-                                            <div class="trainer-profile d-flex align-items-center">
-                                                <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
-                                                <span><a href="'.BASE_URL.'index.php/?page=mentorCourseDetails">Antonio</a></span>
-                                            </div>
-                                            <div class="trainer-rank d-flex align-items-center">
-                                                <span data-toggle="tooltip" data-placement="top" title="Number of Mentees"><i class="fa fa-user-o"></i>&nbsp;50</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> <!-- End Course Item-->
-
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-                                <div class="course-item">
-                                    <a href="'.BASE_URL.'index.php/?page=mentorProgramDetails">
-                                        <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
-                                    </a>
-                                    <div class="course-content">
-                                        <div class="row d-flex justify-content-between align-items-center mb-3">
-                                            <a href="'.BASE_URL.'index.php/?page=" class="text-light"><h4><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h4></a>
-                                            <p class="price pr-1" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                            </p>
-                                        </div>
-                        
-                                        <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h3>
-                                        <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                        <div class="trainer d-flex justify-content-between align-items-center">
-                                            <div class="trainer-profile d-flex align-items-center">
-                                                <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
-                                                <span><a href="'.BASE_URL.'index.php/?page=mentorCourseDetails">Antonio</a></span>
-                                            </div>
-                                            <div class="trainer-rank d-flex align-items-center">
-                                                <span data-toggle="tooltip" data-placement="top" title="Number of Mentees"><i class="fa fa-user-o"></i>&nbsp;50</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> <!-- End Course Item-->
-
+                            '.($topPrograms ?? '<h3 class="pl-3">Coming Soon...</h3>').'
+                    
                         </div>    
                     </div>
                 </section><!-- End Popular Courses Section -->
@@ -439,85 +442,7 @@ class Ui {
                         </div>
 
                         <div class="row" data-aos="zoom-in" data-aos-delay="100">
-                            
-
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                <div class="member">
-                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
-                                    <div class="member-content">
-                                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                                        <span>Marketing</span>
-                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                        </span>
-                                        <p>
-                                        Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                                        </p>
-                                        <div class="social">
-                                        <a href=""><i class="icofont-twitter"></i></a>
-                                        <a href=""><i class="icofont-facebook"></i></a>
-                                        <a href=""><i class="icofont-instagram"></i></a>
-                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                <div class="member">
-                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                                    <div class="member-content">
-                                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                                        <span>Marketing</span>
-                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                        </span>
-                                        <p>
-                                        Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                                        </p>
-                                        <div class="social">
-                                        <a href=""><i class="icofont-twitter"></i></a>
-                                        <a href=""><i class="icofont-facebook"></i></a>
-                                        <a href=""><i class="icofont-instagram"></i></a>
-                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                <div class="member">
-                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                                    <div class="member-content">
-                                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                                        <span>Marketing</span>
-                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                        </span>
-                                        <p>
-                                        Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                                        </p>
-                                        <div class="social">
-                                        <a href=""><i class="icofont-twitter"></i></a>
-                                        <a href=""><i class="icofont-facebook"></i></a>
-                                        <a href=""><i class="icofont-instagram"></i></a>
-                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                            '.($topMentors ?? '<h3 class="pl-3">Coming Soon...</h3>').'
 
                         </div>
 
@@ -545,214 +470,253 @@ class Ui {
     // Displays the course Detial information
     public function courseDetails($data = array()){
 
+        $cards = '';
+        $moreMentorCards = '';
+        
+        // if (!empty($data['topMentors'])){
+
+            for($num =0; $num < 3; $num++){//foreach($data['topMentors'] as $key => $topMentor){
+                //creating top mentor cards
+                $cards .= '
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
+                        <div class="member shadow">
+                            <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid mb-3" alt="">
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="'.BASE_URL.'index.php/?page=signIn"><h5 class="h5 card-tag text-light"><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h5></a>
+                            </div>
+                            
+                            <div class="member-content">
+                                <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
+                                <span>Marketing</span>
+                                <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
+                                    <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                    <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                    <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                    <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                    <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
+                                </span>
+                                <p>
+                                Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
+                                </p>
+                                <div class="social">
+                                <a href=""><i class="icofont-twitter"></i></a>
+                                <a href=""><i class="icofont-facebook"></i></a>
+                                <a href=""><i class="icofont-instagram"></i></a>
+                                <a href=""><i class="icofont-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ';
+            }
+
+        // }else{
+        //     $cards = '<h3 class="ml-3">Coming Soon...</h3>';
+        // }
+        // if (!empty($data['Mentors'])){
+
+            for($num =0; $num < 6; $num++){//foreach($data['mentors'] as $key => $mentors){
+                //creating top mentor cards
+                $moreMentorCards .= '
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
+                        <div class="member shadow">
+                            <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="'.BASE_URL.'index.php/?page=signIn"><h5 class="h5 card-tag text-light"><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h5></a>
+                            </div>
+                            <div class="member-content">
+                                <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
+                                <span>Marketing</span>
+                                <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
+                                    <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                    <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                    <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                    <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                    <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
+                                </span>
+                                <p>
+                                Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
+                                </p>
+                                <div class="social">
+                                <a href=""><i class="icofont-twitter"></i></a>
+                                <a href=""><i class="icofont-facebook"></i></a>
+                                <a href=""><i class="icofont-instagram"></i></a>
+                                <a href=""><i class="icofont-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ';
+            }
+
+        // }else{
+        //     $cards = '<h3 class="ml-3">Coming Soon...</h3>';
+        // }
+
         $html = '
             <main id="main">
 
-                '.$this->banner('Program Details', 'Below is a description of the mentorship program.').'
+                '.$this->banner('Course Details', 'Check out our Mentors and request Mentorship or become a mentors yourself!.').'
                 
             
                 <!-- ======= Cource Details Section ======= -->
                 <section id="course-details" class="course-details">
-                <div class="container" data-aos="fade-up">
-            
-                    <div class="row">
-                    <div class="col-lg-12">
-                        <img src="'.BASE_URL.'assets/img/course-details.jpg" class="img-fluid" alt="">
-                        <h3>Program Name</h3>
-                        <p>
-                        Discription about the mentorship programs being provided.
-                        </p>
+                    <div class="container" data-aos="fade-up">
+                
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <img src="'.BASE_URL.'assets/img/course-details.jpg" class="img-fluid" alt="">
+                                <span class="d-flex justify-content-end mt-3 mb-1">
+                                    <a href="'.BASE_URL.'index.php/?page=signIn" class="h4 get-started-btn btn-lg mr-0"><i class="fa fa-paper-plane-o fa-lg"></i> Become a Mentor</a>
+                                </span>
+                                <h3>Program Name</h3>
+                                <p>
+                                    '.($data['courseInfo'] ?? 'No description has been provided for this course...').'
+                                </p>
+                            </div>
+                            
+                        </div>
+                
                     </div>
-                    
-                    </div>
-            
-                </div>
                 </section><!-- End Cource Details Section -->
-
-                <!-- ======= Cource Details Tabs Section ======= -->
+                
+                
+                <!-- ======= Course Outline  ======= -->
+                <section id="course-details" class="course-details">
+                    <div class="container" data-aos="fade-up">
+                
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h3>Course Outline</h3>
+                                
+                                <span class="d-flex justify-content-center mt-3 mb-1 ">
+                                    <embed class="shadow-lg rounded" src="'.BASE_URL.'uploads/pdf/test.pdf" width="800px" height="800px" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </section><!-- End Cource Details Section -->
+                
+                
+                <!-- ======= Cource Details Tabs Section ======= >
                 <section id="cource-details-tabs" class="cource-details-tabs">
-                <div class="container" data-aos="fade-up">
-            
-                    <div class="row">
-                    <div class="col-lg-3">
-                        <ul class="nav nav-tabs flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active show" data-toggle="tab" href="#tab-1">Modi sit est</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#tab-2">Unde praesentium sed</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#tab-3">Pariatur explicabo vel</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#tab-4">Nostrum qui quasi</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#tab-5">Iusto ut expedita aut</a>
-                        </li>
-                        </ul>
+                    <div class="container" data-aos="fade-up">
+                
+                        <div class="row">
+                        <div class="col-lg-3">
+                            <ul class="nav nav-tabs flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link active show" data-toggle="tab" href="#tab-1">Modi sit est</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab-2">Unde praesentium sed</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab-3">Pariatur explicabo vel</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab-4">Nostrum qui quasi</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tab-5">Iusto ut expedita aut</a>
+                            </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-9 mt-4 mt-lg-0">
+                            <div class="tab-content">
+                            <div class="tab-pane active show" id="tab-1">
+                                <div class="row">
+                                <div class="col-lg-8 details order-2 order-lg-1">
+                                    <h3>Architecto ut aperiam autem id</h3>
+                                    <p class="font-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
+                                    <p>Et nobis maiores eius. Voluptatibus ut enim blanditiis atque harum sint. Laborum eos ipsum ipsa odit magni. Incidunt hic ut molestiae aut qui. Est repellat minima eveniet eius et quis magni nihil. Consequatur dolorem quaerat quos qui similique accusamus nostrum rem vero</p>
+                                </div>
+                                <div class="col-lg-4 text-center order-1 order-lg-2">
+                                    <img src="assets/img/course-details-tab-1.png" alt="" class="img-fluid">
+                                </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab-2">
+                                <div class="row">
+                                <div class="col-lg-8 details order-2 order-lg-1">
+                                    <h3>Et blanditiis nemo veritatis excepturi</h3>
+                                    <p class="font-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
+                                    <p>Ea ipsum voluptatem consequatur quis est. Illum error ullam omnis quia et reiciendis sunt sunt est. Non aliquid repellendus itaque accusamus eius et velit ipsa voluptates. Optio nesciunt eaque beatae accusamus lerode pakto madirna desera vafle de nideran pal</p>
+                                </div>
+                                <div class="col-lg-4 text-center order-1 order-lg-2">
+                                    <img src="assets/img/course-details-tab-2.png" alt="" class="img-fluid">
+                                </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab-3">
+                                <div class="row">
+                                <div class="col-lg-8 details order-2 order-lg-1">
+                                    <h3>Impedit facilis occaecati odio neque aperiam sit</h3>
+                                    <p class="font-italic">Eos voluptatibus quo. Odio similique illum id quidem non enim fuga. Qui natus non sunt dicta dolor et. In asperiores velit quaerat perferendis aut</p>
+                                    <p>Iure officiis odit rerum. Harum sequi eum illum corrupti culpa veritatis quisquam. Neque necessitatibus illo rerum eum ut. Commodi ipsam minima molestiae sed laboriosam a iste odio. Earum odit nesciunt fugiat sit ullam. Soluta et harum voluptatem optio quae</p>
+                                </div>
+                                <div class="col-lg-4 text-center order-1 order-lg-2">
+                                    <img src="assets/img/course-details-tab-3.png" alt="" class="img-fluid">
+                                </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab-4">
+                                <div class="row">
+                                <div class="col-lg-8 details order-2 order-lg-1">
+                                    <h3>Fuga dolores inventore laboriosam ut est accusamus laboriosam dolore</h3>
+                                    <p class="font-italic">Totam aperiam accusamus. Repellat consequuntur iure voluptas iure porro quis delectus</p>
+                                    <p>Eaque consequuntur consequuntur libero expedita in voluptas. Nostrum ipsam necessitatibus aliquam fugiat debitis quis velit. Eum ex maxime error in consequatur corporis atque. Eligendi asperiores sed qui veritatis aperiam quia a laborum inventore</p>
+                                </div>
+                                <div class="col-lg-4 text-center order-1 order-lg-2">
+                                    <img src="assets/img/course-details-tab-4.png" alt="" class="img-fluid">
+                                </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab-5">
+                                <div class="row">
+                                <div class="col-lg-8 details order-2 order-lg-1">
+                                    <h3>Est eveniet ipsam sindera pad rone matrelat sando reda</h3>
+                                    <p class="font-italic">Omnis blanditiis saepe eos autem qui sunt debitis porro quia.</p>
+                                    <p>Exercitationem nostrum omnis. Ut reiciendis repudiandae minus. Omnis recusandae ut non quam ut quod eius qui. Ipsum quia odit vero atque qui quibusdam amet. Occaecati sed est sint aut vitae molestiae voluptate vel</p>
+                                </div>
+                                <div class="col-lg-4 text-center order-1 order-lg-2">
+                                    <img src="assets/img/course-details-tab-5.png" alt="" class="img-fluid">
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                
                     </div>
-                    <div class="col-lg-9 mt-4 mt-lg-0">
-                        <div class="tab-content">
-                        <div class="tab-pane active show" id="tab-1">
-                            <div class="row">
-                            <div class="col-lg-8 details order-2 order-lg-1">
-                                <h3>Architecto ut aperiam autem id</h3>
-                                <p class="font-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
-                                <p>Et nobis maiores eius. Voluptatibus ut enim blanditiis atque harum sint. Laborum eos ipsum ipsa odit magni. Incidunt hic ut molestiae aut qui. Est repellat minima eveniet eius et quis magni nihil. Consequatur dolorem quaerat quos qui similique accusamus nostrum rem vero</p>
-                            </div>
-                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                <img src="assets/img/course-details-tab-1.png" alt="" class="img-fluid">
-                            </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="tab-2">
-                            <div class="row">
-                            <div class="col-lg-8 details order-2 order-lg-1">
-                                <h3>Et blanditiis nemo veritatis excepturi</h3>
-                                <p class="font-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
-                                <p>Ea ipsum voluptatem consequatur quis est. Illum error ullam omnis quia et reiciendis sunt sunt est. Non aliquid repellendus itaque accusamus eius et velit ipsa voluptates. Optio nesciunt eaque beatae accusamus lerode pakto madirna desera vafle de nideran pal</p>
-                            </div>
-                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                <img src="assets/img/course-details-tab-2.png" alt="" class="img-fluid">
-                            </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="tab-3">
-                            <div class="row">
-                            <div class="col-lg-8 details order-2 order-lg-1">
-                                <h3>Impedit facilis occaecati odio neque aperiam sit</h3>
-                                <p class="font-italic">Eos voluptatibus quo. Odio similique illum id quidem non enim fuga. Qui natus non sunt dicta dolor et. In asperiores velit quaerat perferendis aut</p>
-                                <p>Iure officiis odit rerum. Harum sequi eum illum corrupti culpa veritatis quisquam. Neque necessitatibus illo rerum eum ut. Commodi ipsam minima molestiae sed laboriosam a iste odio. Earum odit nesciunt fugiat sit ullam. Soluta et harum voluptatem optio quae</p>
-                            </div>
-                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                <img src="assets/img/course-details-tab-3.png" alt="" class="img-fluid">
-                            </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="tab-4">
-                            <div class="row">
-                            <div class="col-lg-8 details order-2 order-lg-1">
-                                <h3>Fuga dolores inventore laboriosam ut est accusamus laboriosam dolore</h3>
-                                <p class="font-italic">Totam aperiam accusamus. Repellat consequuntur iure voluptas iure porro quis delectus</p>
-                                <p>Eaque consequuntur consequuntur libero expedita in voluptas. Nostrum ipsam necessitatibus aliquam fugiat debitis quis velit. Eum ex maxime error in consequatur corporis atque. Eligendi asperiores sed qui veritatis aperiam quia a laborum inventore</p>
-                            </div>
-                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                <img src="assets/img/course-details-tab-4.png" alt="" class="img-fluid">
-                            </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="tab-5">
-                            <div class="row">
-                            <div class="col-lg-8 details order-2 order-lg-1">
-                                <h3>Est eveniet ipsam sindera pad rone matrelat sando reda</h3>
-                                <p class="font-italic">Omnis blanditiis saepe eos autem qui sunt debitis porro quia.</p>
-                                <p>Exercitationem nostrum omnis. Ut reiciendis repudiandae minus. Omnis recusandae ut non quam ut quod eius qui. Ipsum quia odit vero atque qui quibusdam amet. Occaecati sed est sint aut vitae molestiae voluptate vel</p>
-                            </div>
-                            <div class="col-lg-4 text-center order-1 order-lg-2">
-                                <img src="assets/img/course-details-tab-5.png" alt="" class="img-fluid">
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-            
-                </div>
-                </section><!-- End Cource Details Tabs Section -->
+                </section><! End Cource Details Tabs Section -->
 
                 <!-- ======= Top 3 Mentors Section ======= -->
                 <section id="trainers" class="trainers">
                     <div class="container" data-aos="fade-up">
 
                         <div class="section-title">
-                        <h2>Mentors</h2>
-                        <p>Most Popular Mentors</p>
+                            <h2>Mentors
+                            </h2>
+                            <p>Most Popular Mentors</p>
                         </div>
 
                         <div class="row" data-aos="zoom-in" data-aos-delay="100">
                             
-
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                <div class="member">
-                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
-                                    <div class="member-content">
-                                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                                        <span>Marketing</span>
-                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                        </span>
-                                        <p>
-                                        Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                                        </p>
-                                        <div class="social">
-                                        <a href=""><i class="icofont-twitter"></i></a>
-                                        <a href=""><i class="icofont-facebook"></i></a>
-                                        <a href=""><i class="icofont-instagram"></i></a>
-                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                <div class="member">
-                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                                    <div class="member-content">
-                                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                                        <span>Marketing</span>
-                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                        </span>
-                                        <p>
-                                        Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                                        </p>
-                                        <div class="social">
-                                        <a href=""><i class="icofont-twitter"></i></a>
-                                        <a href=""><i class="icofont-facebook"></i></a>
-                                        <a href=""><i class="icofont-instagram"></i></a>
-                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                <div class="member">
-                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                                    <div class="member-content">
-                                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                                        <span>Marketing</span>
-                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                        </span>
-                                        <p>
-                                        Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                                        </p>
-                                        <div class="social">
-                                        <a href=""><i class="icofont-twitter"></i></a>
-                                        <a href=""><i class="icofont-facebook"></i></a>
-                                        <a href=""><i class="icofont-instagram"></i></a>
-                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                            '.$cards.'
 
                         </div>
+                        <span id="more-mentors" class="d-none">
+                            <div class="row " data-aos="zoom-in" data-aos-delay="100">
+                                
+                                '.$moreMentorCards.'
+
+                            </div>
+                        </span>
+                        <span class="d-flex justify-content-center">
+                            <a href="#trainers" id="view-all-mentors" class="get-started-btn btn-lg"><i class="fa fa-eye fa-lg"></i> <span id="view-all-mentors-text">View</span> all Mentors</a>
+                        </span>
 
                     </div>
                 </section><!-- End Trainers Section -->
@@ -979,7 +943,56 @@ class Ui {
         return $html;
     }
     //Displays the profile of a mentor
-    public function mentorBio(){
+    public function mentorBio($data = []){
+
+        $courseTags = '';
+        $testimonials = '';
+        $testimonialSection = '';
+
+        for($num=0; $num<3; $num++){
+            
+            $courseTags .= '
+            <a href="'.BASE_URL.'index.php/?page=">
+                <span class="badge badge-pill badge-secondary mt-2"><i class="fa fa-tag fa-lg"></i> Marketing</span>
+            </a>
+            ';
+        }
+
+        for($num=0; $num<3; $num++){
+
+            $testimonials .= '
+                <div class="testimonial-wrap">
+                    <div class="testimonial-item">
+                        <img src="'.BASE_URL.'assets/img/testimonials/testimonials-2.jpg" class="testimonial-img" alt="">
+                        <h3>Sara Wilsson</h3>
+                        <h4>Designer</h4>
+                        <p>
+                        <i class="bx bxs-quote-alt-left quote-icon-left"></i>
+                        Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.
+                        <i class="bx bxs-quote-alt-right quote-icon-right"></i>
+                        </p>
+                    </div>
+                </div>
+            ';
+        }
+        $testimonialSection = '
+            <!-- ======= Testimonials Section ======= -->
+            <section id="testimonials" class="testimonials">
+                <div class="container" data-aos="fade-up">
+
+                    <div class="section-title">
+                        <h2>Testimonials</h2>
+                        <p>What are they saying</p>
+                    </div>
+
+                    <div class="owl-carousel testimonials-carousel" data-aos="zoom-in" data-aos-delay="100">
+                        '.$testimonials.'
+
+                    </div>
+                </div>
+            </section><!-- End Testimonials Section -->
+        ';
+
         $html = '
             <main id="main">
 
@@ -999,13 +1012,12 @@ class Ui {
                                         <div data-aos="zoom-in" data-aos-delay="100">
                                             <div class="d-flex align-items-stretch">
                                                 <div class="member">
-                                                <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
+                                                <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid mb-3" alt="">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <a href="'.BASE_URL.'index.php/?page=signIn"><h5 class="h5 card-tag text-light"><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h5></a>
+                                                </div>
                                                 <div class="member-content">
                                                     <h4>Walter White</h4>
-                                                
-                                                    <p>
-                                                    Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut aut
-                                                    </p>
                                                     <div class="social">
                                                     <a href=""><i class="icofont-twitter"></i></a>
                                                     <a href=""><i class="icofont-facebook"></i></a>
@@ -1020,43 +1032,29 @@ class Ui {
                                 </div><!-- End Trainers Section -->
                                 
                             
-                                <!--<img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                                <h3>Mentor\'s name</h3>
-                                <p>
-                                Discription about what the mentors does.
-                                </p>-->
                             </div>
                             <div class="col-lg-8">
                     
                                 <div class="course-info d-flex justify-content-between align-items-center">
-                                    <h4 class="font-weight-bold">Mentor</h4>
-                                    <!--<h5>User Type:</h5><p>Mentor</p>-->
+                                    <h4 class="font-weight-bold h2">Mentor</h4>
                                
                                 </div>
                     
                                 <div class="course-info d-flex justify-content-between align-items-center">
-                                <h5>Occupation:</h5>
-                                <p>Web Developer</p>
+                                <p class="font-weight-bold h5">Occupation:</p>
+                                <h6 class="mt-2">Web Developer</h6>
                                 </div>
 
                                 <div class="course-info d-md-flex justify-content-md-between align-items-md-center">
-                                <h5>Program(s): </h5>
-                                <span class="h5 d-block d-md-inline">
-                                    <a href="'.BASE_URL.'index.php/?page=">
-                                        <span class="badge badge-pill badge-info"><i class="fa fa-tag fa-lg"></i> Marketing</span>
-                                    </a>
-                                    <a href="'.BASE_URL.'index.php/?page=">
-                                        <span class="badge badge-pill badge-info"><i class="fa fa-tag fa-lg"></i> Maths</span>
-                                    </a>
-                                    <a href="'.BASE_URL.'index.php/?page=">
-                                        <span class="badge badge-pill badge-info"><i class="fa fa-tag fa-lg"></i> Piano Lessons</span>
-                                    </a>
+                                <p class="font-weight-bold h5">Course(s): </p>
+                                <span class="h5 d-block d-md-inline ">
+                                   '.$courseTags.'
                                 
                                 </span>
                                 </div>
                     
                                 <div class="course-info d-flex justify-content-between align-items-center">
-                                <h5>Rating:</h5>
+                                <p class="font-weight-bold h5">Rating:</p>
                                 <p>
                                     <span  data-toggle="tooltip" data-placement="top" title="4.0">
                                         <span class="float-right"><i class="text-warning fa fa-star-o fa-lg"></i></span>
@@ -1067,6 +1065,14 @@ class Ui {
                                     </span>
                                 </p>
                                 </div>
+
+                                <div class="course-info">
+                                    <p class="font-weight-bold h5" >About Mentor:</p>
+                                    <br>
+                                    <h6>
+                                            Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut aut
+                                    </h6>
+                                </div>
                     
                     
                             </div>
@@ -1075,59 +1081,7 @@ class Ui {
                     </div>
                 </section><!-- End Cource Details Section -->
 
-                <!-- ======= Testimonials Section ======= -->
-                <section id="testimonials" class="testimonials">
-                    <div class="container" data-aos="fade-up">
-
-                        <div class="section-title">
-                            <h2>Testimonials</h2>
-                            <p>What are they saying</p>
-                        </div>
-
-                        <div class="owl-carousel testimonials-carousel" data-aos="zoom-in" data-aos-delay="100">
-
-                            <div class="testimonial-wrap">
-                                <div class="testimonial-item">
-                                    <img src="'.BASE_URL.'assets/img/testimonials/testimonials-2.jpg" class="testimonial-img" alt="">
-                                    <h3>Sara Wilsson</h3>
-                                    <h4>Designer</h4>
-                                    <p>
-                                    <i class="bx bxs-quote-alt-left quote-icon-left"></i>
-                                    Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.
-                                    <i class="bx bxs-quote-alt-right quote-icon-right"></i>
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="testimonial-wrap">
-                                <div class="testimonial-item">
-                                    <img src="'.BASE_URL.'assets/img/testimonials/testimonials-3.jpg" class="testimonial-img" alt="">
-                                    <h3>Jena Karlis</h3>
-                                    <h4>Store Owner</h4>
-                                    <p>
-                                    <i class="bx bxs-quote-alt-left quote-icon-left"></i>
-                                    Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.
-                                    <i class="bx bxs-quote-alt-right quote-icon-right"></i>
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="testimonial-wrap">
-                                <div class="testimonial-item">
-                                    <img src="'.BASE_URL.'assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">
-                                    <h3>Saul Goodman</h3>
-                                    <h4>Ceo &amp; Founder</h4>
-                                    <p>
-                                    <i class="bx bxs-quote-alt-left quote-icon-left"></i>
-                                    Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.
-                                    <i class="bx bxs-quote-alt-right quote-icon-right"></i>
-                                    </p>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </section><!-- End Testimonials Section -->
+                '.$testimonialSection.'
 
             
             </main><!-- End #main -->        
@@ -1361,50 +1315,107 @@ class Ui {
     }
     //Displays mentors
     public function mentors($data = []){
+        
+        $cards = '';                            //holds all the card html markup
+        $count = 0;                             //keeps track of how much cards have been made
+        $maxCardPerPage = 6;                    //capacity of course cards per page for pagination
+        $possibleCardTotal = $maxCardPerPage;   //gets added +6 everytime course cards reach maxCoursePerPage;
+        $pageCount = 0;                         //page count for pagination
+        $pages = '';                            //hold a the pages for the pagination
+        $pageContent = '';                      //contains all the pages and pagination elements
 
-        $topMentors = '';
-
-        if (!empty($data)){
-
-            foreach($data['mentors'] as $key => $mentor){
-
-                $socialContacts = '';
-
-                foreach($mentor['socialMedia'] as $key => $socialMediaHandle){
-                    $socialContacts .= '
-                        <a href="'.$socialMediaHandle['link'].'"><i class="'.$socialMediaHandle['icon'].'"></i></a>
-                    ';
-                }
-
-                $topMentos .= '
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+        // if(!empty($data['mentors'])){
+            
+            for ($num = 0; $num < 7; $num++){//foreach($data['mentors'] as $key => $mentor){
+                
+                $cards .= '
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
                         <div class="member">
-                            <img src="'.BASE_URL.$mentor['profilePic'].'" class="img-fluid" alt="">
-                            <div class="member-content">
-                                <h4>'.$mentor['fullName'].'</h4>
-                                <span>'.$mentor['profession'].'</span>
-                                <p>
-                                '.$mentor['description'].'
-                                </p>
-                                <div class="social">
-                                    '.$socialContacts.'
-                                </div>
+                        <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
+                        <div class="member-content">
+                            <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
+                            <span>Marketing</span>
+                            <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
+                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
+                            </span>
+                            <p>
+                            Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
+                            </p>
+                            <div class="social">
+                            <a href=""><i class="icofont-twitter"></i></a>
+                            <a href=""><i class="icofont-facebook"></i></a>
+                            <a href=""><i class="icofont-instagram"></i></a>
+                            <a href=""><i class="icofont-linkedin"></i></a>
                             </div>
+                        </div>
                         </div>
                     </div>
                 ';
+               
+                if ($count == ($possibleCardTotal-1)){
+                    //creating page because we reached out maximum cards per page
+                    $pageCount++;
+                    $pages .= '
+                        <div id="page-'.$pageCount.'"> 
+                            <div class="row" data-aos="zoom-in" data-aos-delay="100">
+                            '.$cards.'
+                            </div>
+                        </div>
+                    ';
+                    $cards = '';
+                    $possibleCardTotal += $maxCardPerPage; // increasing count for another page to be added
+                }
+
+                $count++;
+
 
             }
-        }
+
+            // Creating a page for the remaining Course Cards
+            if ($count <= $possibleCardTotal){
+                
+                if ($count != ($possibleCardTotal - $maxCardPerPage)){
+                    //if we have more cards than the maximum amount we will add another page
+                    $pageCount++;
+                }
+                $pages .= '
+                    <div id="page-'.$pageCount.'"> 
+                        <div class="row" data-aos="zoom-in" data-aos-delay="100">
+                            '.$cards.'
+                        </div>
+                    </div>
+                ';
+            }
+
+            
+
+            // creating pagination 
+            $pageContent = '
+                <div id="pagination-content">
+                    '.$pages.'
+                </div>
+                <div class="row pt-3">
+                    <div class="col-12 d-flex justify-content-center">
+                        <div id="pagination-btn"> 
+                        </div>  
+                    </div>
+                </div>
+            ';
+
+        // }
 
         $html = '
         <main id="main" data-aos="fade-in">
-            '.$this->banner('Mentors','Description about our mentors').' 
+            '.$this->banner('Mentors','Take a look at our Mentors').' 
             
             <div class="container mt-4">
                 <div class="d-flex justify-content-center">
                     <div class="searchbar">
-                        <input class="search_input" type="text" name="" placeholder="Search for a Mentor...">
+                        <input class="search_input" id="mentorSearch" type="text" placeholder="Search for a Mentor...">
                         <a href="#" class="search_icon d-inline"><i class="fa fa-search fa-lg"></i></a>
                     </div>
                 </div>
@@ -1420,137 +1431,14 @@ class Ui {
                         <p>Mentors</p>
                     </div>
             
-                    <div id="pagination-content"> 
-                        <div id="page-1"> 
-                            
-                            <div class="row" data-aos="zoom-in" data-aos-delay="100">
-                        
-                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                    <div class="member">
-                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                                    <div class="member-content">
-                                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                                        <span>Marketing</span>
-                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                        </span>
-                                        <p>
-                                        Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                                        </p>
-                                        <div class="social">
-                                        <a href=""><i class="icofont-twitter"></i></a>
-                                        <a href=""><i class="icofont-facebook"></i></a>
-                                        <a href=""><i class="icofont-instagram"></i></a>
-                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                    <div class="member">
-                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                                    <div class="member-content">
-                                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                                        <span>Marketing</span>
-                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                        </span>
-                                        <p>
-                                        Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                                        </p>
-                                        <div class="social">
-                                        <a href=""><i class="icofont-twitter"></i></a>
-                                        <a href=""><i class="icofont-facebook"></i></a>
-                                        <a href=""><i class="icofont-instagram"></i></a>
-                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                    <div class="member">
-                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                                    <div class="member-content">
-                                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                                        <span>Marketing</span>
-                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                        </span>
-                                        <p>
-                                        Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                                        </p>
-                                        <div class="social">
-                                        <a href=""><i class="icofont-twitter"></i></a>
-                                        <a href=""><i class="icofont-facebook"></i></a>
-                                        <a href=""><i class="icofont-instagram"></i></a>
-                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                        
-                            </div>
-
-                        </div>
-                        <div id="page-2"> 
-                            <div class="row" data-aos="zoom-in" data-aos-delay="100">
-                        
-                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                    <div class="member">
-                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                                    <div class="member-content">
-                                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                                        <span>Marketing</span>
-                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                        </span>
-                                        <p>
-                                        Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                                        </p>
-                                        <div class="social">
-                                        <a href=""><i class="icofont-twitter"></i></a>
-                                        <a href=""><i class="icofont-facebook"></i></a>
-                                        <a href=""><i class="icofont-instagram"></i></a>
-                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                        
-                            </div>
-                            
-
-                        </div>
-                    </div>
-                    <div class="row pt-3">
-                        <div class="col-12 d-flex justify-content-center">
-                            <div id="pagination-btn"> 
-                            </div>  
-                        </div>
-                    </div>
+                    '.$pageContent.' 
             
                 </div>
             </section><!-- End Trainers Section -->
         
         </main><!-- End #main -->
         <script>
-            setPaginationTotalCount(2);
+            setPaginationTotalCount('.$pageCount.');
         </script>
     
         
@@ -1601,17 +1489,105 @@ class Ui {
         return $html;
     }
     // Will display all the mentorship programs available
-    public function courses(){
+    public function courses($data = []){
+
+        $cards = '';                            //holds all the card html markup
+        $count = 0;                             // keeps track of how much cards have been made
+        $maxCardPerPage = 6;                    //capacity of course cards per page for pagination
+        $possibleCardTotal = $maxCardPerPage;   //gets added +6 everytime course cards reach maxCoursePerPage;
+        $pageCount = 0;                         // page count for pagination
+        $pages = '';                            // hold a the pages for the pagination
+        $pageContent = '';                      //contains all the pages and pagination elements
+
+        // if(!empty($data['courses'])){
+            
+            for ($num = 0; $num < 7; $num++){//foreach($data['courses'] as $key => $course){
+                
+                $cards .= '
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
+                        <div class="course-item shadow">
+                            <a href="'.BASE_URL.'index.php/?page=courseDetails">
+                                <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
+                            </a>
+                            <div class="course-content">
+                                <div class="row d-flex justify-content-between align-items-center mb-3">
+                                    <a href="'.BASE_URL.'index.php/?page=courseDetails" class="text-light"><h4><i class="fa fa-eye fa-lg"></i> View Course</h4></a>
+                                    <p class="price mr-3" data-toggle="tooltip" data-placement="top" title="4.0">
+                                        <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
+                                        <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                        <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                        <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                        <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                    </p>
+                                </div>
+                
+                                <h3><a href="'.BASE_URL.'index.php/?page=courseDetails"">Website Design</a></h3>
+                                <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
+                            
+                            </div>
+                        </div>
+                    </div> <!-- End Course Item-->
+                ';
+               
+                if ($count == ($possibleCardTotal-1)){
+                    //creating page because we reached out maximum cards per page
+                    $pageCount++;
+                    $pages .= '
+                        <div id="page-'.$pageCount.'"> 
+                            <div class="row" data-aos="zoom-in" data-aos-delay="100">
+                            '.$cards.'
+                            </div>
+                        </div>
+                    ';
+                    $cards = '';
+                    $possibleCardTotal += $maxCardPerPage; // increasing cardTotal for another page to be added
+                }
+
+                $count++;
+            }
+
+            // Creating a page for the remaining Course Cards
+            if ($count <= $possibleCardTotal){
+                
+                if ($count != ($possibleCardTotal - $maxCardPerPage)){
+                    //if we have more cards than the maximum amount we will add another page
+                    $pageCount++;
+                }
+                //creating a page for cards
+                $pages .= '
+                    <div id="page-'.$pageCount.'"> 
+                        <div class="row" data-aos="zoom-in" data-aos-delay="100">
+                            '.$cards.'
+                        </div>
+                    </div>
+                ';
+            }
+
+            // creating pagination with pages
+            $pageContent = '
+                <div id="pagination-content">
+                    '.$pages.'
+                </div>
+                <div class="row pt-3">
+                    <div class="col-12 d-flex justify-content-center">
+                        <div id="pagination-btn"> 
+                        </div>  
+                    </div>
+                </div>
+            ';
+
+        // }
+
         $html = '
         <main id="main" data-aos="fade-in">
-            '.$this->banner('Mentorship Courses', 'Courses available by mentors').'
+            '.$this->banner('Mentorship Courses', 'These are the Courses Available').'
     
 
 
             <div class="container mt-4">
                 <div class="d-flex justify-content-center">
-                    <div class="searchbar">
-                        <input class="search_input" type="text" name="" placeholder="Search for a Program...">
+                    <div class="searchbar ui-widget">
+                        <input class="search_input" id="courseSearch" type="text" placeholder="Search for a course...">
                         <a href="#" class="search_icon d-inline"><i class="fa fa-search fa-lg"></i></a>
                     </div>
                 </div>
@@ -1625,177 +1601,13 @@ class Ui {
                         <h2>Mentorship</h2>
                         <p>Courses</p>
                     </div>
-            
-                   
-                        
-                    <div id="pagination-content"> 
-                        <div id="page-1"> 
-                            <div class="row" data-aos="zoom-in" data-aos-delay="100">
-                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                    <div class="course-item">
-                                        <a href="'.BASE_URL.'index.php/?page=programDetails">
-                                            <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
-                                        </a>
-                                        <div class="course-content">
-                                            <div class="row d-flex justify-content-between align-items-center mb-3">
-                                                <a href="'.BASE_URL.'index.php/?page=" class="text-light"><h4><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h4></a>
-                                                <p class="price pr-1" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                    <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                </p>
-                                            </div>
-                            
-                                            <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h3>
-                                            <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                        
-                                        </div>
-                                    </div>
-                                </div> <!-- End Course Item-->      
-                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-                                    <div class="course-item">
-                                        <a href="'.BASE_URL.'index.php/?page=programDetails">
-                                            <img src="'.BASE_URL.'assets/img/course-2.jpg" class="img-fluid" alt="...">
-                                        </a>
-                                        <div class="course-content">
-                                            <div class="row d-flex justify-content-between align-items-center mb-3">
-                                                <a href="'.BASE_URL.'index.php/?page=" class="text-light"><h4><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h4></a>
-                                                <p class="price pr-1" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                    <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                </p>
-                                            </div>
-                            
-                                            <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h3>
-                                            <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                        
-                                        </div>
-                                    </div>
-                                </div> <!-- End Course Item-->      
-                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-                                    <div class="course-item">
-                                        <a href="'.BASE_URL.'index.php/?page=programDetails">
-                                            <img src="'.BASE_URL.'assets/img/course-3.jpg" class="img-fluid" alt="...">
-                                        </a>
-                                        <div class="course-content">
-                                            <div class="row d-flex justify-content-between align-items-center mb-3">
-                                                <a href="'.BASE_URL.'index.php/?page=" class="text-light"><h4><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h4></a>
-                                                <p class="price pr-1" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                    <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                </p>
-                                            </div>
-                            
-                                            <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h3>
-                                            <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                        
-                                        </div>
-                                    </div>
-                                </div> <!-- End Course Item-->      
-                            </div>
-                        </div>
-                        <div id="page-2"> 
-                            <div class="row" data-aos="zoom-in" data-aos-delay="100">
-
-                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                    <div class="course-item">
-                                        <a href="'.BASE_URL.'index.php/?page=programDetails">
-                                            <img src="'.BASE_URL.'assets/img/course-2.jpg" class="img-fluid" alt="...">
-                                        </a>
-                                        <div class="course-content">
-                                            <div class="row d-flex justify-content-between align-items-center mb-3">
-                                                <a href="'.BASE_URL.'index.php/?page=" class="text-light"><h4><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h4></a>
-                                                <p class="price pr-1" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                    <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                </p>
-                                            </div>
-                            
-                                            <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h3>
-                                            <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                        
-                                        </div>
-                                    </div>
-                                </div> <!-- End Course Item-->     
-
-                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-                                    <div class="course-item">
-                                        <a href="'.BASE_URL.'index.php/?page=programDetails">
-                                            <img src="'.BASE_URL.'assets/img/course-2.jpg" class="img-fluid" alt="...">
-                                        </a>
-                                        <div class="course-content">
-                                            <div class="row d-flex justify-content-between align-items-center mb-3">
-                                                <a href="'.BASE_URL.'index.php/?page=" class="text-light"><h4><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h4></a>
-                                                <p class="price pr-1" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                    <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                </p>
-                                            </div>
-                            
-                                            <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h3>
-                                            <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                        
-                                        </div>
-                                    </div>
-                                </div> <!-- End Course Item--> 
-
-                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-                                    <div class="course-item">
-                                        <a href="'.BASE_URL.'index.php/?page=programDetails">
-                                            <img src="'.BASE_URL.'assets/img/course-2.jpg" class="img-fluid" alt="...">
-                                        </a>
-                                        <div class="course-content">
-                                            <div class="row d-flex justify-content-between align-items-center mb-3">
-                                                <a href="'.BASE_URL.'index.php/?page=" class="text-light"><h4><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h4></a>
-                                                <p class="price pr-1" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                    <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                    <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                                                </p>
-                                            </div>
-                            
-                                            <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h3>
-                                            <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                        
-                                        </div>
-                                    </div>
-                                </div> <!-- End Course Item-->      
-                            </div>
-                        </div>
-                    </div>
-                        
-                    
-                    <div class="row pt-3">
-                        <div class="col-12 d-flex justify-content-center">
-                            
-                            <div id="pagination-btn"> 
-                            </div>  
-
-                        </div>
-                    </div>
-             
+                    '.$pageContent.'
                 </div>
             </section><!-- End Courses Section -->
         </main><!-- End #main -->
     
         <script>
-            setPaginationTotalCount(2);
+            setPaginationTotalCount('.$pageCount.');
         </script>
         
         ';
@@ -1833,7 +1645,7 @@ class Ui {
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text" id="basic-addon1"><i class="fa fa-user fa-lg"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" aria-label="emial" aria-describedby="basic-addon1" placeholder="Enter your email" required="required">
+                                            <input type="text" class="form-control" name="email" aria-label="emial" aria-describedby="basic-addon1" placeholder="Enter your email" required="required">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -1841,7 +1653,7 @@ class Ui {
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text" id="basic-addon1"><i class="fa fa-lock fa-lg"></i></span>
                                             </div>
-                                            <input type="password" class="form-control" placeholder="**********" aria-label="password" aria-describedby="basic-addon1" required="required">
+                                            <input type="password" name="password" class="form-control" placeholder="**********" aria-label="password" aria-describedby="basic-addon1" required="required">
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-success btn-block login-btn">Sign in</button>
@@ -1865,10 +1677,10 @@ class Ui {
         ';
         return $html;
     }
-   // Displays a signIn form
+    // Displays a signIn form
     public function signInWithApi($data){
              
-        $html = $this->banner('Sign In', 'Sign in using your facebook, google or custom Sign In credentials').'
+        $html = $this->banner('Sign In', 'Sign In by entering your pasword').'
             <main id="main">
                 <div class="container">
                     <div class="row d-flex justify-content-center">
@@ -1877,16 +1689,22 @@ class Ui {
                                 <div class="card-body">
                                     <form action="'.BASE_URL.'" method="post">
                                         <input type="hidden" name="action" value="signIn">
-                                        <input type="hidden" name="email" value="'.($data['email'] ?? '').'">
-                                        <h3 class="text-center">Sign in as <br>
-                                        "<strong class="h4">'.($data['email'] ?? '').'</strong>"</h3>
+                                        <h3 class="text-center">Sign in as </h3> 
                                         <hr>		 
+                                        <div class="form-group">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-user fa-lg"></i></span>
+                                                </div>
+                                                <input type="text" class="form-control" name="email" value="'.($data['email'] ?? '').'" aria-label="emial" aria-describedby="basic-addon1" placeholder="Enter your email" required="required">
+                                            </div>
+                                        </div>
                                         <div class="form-group">
                                             <div class="input-group mb-3">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-lock fa-lg"></i></span>
                                                 </div>
-                                                <input type="password" class="form-control" placeholder="Enter your password" aria-label="password" aria-describedby="basic-addon1" required="required">
+                                                <input type="password" class="form-control" name="password" placeholder="Enter your password" aria-label="password" aria-describedby="basic-addon1" required="required">
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-success btn-block login-btn">Sign in</button>
@@ -1941,7 +1759,7 @@ class Ui {
                                     </div>
                                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                                         <form action="'.BASE_URL.'" method="post">
-                                            <input type="hidden" name="api" value="'.(isset($data['api']) ?? 0).'">
+                                            <input type="hidden" name="api" value="'.($data['api'] ?? 0).'">
                                             <input type="hidden" name="action" value="registration">
                                             <!--<div class="or-seperator d-flex justify-content-center justify-content-md-start">
                                                 <i class="">Are you a Mentor or Mentee?</i>
@@ -1984,7 +1802,7 @@ class Ui {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text show-pass" id="basic-addon1"><i class="fa fa-eye fa-lg"></i></span>
                                                         </div>
-                                                        <input type="password" class="form-control" name="newPassword" placeholder="**********" aria-label="password" aria-describedby="basic-addon1" required="required">
+                                                        <input type="password" class="form-control" name="newPassword" placeholder="**********" aria-label="password" pattern=".{8,}" aria-describedby="basic-addon1" required title="Enter minimum of 8 characters">
                                                     </div>
                                                 </div>
                                                 <div class="col-12 pb-2">
@@ -1993,12 +1811,12 @@ class Ui {
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text show-pass" id="basic-addon1"><i class="fa fa-eye fa-lg"></i></span>
                                                         </div>
-                                                        <input type="password" class="form-control" name="confirmPassword" placeholder="**********" aria-label="password" aria-describedby="basic-addon1" required="required">
+                                                        <input type="password" class="form-control" name="confirmPassword" placeholder="**********" aria-label="password" pattern=".{8,}" aria-describedby="basic-addon1" required title="Enter minimum of 8 characters">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
                                                     <div class="clearfix pt-2 pl-1">
-                                                        <label class="pull-left checkbox-inline"><input type="checkbox" required> I Accept the <a class="text-success" href="'.BASE_URL.'index.php/?page=terms">Terms and Conditions</a></label>
+                                                        <label class="pull-left checkbox-inline"><input type="checkbox" required title="Please accept out Terms and Conditions"> I Accept the <a class="text-success" href="'.BASE_URL.'index.php/?page=terms">Terms and Conditions</a></label>
                                                     </div>  
                                                 </div>  
                                                 
@@ -2079,6 +1897,8 @@ class Ui {
 
                                 <form action="'.BASE_URL.'" method="post">
                                     <input type="hidden" name="action" value="registration">
+                                    <input type="hidden" name="email" aria-label="emial" value="'.($data['email'] ?? '').'">
+                                    <input type="hidden" name="api" value="'.($data['api'] ?? 0).'">
                                     
                                     <label class="">Are you a Mentor or Mentee?</label>
                                     <div class="pb-3 pl-3 d-flex justify-content-start ">
@@ -2110,7 +1930,7 @@ class Ui {
                                         </div>
                                         <div class="col-12 col-md-6 pb-2">
                                             <label class="">Email</label>
-                                            <input type="text" class="form-control" name="email" aria-label="emial" aria-describedby="basic-addon1" value="'.($data['email'] ?? '').'" placeholder="Enter your email..." required>
+                                            <p>'.($data['email'] ?? '').'</p>
                                         </div>
                                         <div class="col-12 pb-2">
                                             <label class="">New Password</label>
@@ -2263,15 +2083,15 @@ class Ui {
 
     }
     //Displays contact information
-    public function contact(){
+    public function contact($data = array()){
         $html = '
         <main id="main">
-        '.$this->banner('Contact Us', 'This is the contact page').'
+        '.$this->banner('Contact Us', 'Got any questions? Send us an email.').'
         
             <!-- ======= Contact Section ======= -->
             <section id="contact" class="contact">
                 <div data-aos="fade-up">
-                    <iframe style="border:0; width: 100%; height: 350px;" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621" frameborder="0" allowfullscreen></iframe>
+                    <iframe style="border:1; width: 100%; height: 350px;" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15220.05176183644!2d-88.1997271!3d17.5068957!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x8d7beaf7b10be549!2sSBDCBelize%2C%20BELTRAIDE!5e0!3m2!1sen!2sbz!4v1603748137616!5m2!1sen!2sbz" frameborder="0" allowfullscreen></iframe>
                 </div>
             
                 <div class="container" data-aos="fade-up">
@@ -2283,19 +2103,19 @@ class Ui {
                         <div class="address">
                             <i class="icofont-google-map"></i>
                             <h4>Location:</h4>
-                            <p>A108 Adam Street, New York, NY 535022</p>
+                            <p>Fultec Building, 3rd Floor, 831 Coney Drive</p>
                         </div>
             
                         <div class="email">
                             <i class="icofont-envelope"></i>
                             <h4>Email:</h4>
-                            <p>info@example.com</p>
+                            <p>SBDCBelize@belizeinvest.org.bz</p>
                         </div>
             
                         <div class="phone">
                             <i class="icofont-phone"></i>
                             <h4>Call:</h4>
-                            <p>+1 5589 55488 55s</p>
+                            <p>+501 223-3195</p>
                         </div>
             
                         </div>
@@ -2303,32 +2123,30 @@ class Ui {
                     </div>
             
                     <div class="col-lg-8 mt-5 mt-lg-0">
-            
-                        <form action="forms/contact.php" method="post" role="form" class="php-email-form">
-                        <div class="form-row">
-                            <div class="col-md-6 form-group">
-                            <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" />
-                            <div class="validate"></div>
+                        '.($data['message'] ?? '').'
+                        <span id="contactUsMessage"></span>
+                        <form id="contactUsForm" action="'.BASE_URL.'" method="post" class="email-form">
+                            <input type="hidden" name="action" value="contactUsEmail">
+                            <div class="form-row">
+                                <div class="col-md-6 form-group">
+                                <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" required/>
+                                <div class="validate"></div>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" required/>
+                                <div class="validate"></div>
+                                </div>
                             </div>
-                            <div class="col-md-6 form-group">
-                            <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" />
-                            <div class="validate"></div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject" required/>
+                                <div class="validate"></div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject" />
-                            <div class="validate"></div>
-                        </div>
-                        <div class="form-group">
-                            <textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="Message"></textarea>
-                            <div class="validate"></div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="loading">Loading</div>
-                            <div class="error-message"></div>
-                            <div class="sent-message">Your message has been sent. Thank you!</div>
-                        </div>
-                        <div class="text-center"><button type="submit">Send Message</button></div>
+                            <div class="form-group">
+                                <textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="Message" required></textarea>
+                                <div class="validate"></div>
+                            </div>
+                            <div class="g-recaptcha mb-3" data-sitekey="'.RECAPTCHA_SITE_KEY.'"></div>
+                            <div class="text-center"><button type="submit">Send Message</button></div>
                         </form>
             
                     </div>
@@ -2350,8 +2168,8 @@ class Ui {
                 <div class="container">
                     <div class="row">
 
-                    <div class="col-lg-5 col-md-4 footer-contact">
-                        <h3>Female Entrepreneurship</h3>
+                    <div class="col-12 col-lg-4 col-md-4 footer-contact">
+                        <h3>Female Entrepreneurs</h3>
                         <p>
                        
                         Fultec Building, 3rd Floor <br>
@@ -2359,20 +2177,35 @@ class Ui {
                         Belize, Belize City<br>
                         Central America<br><br>
                         <strong>Phone:</strong> +(501) 223-3195<br>
-                        <strong>Email:</strong> SBDCBelize@belizeinvest.org.bz<br>
+                        <strong>Email:</strong> <a href="mailto:SBDCBelize@belizeinvest.org.bz">SBDCBelize@belizeinvest.org.bz</a><br>
                         </p>
                     </div>
 
-                    <div class="col-lg-2 3col-md-4 footer-links">
-
+                    <div class="col-12 col-lg-4 col-md-4 footer-links">
+                        <span class="row col-12 d-flex justify-content-center">
+                            <a href="https://www.belizeinvest.org.bz/">
+                                <img src="'.BASE_URL.'assets/img/logos/BELTRAIDE_logo.png" alt="BELTRAIDE Logo" width="260" height="auto">
+                            </a>
+                        </span>
                     </div>
 
-                    <div class="col-lg-4 col-md-4 footer-newsletter">
-                        <h4>Join Our Newsletter</h4>
+                    <div class="col-12 col-lg-4 col-md-4 footer-newsletter">
+                        <!--<h4>Join Our Newsletter</h4>
                         <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
                         <form action="" method="post">
-                        <input class="form-control" type="email" name="email"><input type="submit" value="Subscribe">
-                        </form>
+                            <input class="form-control" type="email" name="email"><input type="submit" value="Subscribe">
+                        </form>-->
+                        <span class="row col-12 d-flex justify-content-center justify-content-md-end">
+                            <a href="https://www.belizeinvest.org.bz/exportbelize.html">
+                                <img src="'.BASE_URL.'assets/img/logos/EXPORTBelize_logo.png" alt="EXPORTBelize Logo" width="210" height="auto">
+                            </a>
+                        </span>
+                        <span class="row col-12 pt-4 d-flex justify-content-center justify-content-md-end">
+                            <a href="https://www.belizeinvest.org.bz/sbdcbelize.html">
+                                <img src="'.BASE_URL.'assets/img/logos/SBDCBelize_logo.png" alt="SBDCBelize Logo" width="200" height="auto">
+                            </a>
+                        </span>
+
                     </div>
 
                     </div>
@@ -2395,9 +2228,8 @@ class Ui {
                 </div>
                 <div class="social-links text-center text-md-right pt-3 pt-md-0">
                     <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
-                    <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+                    <a href="www.facebook.com/SBDCBelize" class="facebook"><i class="bx bxl-facebook"></i></a>
                     <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-                    <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
                     <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
                 </div>
                 </div>
@@ -2412,6 +2244,10 @@ class Ui {
 
             <!-- Popper.js -->
             <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+            <!-- Script for Autocomplete-->
+            <!--<script src="https://code.jquery.com/jquery-1.12.4.js"></script>-->
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
             <script src="'.BASE_URL.'assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
             <script src="'.BASE_URL.'assets/vendor/jquery.easing/jquery.easing.min.js"></script>

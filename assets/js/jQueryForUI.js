@@ -23,6 +23,91 @@ $(document).ready(function (){
         }
 
     })
-    
-  
+    //handles the contact form submitssion via a ajax request
+    // $('#contactUsForm').submit(function(event){
+    //     event.preventDefault();
+        
+    //     var formData = $(this).serialize();
+    //     var url = $(this).attr('action');
+
+    //     $.post( url, formData, function( data ) {
+            
+    //         $('#contactUsMessage').html(data.message);
+    //         $console.log(data.message);
+    //         $console.log($('#contactUsMessage'));
+
+    //     }, "json");
+
+
+    // });
+
+    //Autocomplete for course search bar
+    $( "#courseSearch" ).autocomplete({
+        source: function( request, response ) {
+
+            // Fetch data
+            $.ajax({
+                url: BASE_URL,
+                type: 'post',
+                dataType: "json",
+                data: {
+                    action : 'courseSearch',
+                    search : request.term
+                },
+                success: function( data ) {
+                    response( data );
+                }
+            });
+        },
+        select: function (event, ui) {
+            // Set selection
+            $('#courseSearch').val(ui.item.label); // display the selected text
+            
+            return false;
+        }
+    });
+    //Autocomplete for mentor search bar
+    $( "#mentorSearch" ).autocomplete({
+        source: function( request, response ) {
+            // Fetch data
+            $.ajax({
+                url: BASE_URL,
+                type: 'post',
+                dataType: "json",
+                data: {
+                    action : 'mentorSearch',
+                    search : request.term
+                },
+                success: function( data ) {
+                    response( data );
+                }
+            });
+        },
+        select: function (event, ui) {
+            // Set selection
+            $('#mentorSearch').val(ui.item.label); // display the selected text
+
+            
+            
+            return false;
+        }
+    });
+
+    //Displays more mentors
+    $('#view-all-mentors').click(function (e){
+        // e.preventDefault();
+
+        let icon = $(this)[0].children[0];
+        $(icon).toggleClass('fa-eye fa-eye-slash')
+        
+        $('#more-mentors').toggleClass('d-none');
+        
+
+        if ($('#view-all-mentors-text').text() == 'View'){
+            $('#view-all-mentors-text').text('Hide')
+        }else{
+            $('#view-all-mentors-text').text('View')
+        }
+    });
+
 });

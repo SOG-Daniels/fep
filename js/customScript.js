@@ -110,6 +110,7 @@ $(document).ready(function(e){
 
     });
 
+    //requesting a course
     $('#request-course').on('click', function (e){
 
         $('#request-course-addition-modal').modal('hide');
@@ -125,5 +126,6 @@ $(document).ready(function(e){
 
     });
 
+   
 });
 
