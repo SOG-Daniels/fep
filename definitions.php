@@ -1,8 +1,8 @@
 <?php 
     //constant variable uses throughout the php scripts
-    define('DB_USER', 'fepbelize');
-    define('DB_PASS', '2DsM-3=5L7Nj');
-    define('DB_HOST', '107.180.54.183');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+    define('DB_HOST', 'localhost');
     define('DB_NAME', 'fepbelize');
 
     // define('BASE_URL', 'https://femaleentrepreneurs.bz/fep/');

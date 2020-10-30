@@ -112,7 +112,7 @@ class FacebookAPI{
 		$endpoint = FB_GRAPH_DOMAIN . 'me';
 
 		$params = array( // params for the endpoint
-			'fields' => 'first_name,last_name,email,picture,birthday',
+			'fields' => 'first_name,last_name,email,picture.type(large),birthday',
 			'access_token' => $accessToken
 		);
 

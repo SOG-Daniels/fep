@@ -132,7 +132,7 @@ class Ui {
         return $html;
     } 
     // return the home page
-    public function home($data = array()){
+    public function home($data = []){
         
         $courses = '';
         $topPrograms = '';
@@ -468,10 +468,15 @@ class Ui {
         return $html;
     }
     // Displays the course Detial information
-    public function courseDetails($data = array()){
+    public function courseDetails($data = []){
 
         $cards = '';
         $moreMentorCards = '';
+
+        $couseOutline = '';
+        $tabs = '';
+        $tabContent = '';
+
         
         // if (!empty($data['topMentors'])){
 
@@ -482,9 +487,6 @@ class Ui {
                         <div class="member shadow">
                             <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid mb-3" alt="">
                             
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <a href="'.BASE_URL.'index.php/?page=signIn"><h5 class="h5 card-tag text-light"><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h5></a>
-                            </div>
                             
                             <div class="member-content">
                                 <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
@@ -500,11 +502,16 @@ class Ui {
                                 Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
                                 </p>
                                 <div class="social">
-                                <a href=""><i class="icofont-twitter"></i></a>
-                                <a href=""><i class="icofont-facebook"></i></a>
-                                <a href=""><i class="icofont-instagram"></i></a>
-                                <a href=""><i class="icofont-linkedin"></i></a>
+                                    <a href=""><i class="icofont-twitter"></i></a>
+                                    <a href=""><i class="icofont-facebook"></i></a>
+                                    <a href=""><i class="icofont-instagram"></i></a>
+                                    <a href=""><i class="icofont-linkedin"></i></a>
                                 </div>
+                                
+                                <div class="d-flex justify-content-center">
+                                    <a href="'.BASE_URL.'index.php/?page=signIn" class="get-started-btn btn-sm mt-3"><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</a>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -522,9 +529,6 @@ class Ui {
                     <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
                         <div class="member shadow">
                             <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid" alt="">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <a href="'.BASE_URL.'index.php/?page=signIn"><h5 class="h5 card-tag text-light"><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</h5></a>
-                            </div>
                             <div class="member-content">
                                 <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
                                 <span>Marketing</span>
@@ -544,6 +548,9 @@ class Ui {
                                 <a href=""><i class="icofont-instagram"></i></a>
                                 <a href=""><i class="icofont-linkedin"></i></a>
                                 </div>
+                                <div class="d-flex justify-content-center">
+                                    <a href="'.BASE_URL.'index.php/?page=signIn" class="get-started-btn btn-sm mt-3"><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -553,6 +560,46 @@ class Ui {
         // }else{
         //     $cards = '<h3 class="ml-3">Coming Soon...</h3>';
         // }
+
+            //creating tabs and tab content
+            for($num = 1; $num  <= 5; $num++){
+                
+                $tabs .= '
+                    <li class="nav-item">
+                        <a class="nav-link '.(($num == 1)? 'active show' : '').'" data-toggle="tab" href="#tab-'.$num.'">Tab '.$num.'</a>
+                    </li>
+                ';
+                $tabContent .= '
+                    <div class="tab-pane '.(($num == 1)? 'active show' : '').'" id="tab-'.$num.'">
+                        <div class="row">
+                        <div class="col-lg-8 details order-2 order-lg-1">
+                            <h3>Architecto ut aperiam autem id</h3>
+                            <p class="font-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
+                            <p>Et nobis maiores eius. Voluptatibus ut enim blanditiis atque harum sint. Laborum eos ipsum ipsa odit magni. Incidunt hic ut molestiae aut qui. Est repellat minima eveniet eius et quis magni nihil. Consequatur dolorem quaerat quos qui similique accusamus nostrum rem vero</p>
+                        </div>
+                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                            <img src="assets/img/course-details-tab-1.png" alt="" class="img-fluid">
+                        </div>
+                        </div>
+                    </div>
+                ';
+            }
+            // creating course outline display
+            $courseOutline = '
+                <div class="row">
+                    <div class="col-lg-3">
+                        <ul class="nav nav-tabs flex-column">
+                        '.$tabs.'
+                        </ul>
+                    </div>
+                    <div class="col-lg-9 mt-4 mt-lg-0">
+                        <div class="tab-content">
+                        '.$tabContent.'
+                        </div>
+                    </div>
+            
+                </div>
+            ';
 
         $html = '
             <main id="main">
@@ -581,116 +628,20 @@ class Ui {
                     </div>
                 </section><!-- End Cource Details Section -->
                 
-                
-                <!-- ======= Course Outline  ======= -->
-                <section id="course-details" class="course-details">
-                    <div class="container" data-aos="fade-up">
-                
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <h3>Course Outline</h3>
-                                
-                                <span class="d-flex justify-content-center mt-3 mb-1 ">
-                                    <embed class="shadow-lg rounded" src="'.BASE_URL.'uploads/pdf/test.pdf" width="800px" height="800px" />
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </section><!-- End Cource Details Section -->
-                
-                
-                <!-- ======= Cource Details Tabs Section ======= >
+                <!-- ======= Cource Details Tabs Section ======= -->
                 <section id="cource-details-tabs" class="cource-details-tabs">
-                    <div class="container" data-aos="fade-up">
-                
-                        <div class="row">
-                        <div class="col-lg-3">
-                            <ul class="nav nav-tabs flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link active show" data-toggle="tab" href="#tab-1">Modi sit est</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tab-2">Unde praesentium sed</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tab-3">Pariatur explicabo vel</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tab-4">Nostrum qui quasi</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tab-5">Iusto ut expedita aut</a>
-                            </li>
-                            </ul>
-                        </div>
-                        <div class="col-lg-9 mt-4 mt-lg-0">
-                            <div class="tab-content">
-                            <div class="tab-pane active show" id="tab-1">
-                                <div class="row">
-                                <div class="col-lg-8 details order-2 order-lg-1">
-                                    <h3>Architecto ut aperiam autem id</h3>
-                                    <p class="font-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
-                                    <p>Et nobis maiores eius. Voluptatibus ut enim blanditiis atque harum sint. Laborum eos ipsum ipsa odit magni. Incidunt hic ut molestiae aut qui. Est repellat minima eveniet eius et quis magni nihil. Consequatur dolorem quaerat quos qui similique accusamus nostrum rem vero</p>
-                                </div>
-                                <div class="col-lg-4 text-center order-1 order-lg-2">
-                                    <img src="assets/img/course-details-tab-1.png" alt="" class="img-fluid">
-                                </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tab-2">
-                                <div class="row">
-                                <div class="col-lg-8 details order-2 order-lg-1">
-                                    <h3>Et blanditiis nemo veritatis excepturi</h3>
-                                    <p class="font-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
-                                    <p>Ea ipsum voluptatem consequatur quis est. Illum error ullam omnis quia et reiciendis sunt sunt est. Non aliquid repellendus itaque accusamus eius et velit ipsa voluptates. Optio nesciunt eaque beatae accusamus lerode pakto madirna desera vafle de nideran pal</p>
-                                </div>
-                                <div class="col-lg-4 text-center order-1 order-lg-2">
-                                    <img src="assets/img/course-details-tab-2.png" alt="" class="img-fluid">
-                                </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tab-3">
-                                <div class="row">
-                                <div class="col-lg-8 details order-2 order-lg-1">
-                                    <h3>Impedit facilis occaecati odio neque aperiam sit</h3>
-                                    <p class="font-italic">Eos voluptatibus quo. Odio similique illum id quidem non enim fuga. Qui natus non sunt dicta dolor et. In asperiores velit quaerat perferendis aut</p>
-                                    <p>Iure officiis odit rerum. Harum sequi eum illum corrupti culpa veritatis quisquam. Neque necessitatibus illo rerum eum ut. Commodi ipsam minima molestiae sed laboriosam a iste odio. Earum odit nesciunt fugiat sit ullam. Soluta et harum voluptatem optio quae</p>
-                                </div>
-                                <div class="col-lg-4 text-center order-1 order-lg-2">
-                                    <img src="assets/img/course-details-tab-3.png" alt="" class="img-fluid">
-                                </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tab-4">
-                                <div class="row">
-                                <div class="col-lg-8 details order-2 order-lg-1">
-                                    <h3>Fuga dolores inventore laboriosam ut est accusamus laboriosam dolore</h3>
-                                    <p class="font-italic">Totam aperiam accusamus. Repellat consequuntur iure voluptas iure porro quis delectus</p>
-                                    <p>Eaque consequuntur consequuntur libero expedita in voluptas. Nostrum ipsam necessitatibus aliquam fugiat debitis quis velit. Eum ex maxime error in consequatur corporis atque. Eligendi asperiores sed qui veritatis aperiam quia a laborum inventore</p>
-                                </div>
-                                <div class="col-lg-4 text-center order-1 order-lg-2">
-                                    <img src="assets/img/course-details-tab-4.png" alt="" class="img-fluid">
-                                </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tab-5">
-                                <div class="row">
-                                <div class="col-lg-8 details order-2 order-lg-1">
-                                    <h3>Est eveniet ipsam sindera pad rone matrelat sando reda</h3>
-                                    <p class="font-italic">Omnis blanditiis saepe eos autem qui sunt debitis porro quia.</p>
-                                    <p>Exercitationem nostrum omnis. Ut reiciendis repudiandae minus. Omnis recusandae ut non quam ut quod eius qui. Ipsum quia odit vero atque qui quibusdam amet. Occaecati sed est sint aut vitae molestiae voluptate vel</p>
-                                </div>
-                                <div class="col-lg-4 text-center order-1 order-lg-2">
-                                    <img src="assets/img/course-details-tab-5.png" alt="" class="img-fluid">
-                                </div>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                        </div>
-                
+                  <div class="container" data-aos="fade-up">
+            
+                    '.$courseOutline.'
+                    
+                    <div class="row col-12 d-flex justify-content-center">
+
+                        <a class="mt-5 text-primary" href="site-pdf-file"><i class="fa fa-download"></i> Download the Course Outline here</a>
+
                     </div>
-                </section><! End Cource Details Tabs Section -->
+
+                  </div>
+                </section><!-- End Cource Details Tabs Section -->
 
                 <!-- ======= Top 3 Mentors Section ======= -->
                 <section id="trainers" class="trainers">
@@ -715,7 +666,7 @@ class Ui {
                             </div>
                         </span>
                         <span class="d-flex justify-content-center">
-                            <a href="#trainers" id="view-all-mentors" class="get-started-btn btn-lg"><i class="fa fa-eye fa-lg"></i> <span id="view-all-mentors-text">View</span> all Mentors</a>
+                            <a href="#trainers" id="view-all-mentors" class="btn btn-link mt-3"><i class="fa fa-eye fa-lg"></i> <span id="view-all-mentors-text">View</span> all Mentors</a>
                         </span>
 
                     </div>
@@ -1622,7 +1573,7 @@ class Ui {
         return $html;
     }
     // Displays a signIn form
-    public function signIn($data = array()){
+    public function signIn($data = []){
              
         $html = $this->banner('Sign In', 'Sign in using your facebook, google or custom Sign In credentials').'
         <main id="main">
@@ -1768,12 +1719,12 @@ class Ui {
                                             <div class="pb-3 pl-3 d-flex justify-content-start ">
                                                 <div class="form-check-inline">
                                                     <label class="form-check-label">
-                                                        <input type="radio" class="form-check-input" name="userType" checked>Mentee
+                                                        <input type="radio" class="form-check-input" name="userType" value="mentee" checked>Mentee
                                                     </label>
                                                 </div>
                                                 <div class="form-check-inline">
                                                     <label class="form-check-label">
-                                                        <input type="radio" class="form-check-input" name="userType">Mentor
+                                                        <input type="radio" class="form-check-input" name="userType" value="mentor">Mentor
                                                     </label>
                                                 </div>
                                             </div>
@@ -1883,7 +1834,15 @@ class Ui {
     }
     // Displays a registration pre filled by a API
     public function preFilledRegistration($data = null){
-             
+
+        $profilePic = '';
+
+        if (isset($data['profilePic'])){
+            
+            $profilePic = '<span class="d-flex justify-content-center"><img class="" src="'.$data['profilePic'].'" alt="Profile Pic" style="width:100px;height:100px;border-radius: 15%;" /></span>';
+
+        }  
+
         $html = $this->banner('Create an Account', 'Please enter the remaining information').'
         <main id="main">
             <div class="container">
@@ -1891,25 +1850,26 @@ class Ui {
                     <div class="col-12 col-md-6">
                         <div class="card mt-4 login-form shadow-lg">
                             <div class="card-header">
-                                <h3 class="text-center">Registration Form</h3>
+                                <h3 class="text-center">Registration</h3>
                             </div>
                             <div class="card-body">
 
                                 <form action="'.BASE_URL.'" method="post">
                                     <input type="hidden" name="action" value="registration">
+                                    <input type="hidden" name="profilePic" aria-label="profilePic" value="'.($data['profilePic'] ?? '').'">
                                     <input type="hidden" name="email" aria-label="emial" value="'.($data['email'] ?? '').'">
                                     <input type="hidden" name="api" value="'.($data['api'] ?? 0).'">
-                                    
-                                    <label class="">Are you a Mentor or Mentee?</label>
+                                    '.$profilePic.'
+                                    <label class="">Register as a</label>
                                     <div class="pb-3 pl-3 d-flex justify-content-start ">
                                         <div class="form-check-inline">
                                             <label class="form-check-label">
-                                                <input type="radio" class="form-check-input" name="userType" checked>Mentee
+                                                <input type="radio" class="form-check-input" name="userType" value="mentee" checked>Mentee
                                             </label>
                                         </div>
                                         <div class="form-check-inline">
                                             <label class="form-check-label">
-                                                <input type="radio" class="form-check-input" name="userType">Mentor
+                                                <input type="radio" class="form-check-input" name="userType" value="mentor">Mentor
                                             </label>
                                         </div>
                                     </div>
@@ -1930,7 +1890,7 @@ class Ui {
                                         </div>
                                         <div class="col-12 col-md-6 pb-2">
                                             <label class="">Email</label>
-                                            <p>'.($data['email'] ?? '').'</p>
+                                            <p class="font-weight-bold">'.($data['email'] ?? '').'</p>
                                         </div>
                                         <div class="col-12 pb-2">
                                             <label class="">New Password</label>
@@ -2081,6 +2041,78 @@ class Ui {
         ';
         return $html;
 
+    }
+    //creates a  html markup to be sent via email for registration
+    public function emailCard($link){
+        $html = '
+            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+            <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
+                <head>
+                    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+                    <title>Female Entrepreneurs</title>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                
+                    <style type="text/css">
+                        a[x-apple-data-detectors] {color: inherit !important;}
+                    </style>
+                
+                </head>
+                <body style="margin: 0; padding: 0;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td style="padding: 20px 0 30px 0;">
+                
+                                <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; border: 1px solid #cccccc;">
+                                    <tr>
+                                        <td align="center" bgcolor="#5fcf80" style="padding: 40px 0 30px 0px;">
+                                            <img src="https://femaleentrepreneurs.bz/fep/assets/img/logos/fep_logo.png" alt="FEP Logo" width="300" height="auto" style="display: block;" />
+                                        </td>
+                                        
+                                    </tr>
+                                    <tr>
+                                        <td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;">
+                                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                                                <tr>
+                                                    <td style="color: #153643; font-family: Arial, sans-serif;">
+                                                        <h1 style="font-size: 24px; margin: 0;">Thank you for registering!</h1>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; padding: 20px 0 30px 0;">
+                                                        <p style="margin: 0;">Welcome to the Female Entrepreneurship Program, your account registration is almost Complete. 
+                                                        <br><br>
+                                                        Please <a href="'.$link.'">click here</a> to activate your account.
+                                                        
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                                
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td bgcolor="#5fcf80" style="padding: 30px 30px;">
+                                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                                                <tr>
+                                                    <td style="color: #ffffff; font-family: Arial, sans-serif; font-size: 14px;" align="center">
+                                                        <p style="margin: 0;">&#169; <a href="https://www.belizeinvest.org.bz/" style="color: #ffffff;">BELTRAIDE</a>, Belize '.date('Y').'<br/>
+                                                        </p>
+                                                    </td>
+                                                    
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+            </html>
+        ';
+
+        return $html;
     }
     //Displays contact information
     public function contact($data = array()){
@@ -2439,7 +2471,6 @@ class Ui {
                             </a>
                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                                 <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=profile"><i class="dw dw-user1"></i> Profile</a>
-                                <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=faq"><i class="dw dw-help"></i> Help</a>
                                 <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=logout"><i class="dw dw-logout"></i> Log Out</a>
                             </div>
                         </div>
@@ -2714,79 +2745,252 @@ class Ui {
         return  $html;
     } 
     //Displays summary of content when logged in
-    public function dashboard($data = array()){
+    public function dashboard($data = []){
         
+        $courses = '';
+
+        $topMentors = '';
+        $mentorCards = '';
+        $mentorIndicators = '';
+
+        //programs the user is linked too as a mentor or mentee
+        if (!empty($data['programs'])){
+
+            foreach($data['programs'] as $key => $program){
+                $programId = encrypt($program['id']);
+                $courses .= '
+                    <div class="col-xl-3 mb-30">
+                        <a href="'.BASE_URL.'index.php/?page=programContent&programId='.$programId.'">
+                            <div class="card-box height-100-p widget-style1 shadow-lg">
+                                <div class="d-flex flex-wrap align-items-center">
+                                    <div class="progress-data text-center">
+                                        <!--<div id="chart"></div>-->
+                                        <i class="icon-copy dw dw-suitcase h1"></i>
+                                    </div>
+                                    <div class="widget-data">
+                                        <div class="h4 mb-0" data-toggle="tooltip" data-placement="top" title="Mentee total"><i class="fa fa-user"></i> '.$program['mentee_total'].'</div>
+                                        <div class="weight-600 font-14">'.$program['name'].'</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                ';
+            }
+
+        }else{
+            // user is not linked any programs
+            for($num =0; $num < 4; $num++){//foreach($data['courses'] as $key => $course){
+                $courseId = encrypt(1);
+                $course['mentee_total'] = 2;
+                $course['name'] = 'Marketing';
+
+                $courses .= '
+                    <div class="col-xl-3 mb-30">
+                        <a href="'.BASE_URL.'index.php/?page=programContent&programId='.$courseId.'">
+                            <div class="card-box height-100-p widget-style1 shadow-lg">
+                                <div class="d-flex flex-wrap align-items-center">
+                                    <div class="progress-data text-center">
+                                        <!--<div id="chart"></div>-->
+                                        <i class="icon-copy dw dw-suitcase h1"></i>
+                                    </div>
+                                    <div class="widget-data">
+                                        <div class="h4 mb-0" data-toggle="tooltip" data-placement="top" title="Mentee total"><i class="fa fa-user"></i> '.$course['mentee_total'].'</div>
+                                        <div class="weight-600 font-14">'.$course['name'].'</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>  
+                ';
+            }
+
+        }  
+        //top mentors 
+        // if (!empty($data['topMentors'])){
+
+            for($num = 0; $num < 3; $num++){//foreach($data['topMentors'] as $key => $topMentor){
+
+                $mentorIndicators .= '
+                    <li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="'.$num.'" class="'.(($num  == 0)? 'active' : '').'"></li>
+                ';
+                $mentorCards .= '
+                <div class="carousel-item '.(($num == 0)? 'active' : '').'">
+                    <div class="clearfix">
+                        
+                            <div class="da-card">
+                                <div class="da-card-photo">
+                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
+                                    <div class="da-overlay da-slide-top">
+                                        <div class="da-social">
+                                            <ul class="clearfix">
+                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                                <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="da-card-content text-center">
+                                    <h5 class="h5 mb-0"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
+                                    <p class="mb-0">Marketing</p>
+                                    <span class="d-flex justify-content-center mb-2" data-toggle="tooltip" data-placement="top" title="4.0" >
+                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                        <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
+                                    </span>
+                                    <span>
+                                        <a href="#" class="btn btn-success btn-sm"><i class="fa fa-paper-plane-o"></i> Request Mentorship</a>
+                                    </span>
+                                </div>
+                            </div>
+                        
+                    </div>
+                </div>
+                ';
+            }
+            $topMentors = '
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        <h3 class="h3 text-blue">Popular Mentors</h3>
+
+                        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                            <ol class="carousel-indicators">
+                                '.$mentorIndicators.'
+                                <!--<li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                                <li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                                <li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
+                            </ol>
+                            <div class="carousel-inner pb-1">
+                                '.$mentorCards.'
+                                <!--<div class="carousel-item active">
+                                    <div class="clearfix">
+                                        
+                                            <div class="da-card">
+                                                <div class="da-card-photo">
+                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
+                                                    <div class="da-overlay da-slide-top">
+                                                        <div class="da-social">
+                                                            <ul class="clearfix">
+                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                                                <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="da-card-content text-center">
+                                                    <h5 class="h5"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
+                                    ii               <p class="mb-0">Marketing</p>
+                                                    <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <div class="clearfix">
+                                            <div class="da-card">
+                                                <div class="da-card-photo">
+                                                    <img src="'.BASE_URL.'vendors/images/photo2.jpg" alt="">
+                                                    <div class="da-overlay da-slide-top">
+                                                        <div class="da-social">
+                                                            <ul class="clearfix">
+                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="da-card-content text-center">
+                                                    <h5 class="h5"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
+                                                    <p class="mb-0">Marketing</p>
+                                                    <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                    </div>                            
+                                </div>
+                                <div class="carousel-item">
+                                    <div class="clearfix">
+                                            <div class="da-card">
+                                                <div class="da-card-photo">
+                                                    <img src="'.BASE_URL.'vendors/images/photo3.jpg" alt="">
+                                                    <div class="da-overlay da-slide-top">
+                                                        <div class="da-social">
+                                                            <ul class="clearfix">
+                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="da-card-content text-center">
+                                                    <h5 class="h5"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
+                                                    <p class="mb-0">Marketing</p>
+                                                    <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star-half-o fa-lg"></i></span>
+                                                        <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>-->
+                            </div>
+                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon bg-secondary" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon bg-secondary" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="col-12 col-md-6">
+                    </div>
+                </div>
+            ';
+        // }
+        // echo '<br><br><br><br>';
+        // var_dump($courses);
         $html = $this->preloader().'
             <div class="main-container">
                 <div class="pd-ltr-20">
+                    <h3 class="h3 text-blue">Courses</h3>
                     <div class="row">
-                        <div class="col-xl-3 mb-30">
-                            <a href="'.BASE_URL.'index.php/?page=programContent">
-                                <div class="card-box height-100-p widget-style1 shadow-lg">
-                                    <div class="d-flex flex-wrap align-items-center">
-                                        <div class="progress-data">
-                                            <div id="chart"></div>
-                                        </div>
-                                        <div class="widget-data">
-                                            <div class="h4 mb-0"><i class="fa fa-user"></i> 20</div>
-                                            <div class="weight-600 font-14">Marketing</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-xl-3 mb-30">
-                            <a href="'.BASE_URL.'index.php/?page=programContent">
-                                <div class="card-box height-100-p widget-style1 shadow-lg">
-                                    <div class="d-flex flex-wrap align-items-center">
-                                        <div class="progress-data">
-                                            <div id="chart2"></div>
-                                        </div>
-                                        <div class="widget-data">
-                                            <div class="h4 mb-0"><i class="fa fa-user"></i> 25</div>
-                                            <div class="weight-600 font-14">Programming</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-xl-3 mb-30">
-                            <a href="'.BASE_URL.'index.php/?page=programContent">
-                                <div class="card-box height-100-p widget-style1 shadow-lg">
-                                    <div class="d-flex flex-wrap align-items-center">
-                                        <div class="progress-data">
-                                            <div id="chart3"></div>
-                                        </div>
-                                        <div class="widget-data">
-                                            <div class="h4 mb-0"><i class="fa fa-user"></i> 10</div>
-                                            <div class="weight-600 font-14">Psychology</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-xl-3 mb-30">
-                            <a href="'.BASE_URL.'index.php/?page=programContent">
-                                <div class="card-box height-100-p widget-style1 shadow-lg">
-                                    <div class="d-flex flex-wrap align-items-center">
-                                        <div class="progress-data">
-                                            <div id="chart4"></div>
-                                        </div>
-                                        <div class="widget-data">
-                                            <div class="h4 mb-0"><i class="fa fa-user"></i> 10</div>
-                                            <div class="weight-600 font-14">Maths</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+                        '.$courses.'
+                       
                     </div>
-                   
-                    <div class="pd-20 card-box mb-30">
+
+                    '.$topMentors.'
+                    
+                   <!-- Calendar for user-->
+                    <!--<div class="pd-20 card-box mb-30">
                         <div class="calendar-wrap">
                             <div id="calendar"></div>
                         </div>
-                        <!-- calendar modal -->
+                        <!-- calendar modal 
                         <div id="modal-view-event" class="modal modal-top fade calendar-modal">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
@@ -2847,127 +3051,9 @@ class Ui {
                                 </div>
                             </div>
                         </div>
-                    </div>   
+                    </div>-->
 
-                    <div class="row">
-
-
-                        <div class="col-12 col-md-4">
-                            <h3 class="h3 text-blue">Popular Mentors</h3>
-
-                            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                                <ol class="carousel-indicators">
-                                    <li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                                    <li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                                    <li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                                </ol>
-                                <div class="carousel-inner pb-1">
-                                    <div class="carousel-item active">
-                                        <div class="clearfix">
-                                            
-                                                <div class="da-card">
-                                                    <div class="da-card-photo">
-                                                        <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                        <div class="da-overlay da-slide-top">
-                                                            <div class="da-social">
-                                                                <ul class="clearfix">
-                                                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                    <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="da-card-content text-center">
-                                                        <h5 class="h5"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
-                                                        <p class="mb-0">Marketing</p>
-                                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            
-                                        </div>
-                                    </div>
-                                    <div class="carousel-item">
-                                        <div class="clearfix">
-                                                <div class="da-card">
-                                                    <div class="da-card-photo">
-                                                        <img src="'.BASE_URL.'vendors/images/photo2.jpg" alt="">
-                                                        <div class="da-overlay da-slide-top">
-                                                            <div class="da-social">
-                                                                <ul class="clearfix">
-                                                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                    <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="da-card-content text-center">
-                                                        <h5 class="h5"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
-                                                        <p class="mb-0">Marketing</p>
-                                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                        </div>                            
-                                    </div>
-                                    <div class="carousel-item">
-                                        <div class="clearfix">
-                                                <div class="da-card">
-                                                    <div class="da-card-photo">
-                                                        <img src="'.BASE_URL.'vendors/images/photo3.jpg" alt="">
-                                                        <div class="da-overlay da-slide-top">
-                                                            <div class="da-social">
-                                                                <ul class="clearfix">
-                                                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                    <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="da-card-content text-center">
-                                                        <h5 class="h5"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
-                                                        <p class="mb-0">Marketing</p>
-                                                        <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star-half-o fa-lg"></i></span>
-                                                            <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                                    <span class="carousel-control-prev-icon bg-secondary" aria-hidden="true"></span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                                    <span class="carousel-control-next-icon bg-secondary" aria-hidden="true"></span>
-                                    <span class="sr-only">Next</span>
-                                </a>
-                            </div>
-
-                        </div>
-                        <div class="col-12 col-md-6">
-                        </div>
-                    </div>
-
+                  
                 </div>
             </div>
         ';
@@ -3283,8 +3369,8 @@ class Ui {
             $tr .= '
                 <tr>
                     <td class="table-plus">Danielson L. Correa</td>
-                    <td>2</td>
-                    <td>20</td>
+                    <td>Basic programming</td>
+                    <td>4.0</td>
                     <td class="text-success">Active</td>
                     <td>29-03-2018</td>
                     <td>
@@ -3334,8 +3420,8 @@ class Ui {
                                     <thead>
                                         <tr>
                                             <th class="table-plus">Name</th>
-                                            <th>Course Count</th>
-                                            <th>Mentee Count</th>
+                                            <th>Course Name</th>
+                                            <th>Rating</th>
                                             <th>Status</th>
                                             <th>Last Online</th>
                                             <th class="datatable-nosort">Action</th>
@@ -3444,14 +3530,16 @@ class Ui {
                     <td>Danielson Correa</td>
                     <td>20</td>
                     <td>10</td>
-                    <td class="text-success">Active</td>
                     <td>4.0</td>
+                    <td>29-03-2018</td>
                     <td>
                         <div class="dropdown">
                             <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
                                 <i class="dw dw-more"></i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                                <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=viewCoureDetail"><i class="dw dw-eye"></i> View</a>
+                                <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=editCourse&mentorId="><i class="dw dw-edit2"></i> Edit</a>
                                 <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=forums"><i class="dw dw-chat-11"></i> Forums</a>
                                 <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#remove-course-modal"><i class="dw dw-delete-3"></i> Remove</a>
                             </div>
@@ -3463,8 +3551,8 @@ class Ui {
                     <td>Danielson Correa</td>
                     <td>10</td>
                     <td>20</td>
-                    <td class="text-danger">Removed</td>
                     <td>4.0</td>
+                    <td>29-03-2018</td>
                     <td>
                         <div class="dropdown">
                             <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
@@ -3519,12 +3607,19 @@ class Ui {
                                 <table id="mentor-table" class="table stripe hover nowrap">
                                     <thead>
                                         <tr>
+                                            <!--<th class="table-plus">Course Name</th>
+                                            <th>Advisor</th>
+                                            <th>Mentee Total</th>
+                                            <th>Mentor Total</th>
+                                            <th>Forum Total</th>
+                                            <th>Overall Rating</th>
+                                            <th class="datatable-nosort">Action</th>-->
                                             <th class="table-plus">Course Name</th>
-                                            <th>Mentor</th>
-                                            <th>Mentee Count</th>
-                                            <th>Forum Count</th>
-                                            <th>Status</th>
+                                            <th>Advisor</th>
+                                            <th>Mentee Total</th>
+                                            <th>Forum Total</th>
                                             <th>Rating</th>
+                                            <th>Date Joined</th>
                                             <th class="datatable-nosort">Action</th>
                                         </tr>
                                     </thead>
@@ -4388,7 +4483,7 @@ class Ui {
             $tr .= '
                 <tr>
                     <td class="table-plus">Danielson L. Correa</td>
-                    <td>2</td>
+                    <td>Basic Guitar Lessons</td>
                     <td class="text-success">Accepted</td>
                     <td>29-03-2017</td>
                     <td>29-03-2018</td>
@@ -4439,7 +4534,7 @@ class Ui {
                                     <thead>
                                         <tr>
                                             <th class="table-plus">Name</th>
-                                            <th>Course Taking</th>
+                                            <th>Course Name</th>
                                             <th>Mentorship Request</th>
                                             <th>Date Joined</th>
                                             <th>Last Online</th>
@@ -5944,9 +6039,16 @@ class Ui {
 
                                         </a>
                                     </span>
-                                    <span class="ml-3 text-secondary">
+                                    <span class="ml-3 d-block text-secondary">
                                         September 29, 2020
                                     </span>
+                                    <span class="d-flex justify-content-start align-items-center ml-3 mt-2" data-toggle="tooltip" data-placement="top" title="4.0">
+                                        <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
+                                        <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
+                                        <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
+                                        <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
+                                        <span class="float-right"><i class="text-warning fa fa-star-o fa-lg"></i></span>
+                                    </span>                                    
                                 </div>
                                 
                             </div>
@@ -5965,10 +6067,10 @@ class Ui {
                                     <button class="btn btn-link text-secondary mr-2 reply-to-forum">
                                         <i class="icon-copy fa fa-reply" aria-hidden="true"></i> Reply
                                     </button>
-                                    <span class="mr-2">
+                                    <!--<span class="mr-2">
                                         <i class="icon-copy fa fa-thumbs-o-up fa-lg like pr-2" aria-hidden="true"  data-placement="top" data-toggle="tooltip" title="I like this"><span class="pl-2">33</span></i>
                                         <i class="icon-copy fa fa-thumbs-o-down fa-lg dislike" aria-hidden="true" data-placement="top" data-toggle="tooltip" title="I dislike this"><span class="pl-2">3</span></i>
-                                    </span>
+                                    </span>-->
                                     
                                 </span>    
                                 <span class="pull-left">

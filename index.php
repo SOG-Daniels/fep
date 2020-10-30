@@ -1,5 +1,6 @@
 <?php 
     //starting session
+    session_start();
 
     // The Index.php file is the controller of the application, which request data from the DBMS and returns the appropriate view
     require_once('./definitions.php');
@@ -11,7 +12,7 @@
     require_once('./class.facebook_api.php');
     require_once('./class.google_api.php');
 
-
+    
     // echo "<br><br><br><br>";
     // echo "<pre>";
     // print_r($_SESSION);
@@ -24,25 +25,31 @@
     $email = new Email(EMAIL_SENDER_NAME, EMAIL_SENDER, EMAIL_SENDER_PASS);
 
     //variables will determine if the public or portal website view
-    $header = '';
-    $topbar = '';
-    $sidebar = '';
+    //pages with the exception of pageContent need to be null to make sure isset() returns false
+    $header = null;
+    $topbar = null;
+    $sidebar = null;
     $pageContent = '';
-    $footer = '';
+    $footer = null;
     $currentPage = '';
     
     //Variables Keep track of the ajax request being sent
     $ajaxRequest = false;
     $ajaxResponse = [];
 
+        
 
-    if (!empty($_SESSION) && isset($_SESSION['USERDATA'])){
+    if (!empty($_SESSION['USERDATA']) && isset($_SESSION['USERDATA']['access_token'])){
         //User is logged into the portal
-
+        
         if ($_GET && isset($_GET['page'])){
             // logged in user wants to access a page
             if($_GET['page'] == 'dashboard'){
-
+                // echo '<br><br><br><br>';
+                // echo '<pre class="pt-5 d-flex justify-content-center">';
+                // print_r($_SESSION);
+                // // echo $view->testEncryption();
+                // echo '</pre>';
                 $currentPage = 'dashboard';
                 $pageContent = $view->dashboard();
             
@@ -100,13 +107,26 @@
 
             }else if($_GET['page'] == 'logout'){
 
-                //ending user session and redirecting them to public website
+                //ending user session and logging it
+                
+                $wasLoggedOut = $process->logout_account($_SESSION['USERDATA']['access_token']);
+                
+                if ($wasLoggedOut['res_code'] == 1){
 
-                // session_destroy();
-                // unset($_SESSION['USERDATA']);
-                // $_SESSION = array();
+                    //Destroys current sessions
+                    session_destroy();
+                    unset($_SESSION['USERDATA']);
+                    $_SESSION = array();
 
-                // header('Location: '.BASE_URL.'index.php/?page=home');
+                    // Displaying public webpage signIn page
+                    $header = $view->header();
+                    $topbar = $view->topBar($currentPage);
+                    $sidebar = '';
+                    $pageContent = $view->signIn();
+                    $footer = $view->footer();
+                    
+                }
+                
                 
 
             }else{
@@ -140,10 +160,10 @@
         }
        
         //Portal website structure
-        $header =  $view->portalHeader();
-        $topbar = $view->portalTopBar();
-        $sidebar = $view->portalSideBar($data);
-        $footer = $view->portalFooter();
+        $header =  $header ?? $view->portalHeader();
+        $topbar =  $topbar ?? $view->portalTopBar();
+        $sidebar = $sidebar ?? $view->portalSideBar();
+        $footer =  $footer ?? $view->portalFooter();
 
 
     }else{
@@ -207,6 +227,31 @@
                             ';
                         }
                     }
+                    if (isset($_GET['activationCode'])){
+                        
+                        $data['message'] = '
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>Registration Complete!</strong><br> You have been registered, you can now Sign In to your account now.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        ';
+
+                        $isActivated = $process->activate_account($_GET['activationCode']);
+                       
+                        if ($isActivated['res_code'] != 1){
+                            
+                            $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Oops!</strong><br>The '.$isActivated['message'].'
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                ';
+                        }
+                    }
 
                     $pageContent = $view->signIn($data);
                 }
@@ -236,6 +281,7 @@
                         $data['firstName'] = $result['fb_user_info']['first_name'] ?? '';
                         $data['lastName'] = $result['fb_user_info']['last_name'] ?? '';
                         $data['email'] = $result['fb_user_info']['email'] ?? '';
+                        $data['profilePic'] = $result['fb_user_info']['picture']['data']['url'] ?? '';
                         $data['api'] = 1;//register with api is true 
                         
 
@@ -258,13 +304,17 @@
                             //If client reloads page an exception will be thrown 
                             $result = $google->getUserInfoByCode($_GET['code']);
                             if (!empty($result)) {
-                                
+                               
                                 //separating name
                                 $name = explode(' ', $result['name']);
 
                                 $data['firstName'] = $name[0] ?? '';
                                 $data['lastName'] = $name[1] ?? '';
                                 $data['email'] = $result['email'] ?? '';
+                                $data['profilePic'] = $result['profilePic'] ?? '';
+                                $data['userId'] = $result['userId'] ?? '';
+                                $data['gender'] = $result['gender'] ?? '';
+                                $data['verifiedEmail'] = $result['verifiedEmail'] ?? '';
                                 $data['api'] = 1;//register with api is true 
 
                             }
@@ -362,78 +412,194 @@
 
             if ($_POST['action'] == 'signIn'){
                 
+                $data['message'] = '';
                 //validating user login
-                // echo '<br><br><br><br>';
-                // echo '<pre>';
-                // print_r($_POST);
-                // echo '</pre>';
                 
-                $result = $process->validateUser($_POST);
-
-                // if($result == 0){
-                //     $data['message'] ='
-                //     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                //         <strong>Access Denied!</strong><br> Make sure your enter the correct email and password, please try again.
-                //         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                //             <span aria-hidden="true">&times;</span>
-                //         </button>
-                //     </div>
-                //     ';
-                // }else{
-                //     //user entered correct credentials setting session
-
-                //     // $_SESSION['USERDATA'] = $result[''];
-
-                    
-                //     // header('Location: '.BASE_URL.'index.php/?page=dashboard');
-                    
-                // }
+                $result = $process->validateLogin($_POST);
                 
+                if ($result['res_code'] != 1){
+                    //user not found
+                    $data['message'] ='
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Access Denied!</strong><br> Make sure your enter the correct email and password, please try again.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    ';
 
-                //redirecting to login portal
-                // header('Location: '.BASE_URL.'index.php/?page=dashboard');
+                    $pageContent = $view->signin();
+
+                }else{
+                    //success - displaying login portal
+                    $_SESSION['USERDATA']['access_token'] = $result['access_token'];
+
+                    $header =  $view->portalHeader();
+                    $topbar = $view->portalTopBar();
+                    $sidebar = $view->portalSideBar();
+                    $pageContent = $view->dashboard();
+                    $footer = $view->portalFooter();
+                    
+                }
+                
             }else if ($_POST['action'] == 'registration'){
+
+                //setting api links
+                $data['fbAuthLink'] = $fb->getFacebookLoginUrl(FB_REDIRECT_URI_REG);
+                $data['googleAuthLink'] = $google->getGoogleAuthUrl(G_REDIRECT_URI_REG);
+
+                $data['message'] = '';
 
                 if($_POST['newPassword'] != $_POST['confirmPassword']){
                     //checking password
 
                     $data['message'] .= '
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Registration Cancelled!</strong><br> Password for the <b>new</b> and <b>confirm</b> password fields do not match, please try again.
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Registration Cancelled!</strong><br> Password for the <b>new</b> and <b>confirm</b> password fields do not match, please try again.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                     ';
                    
-                    //setting api links
-                    $data['fbAuthLink'] = $fb->getFacebookLoginUrl(FB_REDIRECT_URI_REG);
-                    $data['googleAuthLink'] = $google->getGoogleAuthUrl(G_REDIRECT_URI_REG);
-
                     $pageContent = $view->registration($data);
+
                     
                 }else{
                     // correct passwords entered
 
+
                     if (isset($_POST['api']) && $_POST['api'] == 1){
                         // user registering by api - no email verification needed
-
+                        
+                        $result = $process->registerUser($_POST);
                         //add user info
 
-                        //display success page and ask them to sign In
+                        if ($result['res_code'] == '42000'){
+                            //Pass complexity not matched
+                            $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Registration could not be complete!</strong><br> '.$result['message'].', please try again.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+                            
+                        }else if ($result['res_code'] == 1){
+                            // registration was a success
+                            $data['message'] = '
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>Registration Complete!</strong><br> You have been registered, please <a href="'.BASE_URL.'index.php?page=signIn" >Sign In</a>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+                            $isActivated = $process->activate_account($result['activation_code']);
+
+                            if ($isActivated['res_code'] != 1){
+                                
+                                $data['message'] = '
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong>Oops!</strong><br>The '.$isActivated['res_code'].'.
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                ';
+                            }
+
+
+                        }else{
+                            // registration complete notify success and redirect to signIn
+                            $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Oops!</strong><br> Sorry and error occured while trying to register your information. Please try again.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+
+
+                        }
+                        //calling registration page to display message
+                        $pageContent = $view->registration($data);
+
 
                     }else{
-                        //user custom registration - email verification required
-                        $link  = BASE_URL.'index.php/?activationCode=';
-                        //enter user info
 
-                        //succes in adding user send a email verification 
+                        // registering user
+                        $result = $process->registerUser($_POST);
 
-                        //success in sending email show thank you page and tell them to check email
+                        if ($result['res_code'] == 42000){
+                         //Pass complexity not matched
+                                $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Registration could not be complete!</strong><br> '.$result['message'].', please try again.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+                            
+                        }else if ($result['res_code'] == 1){
+                            // registration was a success
+                            $data['message'] = '
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>Success!</strong><br> To complete the registration process please check your email for further instructions.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+                            
+                            //Verification code for user
+                            $link  = BASE_URL.'index.php/?page=signIn&activationCode='.$result['activation_code'];
+
+                            //HTML structured card for email body
+                            $message = $view->emailCard($link);
+
+                            // sending activation code to email
+                            $email->set_Subject('Female Entrepreneurs Account Activation');
+
+                            //
+                            $emailSent = $email->send($_POST['email'], $message);//sending email
+
+                            if ($emailSent != 1){
+                                
+                                $data['message'] = '
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong>Oops!</strong><br> Sorry, we could not send your account activation code to your email. Please try again later.
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    ';
+                            }
+
+
+                        }else{
+                            // registration complete notify success and redirect to signIn
+                            $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Oops!</strong><br> Sorry and error occured while trying to register your information. Please try again.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+
+
+                        }
+                     
+                        $pageContent = $view->registration($data);
 
                     }
 
                 }
+
             }else if ($_POST['action'] == 'contactUsEmail'){
                 //Guest is sending an email 
 
@@ -518,15 +684,15 @@
         }
 
         //Public Website structure
-        $header = $view->header();
-        $topbar =  $view->topBar($currentPage);
-        $sidebar = '';
-        $footer =  $view->footer();
+        $header = $header ?? $view->header();
+        $topbar =  $topbar ?? $view->topBar($currentPage);
+        $sidebar = $sidebar ?? '';
+        $footer =  $footer ?? $view->footer();
     }
 
     if (!$ajaxRequest){
         
-        //Displaying webpage structure 
+        // Displaying webpage structure 
         echo $header;
         echo $topbar;
         echo $sidebar;
@@ -534,6 +700,7 @@
         echo $footer;
 
     }
+    
 
 
 ?>
