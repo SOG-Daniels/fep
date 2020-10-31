@@ -68,7 +68,8 @@ class Process {
         $sql->bindParam(5, $type);
         $sql->bindParam(6, $email);
         $sql->bindParam(7, $pass);
-       
+      
+
         $sql->execute();
         $result = $sql->fetch(PDO::FETCH_ASSOC);
 

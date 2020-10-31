@@ -55,7 +55,7 @@
             
             }else if($_GET['page'] == 'profile'){
 
-                $pageContent = $view->mentorProfile();
+                $pageContent = $view->profile();
 
             }else if($_GET['page'] == 'mentorList'){
 
@@ -117,12 +117,14 @@
                     session_destroy();
                     unset($_SESSION['USERDATA']);
                     $_SESSION = array();
+                    
+                    $currentPage = 'home';
 
                     // Displaying public webpage signIn page
                     $header = $view->header();
                     $topbar = $view->topBar($currentPage);
                     $sidebar = '';
-                    $pageContent = $view->signIn();
+                    $pageContent = $view->home();
                     $footer = $view->footer();
                     
                 }
@@ -404,6 +406,9 @@
                 $data['upcomingEventCount'] = 0;//$process->getUpcomingEventCount();                
 
                 $currentPage = 'home';
+                $data['fbAuthLink'] = $fb->getFacebookLoginUrl(FB_REDIRECT_URI_SIGN);
+                $data['googleAuthLink'] = $google->getGoogleAuthUrl(G_REDIRECT_URI_SIGN);
+
                 $pageContent = $view->home($data);
                 
             }
@@ -428,7 +433,7 @@
                         </div>
                     ';
 
-                    $pageContent = $view->signin();
+                    $pageContent = $view->signin($data);
 
                 }else{
                     //success - displaying login portal
@@ -467,8 +472,6 @@
                     
                 }else{
                     // correct passwords entered
-
-
                     if (isset($_POST['api']) && $_POST['api'] == 1){
                         // user registering by api - no email verification needed
                         
@@ -524,8 +527,9 @@
 
 
                         }
+                        echo ($data['message']);
                         //calling registration page to display message
-                        $pageContent = $view->registration($data);
+                        // $pageContent = $view->registration($data);
 
 
                     }else{
