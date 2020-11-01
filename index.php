@@ -374,7 +374,12 @@
             }else if($_GET['page'] == 'mentors'){
             
                 $currentPage = 'mentors';
-                $pageContent = $view->mentors();
+
+                $result['mentors'] = $process->getMentorList(); 
+  
+                $pageContent = $view->mentors($result);
+
+
 
             }else if($_GET['page'] == 'thankyou'){
                 
@@ -393,7 +398,9 @@
             }else if($_GET['page'] == 'courses'){
 
                 $currentPage = 'courses';
-                $pageContent = $view->courses();
+                $result['courses'] = $process->getCourseList(); 
+
+                $pageContent = $view->courses($result);
             
             }else{
 
@@ -527,9 +534,9 @@
 
 
                         }
-                        echo ($data['message']);
+                        
                         //calling registration page to display message
-                        // $pageContent = $view->registration($data);
+                        $pageContent = $view->registration($data);
 
 
                     }else{
@@ -650,38 +657,71 @@
 
 
             }else if($_POST['action'] == 'courseSearch'){
-                //autocomplete word search
-                $ajaxRequest = true; 
+               
+                if (isset($_POST['search'])){
+                    //ajax request for autocomplete
+                    $ajaxRequest = true; 
 
-                $words = [ 'what', 'yay', 'bro', 'shure'];
-                
-                $result = $words; //$process->getCourseName($_POST['search']);
+                    $result = $process->getCourseList($_POST['search']);
 
-                echo json_encode($result);
+                    $found = [];
+
+                    //looping to get the course names
+                    foreach($result as $key => $course){
+                        $found[] = $course['course_name'];
+                    }
+
+                    echo json_encode($found);
+
+                }else{
+                    //submitted search form
+                    $result['searchFor'] = $_POST['searchFor'];
+                    $result['courses'] = $process->getCourseList($_POST['searchFor']);
+                    
+                    $currentPage = 'courses';
+                    $pageContent = $view->courses($result);
+
+                }
 
             }else if($_POST['action'] == 'mentorSearch'){
                 //autocomplete word search
-                $ajaxRequest = true; 
+                if (isset($_POST['search'])){
+                    //ajax request for autocomplete
+                    $ajaxRequest = true; 
 
-                $words = [ 'wow', 'test', 'dude', '777'];
-                
-                $result = $words; //$process->getCourseName($_POST['search']);
+                    $result['mentors'] = $process->getMentorList($_POST['search']);
 
-                echo json_encode($result);
+                    $found = [];
 
+                    //looping to get the mentor names
+                    foreach($result['mentors'] as $key => $course){
+                        $found[] = $course['mentor_name'];
+                    }
+
+                    echo json_encode($found);
+
+                }else{
+                    //submitted search form
+                    $currentPage = 'mentors';
+                    $result['mentors'] = $process->getMentorList($_POST['searchFor']); 
+                    $result['searchFor'] = $_POST['searchFor'];
+                    
+                    $pageContent = $view->mentors($result);
+
+
+                }
+            
             }else{
 
             }
 
         }else{
 
-            $data['topMentors'] = $process->getTopMentors();
-            $data['topPrograms'] = $process->getTopPrograms();
-            $data['courses'] = $process->getCourses();
-            $data['courseCount'] = 1;//count($data['courses']);
-            $data['mentorCount'] = 1;//$process->getMentorCount();
-            $data['menteeCount'] = 2;//$process->getMenteeCount();
-            $data['upcomingEventCount'] = 0;//$process->getUpcomingEventCount();                
+            $temp = $process->getMentorList(null, 3);
+            $data['topMentors'] = $process->getMentorList(null, 3);
+            $data['topPrograms'] = $process->getProgramList(null, 3);
+            $data['courses'] = $process->getCourseList();
+            $data['systemSummary'] = $process->getSystemSummary();
 
             $currentPage = 'home';
             $pageContent = $view->home($data);

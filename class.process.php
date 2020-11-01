@@ -105,37 +105,178 @@ class Process {
 
         return $result;
     }
-    //Gets the number of mentors in the system
-    public function getMentorCount(){
+   
+    //gets course by name or all courses if name not specified
+    //@param1 course name if nulls queries all courses
+    //@parma2 the amount of records to return if 0 will return all records
+    //@returns associative array()
+    public function getCourseList($name = null, $limit = 0){
+        
+        $sql = $this->conn->prepare('call get_course_list(?, ?);');
 
+        //escaping input
+        $sql->bindParam(1, $name);
+        $sql->bindParam(2, $limit);
+       
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result;
     }
-    //Gets the number of mentors in the system
-    public function getMenteeCount(){
+    //gets course by name or all courses if name not specified
+    //@param1 course name if nulls queries all courses
+    //@parma2 the amount of records to return if 0 will return all records
+    //@returns associative array()
+    public function getMentorList($name = null, $limit = 0){
+        
+        $sql = $this->conn->prepare('call get_mentor_list(?, ?);');
+
+        //escaping input
+        $sql->bindParam(1, $name);
+        $sql->bindParam(2, $limit);
+       
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+        // restructuring records recieved
+
+        $data['mentors'] = [];
+        
+        if (!empty($result) && !empty($result[0])){
+            foreach ($result as $key => $mentor){
+                
+                if(array_key_exists($mentor['mentor_id'], $data['mentors'])){
+                   
+                    $isFound = 0;
+                    foreach($data['mentors'][$mentor['mentor_id']]['social_networks'] as $key => $socialNetwork){
+                        if (in_array($mentor['sn_url'], $data['mentors'][$mentor['mentor_id']]['social_networks'][$key])){
+                            $isFound = 1;
+                        }
+
+                    }
+                    if (!$isFound){
+                        //adding social network if it hasnt been added
+                        // echo '<br><br><br>';
+                        // echo $mentor['sn_name'];
+                        $data['mentors'][$mentor['mentor_id']]['social_networks'][] = array(
+                            'sn_name' => $mentor['sn_name'],
+                            'sn_icon' => $mentor['sn_icon'],
+                            'sn_url' => $mentor['sn_url'],
+                        );
+
+
+                    }
+                    if (!in_array($mentor['profession'], $data['mentors'][$mentor['mentor_id']]['professions'])){
+                        //adding profession if it hasnt been added
+                        $data['mentors'][$mentor['mentor_id']]['professions'][] = $mentor['profession'];
+                    }
+
+
+                }else{
+                    
+                    //adding mentor data
+                    $data['mentors'][$mentor['mentor_id']]['mentor_id'] = $mentor['mentor_id'];
+                    $data['mentors'][$mentor['mentor_id']]['mentor_name'] = $mentor['mentor_name'];
+                    $data['mentors'][$mentor['mentor_id']]['profile_pic'] = $mentor['profile_pic'];
+                    $data['mentors'][$mentor['mentor_id']]['about'] = $mentor['about'];
+                    $data['mentors'][$mentor['mentor_id']]['rating'] = $mentor['rating'];
+
+                    if (isset($mentor['sn_icon']) && isset($mentor['sn_url'])){
+                        //adding social network
+                        $data['mentors'][$mentor['mentor_id']]['social_networks'][] = array(
+                            'sn_name' => $mentor['sn_name'],
+                            'sn_icon' => $mentor['sn_icon'],
+                            'sn_url' => $mentor['sn_url'],
+                        );
+                    }
+                    else{
+                        //creating an empty social network array
+                        $data['mentors'][$mentor['mentor_id']]['social_networks'] = [];
+
+                    }
+
+                    if (isset($mentor['profession'])){
+
+                        //adding mentor profession
+                        $data['mentors'][$mentor['mentor_id']]['professions'][] = $mentor['profession'];
+
+                    }else{
+                        //creating empty profession array 
+                        $data['mentors'][$mentor['mentor_id']]['professions'] = [];
+
+                    }
+
+
+                }
+                
+            }
+        }
+
+        return $data['mentors'];
+    }
+    //Gets all courses that have a mentor assigned to them in decending order
+    //@param1 program name if nulls queries all programs
+    //@parma2 the amount of records to return if 0 will return all records
+    //@returns associative array()
+    public function getProgramList($name = null, $limit = 0){
+        
+        $sql = $this->conn->prepare('call get_program_list(?, ?);');
+
+        //escaping input
+        $sql->bindParam(1, $name);
+        $sql->bindParam(2, $limit);
+       
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result;
         
     }
-    //Gets the top mentors by rating
-    public function getTopMentors(){
-        
-    }
-    //Gets the top courses that have a mentor
-    public function getTopPrograms(){
-        
-    }
-    //Gets the courses available in the program
-    public function getCourses(){
-        
-    }
-    //Gets the number of upcoming events
-    public function getUpcomingEventCount(){
-        
-    }
-    //Gets the matching course name being types
-    public function getCourseName($search){
+    //gets the course outline title and content
+    public function getCourseOutline(){
 
+        $sql = $this->conn->prepare('
+            select
+            cot.summary as title, cos.summary as content
+            from
+            course_outline cot,
+            course_outline cos
+            where
+            cot.course_id = 1
+            and cot.parent = 0
+            and cot.id = cos.parent
+            and cos.parent <> 0
+            order by cot.order_id asc
+        ');
 
+       
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $result;
     }
 
+    //gets the homepage system summary
+    public function getSystemSummary(){
 
+        $sql = $this->conn->prepare('
+            select
+            c.total as courses,
+            m.total as mentors,
+            me.total as mentees
+            from
+            (select count(id) as total from course where status = 1) as c,
+            (select count(id) as total from mentor where status = 1) as m,
+            (select count(id) as total from mentee where status = 1) as me
+        ');
+
+       
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+    
 
     /*
     *   Functions below are used to help the process class in carring out additional functionality.

@@ -134,32 +134,48 @@ class Ui {
     // return the home page
     public function home($data = []){
         
+        
         $courses = '';
         $topPrograms = '';
         $topMentors = '';
         
-        // courses with icon 
-        for($num = 0; $num < 8; $num++){
-
-            $courses .= '
-                <div class="col-lg-3 col-md-4 mt-2">
-                    <div class="icon-box">
-                    <i class="ri-book-2-line" style="color: #272727;"></i>
-                    <h3><a href="">Program 1</a></h3>
+        if (!empty($data['courses'])){
+            // courses with icon 
+            foreach($data['courses'] as $key => $course){
+                $courses .= '
+                    <div class="col-lg-3 col-md-4 mt-2">
+                        <div class="icon-box">
+                        <i class="fa fa-'.$course['course_icon'].' fa-lg" style="color: black;"></i>
+                        <h3><a href="'.BASE_URL.'index.php/?page=courseDetails&courseId='.encrypt($course['course_id']).'">'.$course['course_name'].'</a></h3>
+                        </div>
                     </div>
-                </div>
-            ';
+                ';
+            }
+
         }
-        // program cards
-        for ($num = 0; $num < 3; $num++){
-           
-            $topPrograms .= $this->generate_program_card_public();
+    
+        //building top programs
+        if (!empty($data['topPrograms'])){
+            // program cards
+            foreach($data['topPrograms'] as $key => $program){
             
+                $topPrograms .= $this->generate_program_card_public($program);
+                
+            }
+
+        }else{
+            $topPrograms = '<h3 class="ml-3">Coming Soon....</h3>';
         }
-        // mentor cards 
-        for ($num = 0; $num < 3; $num++){
-            
-            $topMentors .= $this->generate_mentor_card_public();
+        //building top mentors
+        if (!empty($data['topMentors'])){
+            // mentor cards 
+            foreach($data['topMentors'] as $key => $mentor){
+                
+                $topMentors .= $this->generate_mentor_card_public($mentor);
+            }
+
+        }else{
+            $topMentors = '<h3 class="ml-3">Coming Soon....</h3>';
         }
 
         
@@ -186,7 +202,7 @@ class Ui {
 
                         <div class="row">
                         <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-left" data-aos-delay="100">
-                            <img src="'.BASE_URL.'assets/img/stockPhotos/DSC_1307.jpg" class="img-fluid" alt="">
+                            <img src="'.BASE_URL.'assets/img/stockPhotos/DSC_1307.jpg" class="img-fluid shadow-lg rounded" alt="">
                         </div>
                         <div class="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 content">
                             <h3>Our Purpose Is To</h3>
@@ -225,25 +241,25 @@ class Ui {
 
                         <div class="row counters">
 
-                        <div class="col-lg-3 col-6 text-center">
-                            <span data-toggle="counter-up">'.($data['mentorCount'] ?? 0).'</span>
+                        <div class="col-lg-4 col-6 text-center">
+                            <span data-toggle="counter-up">'.($data['systemSummary']['mentors'] ?? 0).'</span>
                             <p>Mentors</p>
                         </div>
 
-                        <div class="col-lg-3 col-6 text-center">
-                            <span data-toggle="counter-up">'.($data['menteeCount'] ?? 0).'</span>
+                        <div class="col-lg-4 col-6 text-center">
+                            <span data-toggle="counter-up">'.($data['systemSummary']['mentees'] ?? 0).'</span>
                             <p>Mentees</p>
                         </div>
 
-                        <div class="col-lg-3 col-6 text-center">
-                            <span data-toggle="counter-up">'.($data['courseCount'] ?? 0).'</span>
+                        <div class="col-lg-4 col-12 text-center">
+                            <span data-toggle="counter-up">'.($data['systemSummary']['courses'] ?? 0).'</span>
                             <p>Courses</p>
                         </div>
 
-                        <div class="col-lg-3 col-6 text-center">
-                            <span data-toggle="counter-up">'.($data['upcomingEventCount'] ?? 0).'</span>
+                        <!--<div class="col-lg-3 col-6 text-center">
+                            <span data-toggle="counter-up">'.($data['systemSummary']['mentors'] ?? 0).'</span>
                             <p> Upcoming Events</p>
-                        </div>
+                        </div>-->
 
                         </div>
 
@@ -269,22 +285,22 @@ class Ui {
                         <div class="col-lg-8 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
                             <div class="icon-boxes d-flex flex-column justify-content-center">
                             <div class="row">
-                                <div class="col-xl-4 d-flex align-items-stretch">
-                                <div class="icon-box mt-4 mt-xl-0">
+                                <div class="col-xl-4 d-flex align-items-stretch ">
+                                <div class="icon-box mt-4 mt-xl-0 shadow">
                                     <i class="bx bx-receipt"></i>
                                     <h4>Step 1</h4>
                                     <p>Fill out the <a href="'.BASE_URL.'index.php/?page=register" >registration form.</a></p>
                                 </div>
                                 </div>
                                 <div class="col-xl-4 d-flex align-items-stretch">
-                                <div class="icon-box mt-4 mt-xl-0">
+                                <div class="icon-box mt-4 mt-xl-0 shadow">
                                     <i class="bx bx-check"></i>
                                     <h4>Step 2</h4>
                                     <p>Wait for your account to be approved for mentoring.</p>
                                 </div>
                                 </div>
                                 <div class="col-xl-4 d-flex align-items-stretch">
-                                <div class="icon-box mt-4 mt-xl-0">
+                                <div class="icon-box mt-4 mt-xl-0 shadow">
                                     <i class="bx bx-chalkboard"></i>
                                     <h4>Step 3</h4>
                                     <p><a href="'.BASE_URL.'index.php/?page=signIn">Sign In</a> to your mentor profile and start sharing your skills.</p>
@@ -748,10 +764,10 @@ class Ui {
         
         $html = '
                 <main id="main">
-                    '.$this->banner('About Us', 'This is the about us page').'
+                    '.$this->banner('About Us', 'Learn more about what Female Entrepreneurs Belize is doing!').'
 
                     <!-- ======= Why Us Section ======= -->
-                    <section id="why-us" class="why-us pb-0 mb-0">
+                    <section id="why-us" class="why-us pb-5 mb-0">
                         <div class="container" data-aos="fade-up">
                         <!-- ======= Trainers Section ======= -->
             
@@ -765,28 +781,28 @@ class Ui {
                                     <div class="icon-boxes d-flex flex-column justify-content-center">
                                         <div class="row">
                                             <div class="col-xl-3 d-flex align-items-stretch">
-                                                <div class="icon-box mt-4 mt-xl-0">
+                                                <div class="icon-box mt-4 mt-xl-0 shadow">
                                                     <i class="fa fa-bullhorn"></i>
                                                     <h4>Promote</h4>
                                                     <p>Women in Micro, Small and Medium-Sized Enterprises</p>
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 d-flex align-items-stretch">
-                                                <div class="icon-box mt-4 mt-xl-0">
+                                                <div class="icon-box mt-4 mt-xl-0 shadow">
                                                     <i class="bx bx-donate-heart"></i>
                                                     <h4>Sustain</h4>
                                                     <p>Women in Micro, Small and Medium-Sized Enterprises</p>
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 d-flex align-items-stretch">
-                                                <div class="icon-box mt-4 mt-xl-0">
+                                                <div class="icon-box mt-4 mt-xl-0 shadow">
                                                     <i class="fa fa-hand-rock-o"></i>
                                                     <h4>Empower</h4>
                                                     <p>Women in Micro, Small and Medium-Sized Enterprises</p>
                                                 </div>
                                             </div>
                                             <div class="col-xl-3 d-flex align-items-stretch">
-                                                <div class="icon-box mt-4 mt-xl-0">
+                                                <div class="icon-box mt-4 mt-xl-0 shadow">
                                                     <i class="bx bx-trophy"></i>
                                                     <h4>Recognize</h4>
                                                     <p>Women in Micro, Small and Medium-Sized Enterprises</p>
@@ -805,7 +821,7 @@ class Ui {
                             
                             <div class="row">
                                 <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-left" data-aos-delay="100">
-                                <img src="'.BASE_URL.'assets/img/stockPhotos/DSC_4942.JPG" class="img-fluid" alt="">
+                                <img src="'.BASE_URL.'assets/img/stockPhotos/DSC_4942.JPG" class="img-fluid shadow-lg rounded" alt="">
                                 </div>
                                 <div class="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 content">
                                 
@@ -843,7 +859,7 @@ class Ui {
                             <br>
                             <div class="row">
                                 <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-left" data-aos-delay="100">
-                                <img src="'.BASE_URL.'assets/img/stockPhotos/DSC_5133.JPG" class="img-fluid" alt="">
+                                <img src="'.BASE_URL.'assets/img/stockPhotos/DSC_5133.JPG" class="img-fluid shadow rounded" alt="">
                                 </div>
                                 <div class="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 content">
                                 <div class="section-title pb-2">
@@ -873,7 +889,7 @@ class Ui {
                             <br>
                             <div class="row">
                                 <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-left" data-aos-delay="100">
-                                <img src="'.BASE_URL.'assets/img/stockPhotos/DSC_0165.jpg" class="img-fluid" alt="">
+                                <img src="'.BASE_URL.'assets/img/stockPhotos/DSC_0165.jpg" class="img-fluid shadow rounded" alt="">
                                 </div>
                                 <div class="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 content">
                                     <div class="section-title pb-2">
@@ -978,37 +994,12 @@ class Ui {
         $pages = '';                            //hold a the pages for the pagination
         $pageContent = '';                      //contains all the pages and pagination elements
 
-        // if(!empty($data['mentors'])){
+        if(!empty($data['mentors'])){
             
-            for ($num = 0; $num < 7; $num++){//foreach($data['mentors'] as $key => $mentor){
+            foreach($data['mentors'] as $key => $mentor){
                 
-                $cards .= '
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
-                        <div class="member">
-                        <img src="'.BASE_URL.'assets/img/trainers/trainer-2.jpg" class="img-fluid" alt="">
-                        <div class="member-content">
-                            <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId=">Sarah Jhinson</a></h4>
-                            <span>Marketing</span>
-                            <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                            </span>
-                            <p>
-                            Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                            </p>
-                            <div class="social">
-                            <a href=""><i class="icofont-twitter"></i></a>
-                            <a href=""><i class="icofont-facebook"></i></a>
-                            <a href=""><i class="icofont-instagram"></i></a>
-                            <a href=""><i class="icofont-linkedin"></i></a>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                ';
+                $cards .= $this->generate_mentor_card_public($mentor);
+                
                
                 if ($count == ($possibleCardTotal-1)){
                     //creating page because we reached out maximum cards per page
@@ -1060,20 +1051,26 @@ class Ui {
                 </div>
             ';
 
-        // }
+        }else{
+            $pageContent = '<h3 class="">No Course Found...</h3>';
+        }
 
         $html = '
         <main id="main" data-aos="fade-in">
-            '.$this->banner('Mentors','Take a look at our Mentors').' 
+            '.$this->banner('Mentors','Take a look at our mentors or search for a specific mentor!').' 
             
-            <div class="container mt-4">
-                <div class="d-flex justify-content-center">
-                    <div class="searchbar">
-                        <input class="search_input" id="mentorSearch" type="text" placeholder="Search for a Mentor...">
-                        <a href="#" class="search_icon d-inline"><i class="fa fa-search fa-lg"></i></a>
+            <form action="'.BASE_URL.'" method="post">
+                <div class="container mt-4">
+                    <div class="d-flex justify-content-center">
+                        <div class="searchbar ui-widget">
+                            <input type="hidden" name="action" value="mentorSearch">
+                            <input class="search_input" id="mentorSearch" name="searchFor" value="'.($data['searchFor'] ?? '').'" type="text" placeholder="Search for a mentor...">
+                            <button type="submit" class="btn btn-link search_icon d-inline"><i class="fa fa-search fa-lg"></i></a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
+            
             
             
             <!-- ======= Trainers Section ======= -->
@@ -1145,6 +1142,8 @@ class Ui {
     // Will display all the mentorship programs available
     public function courses($data = []){
 
+      
+
         $cards = '';                            //holds all the card html markup
         $count = 0;                             // keeps track of how much cards have been made
         $maxCardPerPage = 6;                    //capacity of course cards per page for pagination
@@ -1153,37 +1152,13 @@ class Ui {
         $pages = '';                            // hold a the pages for the pagination
         $pageContent = '';                      //contains all the pages and pagination elements
 
-        // if(!empty($data['courses'])){
+        if(!empty($data['courses'])){
             
-            for ($num = 0; $num < 7; $num++){//foreach($data['courses'] as $key => $course){
+            foreach($data['courses'] as $key => $course){
                 
-                $cards .= $this->generate_course_card_public();
-                // $cards .= '
-                //     <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
-                //         <div class="course-item shadow">
-                //             <a href="'.BASE_URL.'index.php/?page=courseDetails">
-                //                 <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
-                //             </a>
-                //             <div class="course-content">
-                //                 <div class="row d-flex justify-content-between align-items-center mb-3">
-                //                     <a href="'.BASE_URL.'index.php/?page=courseDetails" class="text-light"><h4><i class="fa fa-eye fa-lg"></i> View Course</h4></a>
-                //                     <p class="price mr-3" data-toggle="tooltip" data-placement="top" title="4.0">
-                //                         <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
-                //                         <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                //                         <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                //                         <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                //                         <span class="float-right"><i class="text-warning fa fa-star"></i></span>
-                //                     </p>
-                //                 </div>
-                
-                //                 <h3><a href="'.BASE_URL.'index.php/?page=courseDetails"">Website Design</a></h3>
-                //                 <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                            
-                //             </div>
-                //         </div>
-                //     </div> <!-- End Course Item-->
-                // ';
-               
+                //getting course card
+                $cards .= $this->generate_course_card_public($course);
+                               
                 if ($count == ($possibleCardTotal-1)){
                     //creating page because we reached out maximum cards per page
                     $pageCount++;
@@ -1231,22 +1206,23 @@ class Ui {
                 </div>
             ';
 
-        // }
+        }
 
         $html = '
         <main id="main" data-aos="fade-in">
-            '.$this->banner('Mentorship Courses', 'These are the Courses Available').'
-    
+            '.$this->banner('Courses', 'These are the courses we currently offer. Find a mentor for the course or become a mentor.').'           
 
-
-            <div class="container mt-4">
-                <div class="d-flex justify-content-center">
-                    <div class="searchbar ui-widget">
-                        <input class="search_input" id="courseSearch" type="text" placeholder="Search for a course...">
-                        <a href="#" class="search_icon d-inline"><i class="fa fa-search fa-lg"></i></a>
+            <form action="'.BASE_URL.'" method="post">
+                <div class="container mt-4">
+                    <div class="d-flex justify-content-center">
+                        <div class="searchbar ui-widget">
+                            <input type="hidden" name="action" value="courseSearch">
+                            <input class="search_input" id="courseSearch" name="searchFor" value="'.($data['searchFor'] ?? '').'" type="text" placeholder="Search for a course...">
+                            <button type="submit" class="btn btn-link search_icon d-inline"><i class="fa fa-search fa-lg"></i></a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
 
             <!-- ======= Courses Section ======= -->
             <section id="courses" class="courses">
@@ -2125,18 +2101,19 @@ class Ui {
     //Generates a card for a course 
     //@params array()
     // course id, course name, course overall rating, course description, course image
-    public function generate_course_card_public(){
-        
-        $courseId = (isset($data['courseId'])? encrypt($data['courseId']) : 0); 
-        $rating = $data['rating'] ?? 4;
-        
-        $starRating = $this->create_start_rating($rating, 'mr-3');
+    public function generate_course_card_public($data = []){
 
+        $courseId = (isset($data['course_id'])? encrypt($data['course_id']) : 0); 
+        $rating = ($data['rating'] != 0)? $data['rating'] : 0;
+        $starRating = $this->create_start_rating($rating, 'mr-3');
+        
+        $summary = $this->make_text_shorter($data['course_summary']);
+        
         $html = '
             <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
-                <div class="course-item shadow">
+                <div class="course-item shadow-lg">
                     <a href="'.BASE_URL.'index.php/?page=courseDetails&courseId='.$courseId.'">
-                        <img src="'.($data['image'] ?? BASE_URL."assets/img/course-1.jpg").'" class="img-fluid" alt="...">
+                        <img src="'.($data['image_src'] ?? '').'" class="card-img" alt="...">
                     </a>
                     <div class="course-content">
                         <div class="row d-flex justify-content-between align-items-center mb-3">
@@ -2144,8 +2121,8 @@ class Ui {
                             '.$starRating.'
                         </div>
 
-                        <h3><a href="'.BASE_URL.'index.php/?page=courseDetails&courseId='.$courseId.'">'.($data['name'] ?? 'N/A').'</a></h3>
-                        <p>'.($data['decription'] ?? 'N/A').'</p>
+                        <h3><a href="'.BASE_URL.'index.php/?page=courseDetails&courseId='.$courseId.'">'.($data['course_name'] ?? 'N/A').'</a></h3>
+                        <p>'.$summary.'</p>
                     
                     </div>
                 </div>
@@ -2161,9 +2138,11 @@ class Ui {
     // program id, program name, mentor rating for program, program image, program description, mentor id, mentor name, total mentees in program
     public function generate_program_card_public($data = []){
 
-        $programId = (isset($data['programId'])? encrypt($data['programId']) : 0); 
-        $mentorId = (isset($data['mentorId'])? encrypt($data['mentorId']) : 0);
-        $programRating = $data['rating'] ?? 4;
+        $programId = (isset($data['program_id'])? encrypt($data['program_id']) : 0); 
+        $mentorId = (isset($data[''])? encrypt($data['mentorId']) : 0);
+        $programRating = $data['rating'] ?? 0;
+        
+        $summary = $this->make_text_shorter($data['summary'] ?? '');
 
         //variables for html content 
         $socialMediaIcons = '';
@@ -2175,7 +2154,7 @@ class Ui {
             <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3 mt-md-0">
                 <div class="course-item shadow">
                     <a href="'.BASE_URL.'index.php/?page=mentorProgramDetails&programId='.$programId.'">
-                        <img src="'.($data['programImage'] ?? BASE_URL."assets/img/course-1.jpg" ).'" class="img-fluid" alt="Program Image">
+                        <img src="'.($data['profile_pic'] ?? BASE_URL."assets/img/logos/fep_logo.png").'" class="img-fluid" alt="Program Image">
                     </a>
                     <div class="course-content">
                         <div class="row d-flex justify-content-between align-items-center mb-3">
@@ -2183,15 +2162,15 @@ class Ui {
                             '.$starRating.'
                         </div>
 
-                        <h3><a href="'.BASE_URL.'index.php/?page=programDetails&programId='.$programId.'">Website Design</a></h3>
-                        <p>'.($data['programDescription'] ?? 'N/A').'</p>
+                        <h3><a href="'.BASE_URL.'index.php/?page=programDetails&programId='.$programId.'">'.$data['course_name'].'</a></h3>
+                        <p>'.$summary.'</p>
                         <div class="trainer d-flex justify-content-between align-items-center">
                             <div class="trainer-profile d-flex align-items-center">
-                                <img src="'.($data['mentorProfilePic'] ?? BASE_URL."assets/img/trainers/trainer-1.jpg").'" class="img-fluid" alt="">
-                                <span><a href="'.BASE_URL.'index.php/?page=mentorCourseDetails&programId='.$programId.'">'.($data['mentorName'] ?? 'N/A').'</a></span>
+                                <img src="'.($data['mentorProfilePic'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" class="img-fluid" alt="">
+                                <span><a href="'.BASE_URL.'index.php/?page=mentorCourseDetails&programId='.$programId.'">'.($data['mentor_name'] ?? 'N/A').'</a></span>
                             </div>
                             <div class="trainer-rank d-flex align-items-center">
-                                <span data-toggle="tooltip" data-placement="top" title="Number of Mentees"><i class="fa fa-user-o"></i>&nbsp;'.($data['menteeTotal'] ?? 0).'</span>
+                                <span data-toggle="tooltip" data-placement="top" title="Number of Mentees"><i class="fa fa-user-o"></i>&nbsp;'.($data['total_enrollment'] ?? 0).'</span>
                             </div>
                         </div>
                     </div>
@@ -2208,51 +2187,62 @@ class Ui {
     public function generate_mentor_card_public($data = []){
 
         // $courseId = (isset($data['courseId'])? encrypt($data['courseId']) : 0); 
-        $mentorId = (isset($data['mentorId'])? encrypt($data['mentorId']) : 0);
-        $rating = $data['rating'] ?? 4;
+        $mentorId = (isset($data['mentor_id'])? encrypt($data['mentor_id']) : 0);
+        $rating = $data['rating'] ?? 0;
+        $bio = $this->make_text_shorter($data['about'] ?? '');
 
         //variables for html content 
         $starRating = $this->create_start_rating($rating);
-        $socialMediaIcons = '';
-        //example
-        // <a href=""><i class="icofont-twitter"></i></a>
-        // <a href=""><i class="icofont-facebook"></i></a>
-        // <a href=""><i class="icofont-instagram"></i></a>
-        // <a href=""><i class="icofont-linkedin"></i></a>
-        $data['socialMediaLinks'] = array(array('link' => 'test', 'icon' => 'icofont-instagram')) ;
+        $socialIcons = '';
+
+        $occupation = '';
+        
+        if (!empty($data['professions']) && $data['professions'][0] != ''){
+            foreach($data['professions'] as $key => $profession){
+                $occupation .= ($key == 0 ? '': ', ').$data['professions'][$key];
+            }
+        }else{
+            $occupation = 'Mentor has not set his occupations yet....';
+        }
+
+        if($bio == ''){
+            $bio = 'Mentor has not set a bio as yet....';
+        }
        
         //getting social media links
-        if (!empty($data['socialMediaLinks'])){
+        if (!empty($data['social_networks'])){
 
-            foreach($data['socialMediaLinks'] as $key => $socialMedia){
+            foreach($data['social_networks'] as $key => $socialNetwork){
 
-                $socialMediaIcons .= '
-                        <a href="'.$socialMedia['link'].'"><i class="'.$socialMedia['icon'].'"></i></a>
+                $socialIcons .= '
+                        <a href="'.$socialNetwork['sn_url'].'"><i class="fa fa-'.strtolower($socialNetwork['sn_icon']).'"></i></a>
                 ';
             }
-            $socialMediaIcons = '
+            $socialIcons = '
                 <div class="social">
-                '.$socialMediaIcons.'
+                '.$socialIcons.'
                 </div>
             ';
 
         }
 
         $html = '
-            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3 mt-md-0">
-                <div class="member">
-                    <img src="'.($data['profilePic'] ?? BASE_URL."assets/img/trainers/trainer-2.jpg").'" class="img-fluid" alt="">
-                    <div class="member-content">
-                        <h4><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId='.$mentorId.'">'.($data['mentorName'] ?? 'N/A').'</a></h4>
-                        <span>'.($data['courseName'] ?? 'N/A').'</span>
-                            '.$starRating.'
+            <div class="col-12 col-lg-4 col-md-6 d-flex align-items-stretch mt-2 mt-md-0">
+                <div class="member shadow-lg">
+                    <img src="'.($data['profile_pic'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" class="img-fluid" alt="">
+                    <div class="member-content mb-5">
+                        <h4 class="mb-2"><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId='.$mentorId.'">'.($data['mentor_name'] ?? 'N/A').'</a></h4>
+                        '.$starRating.'
+                        <span class="mt-2">'.$occupation.'</span>
                         <p>
-                        '.($data['courseDescription'] ?? 'N/A').'
+                        '.$bio.'
                         </p>
-                        '.$socialMediaIcons.'
-                        <div class="d-flex d-block justify-content-center">
-                            <a href="'.BASE_URL.'index.php/?page=signIn" class="get-started-btn btn-md mt-3 mr-0 ml-0"><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</a>
-                        </div>
+                        '.$socialIcons.'
+                        
+                         
+                    </div>
+                    <div class="stay-bottom">
+                        <a href="'.BASE_URL.'index.php/?page=signIn" class="get-started-btn mt-3 mr-0 ml-0"><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</a>
                     </div>
                 </div>
             </div>              
@@ -2829,7 +2819,7 @@ class Ui {
                                                 </div>
                                                 <div class="da-card-content text-center">
                                                     <h5 class="h5"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
-                                    ii               <p class="mb-0">Marketing</p>
+                                                   <p class="mb-0">Marketing</p>
                                                     <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
                                                         <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
                                                         <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
@@ -7548,11 +7538,61 @@ class Ui {
         The functions listed below should only be used on the Portal/ Backend
     ****************************************************************************************/
     
+    //Builds the simple course cards that go on the dashboard for informational purposes
+    //@param1 the id of the course
+    //@param2 the name of the course
+    //@param3 the icon for the course
+    //@param4 the total amount of mentees in the course
+    //@return the contructed html start rating or an empty string if rating is zero 
+    public function create_simple_course_card_portal($courseId = 0, $name = null, $icon = null, $count = 0){
+        
+        $id = encrypt($courseId);
+        $course = '
+            <div class="col-xl-3 mb-30">
+                <a href="'.BASE_URL.'index.php/?page=programContent&programId='.$id.'">
+                    <div class="card-box height-100-p widget-style1 shadow-lg">
+                        <div class="d-flex flex-wrap align-items-center">
+                            <div class="progress-data text-center">
+                                <!--<div id="chart"></div>-->
+                                <i class="'.($icon ?? 'fa fa-book').' h1"></i>
+                            </div>
+                            <div class="widget-data">
+                                <div class="h4 mb-0" data-toggle="tooltip" data-placement="top" title="Mentee total"><i class="fa fa-user"></i> '.$program['mentee_total'].'</div>
+                                <div class="weight-600 font-14">'.$program['name'].'</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        ';
+
+        return $course;
+    }
+
     
     /***************************************************************************************
         Functions below can be used for Public and the  Portal/ Backend
     ****************************************************************************************/
 
+    //Makes a text shorter by specific amount of characters
+
+    //@param1 the text to make shorter
+    //@param2  make text shorter by number of characters
+    //@param3 what to append to the string afte the end of string
+    //@returns the text sumary
+    public function make_text_shorter($text = '', $charSize = 150, $stringEnd = '.......'){
+
+        if($text != ''){
+
+            //making summary
+            if (strlen($text) > $charSize){
+                $maxLength = $charSize;
+                $text = substr($text, 0, $maxLength);
+                $text .= $stringEnd;
+            }
+        }
+        return $text;
+    }
     //Builds the start rating for the specified rating amount
     //@param the rating amount from 1 - 5
     //@param style classes for startrating
@@ -7560,7 +7600,8 @@ class Ui {
     public function create_start_rating($rating = 0, $classes = ''){
 
         $starRating = '';
-        
+        $rating = sprintf("%.1f", $rating);
+
         if($rating != 0){
 
             for($num = 1; $num <= 5; $num++){

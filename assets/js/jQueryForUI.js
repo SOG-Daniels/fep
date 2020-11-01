@@ -62,6 +62,7 @@ $(document).ready(function (){
         select: function (event, ui) {
             // Set selection
             $('#courseSearch').val(ui.item.label); // display the selected text
+            $('#courseSearch').closest("form").submit();
             
             return false;
         }
@@ -80,13 +81,14 @@ $(document).ready(function (){
                 },
                 success: function( data ) {
                     response( data );
+                    console.log(data);
                 }
             });
         },
         select: function (event, ui) {
             // Set selection
             $('#mentorSearch').val(ui.item.label); // display the selected text
-
+            $('#mentorSearch').closest("form").submit();
             
             
             return false;
