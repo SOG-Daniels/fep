@@ -644,7 +644,7 @@ class Ui {
     
                 <div class="course-info d-flex justify-content-between align-items-center">
                   <h5>Mentor:</h5>
-                  <a href="'.BASE_URL.'index.php/?page=mentorBio&mendorId='.encrypt($data['mentor']['mentor_id']??'').'">'.($data['mentor']['mentor_name']).'</a>
+                  <a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId='.encrypt($data['mentor']['mentor_id']??'').'">'.($data['mentor']['mentor_name']).'</a>
                 </div>
     
                 <div class="course-info d-flex justify-content-between align-items-center">
@@ -2266,6 +2266,8 @@ class Ui {
         $programRating = $data['rating'] ?? 0;
         
         $summary = $this->make_text_shorter($data['summary'] ?? '');
+        $urlCourseName = str_replace(' ', '+', $data['course_name']);
+        $courseId = (isset($data['course_id'])? encrypt($data['course_id']) : 0); 
 
         //variables for html content 
         $socialMediaIcons = '';
@@ -2276,7 +2278,7 @@ class Ui {
         $html = '
             <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3 mt-md-0">
                 <div class="course-item shadow">
-                    <a href="'.BASE_URL.'index.php/?page=mentorProgramDetails&programId='.$programId.'">
+                    <a href="'.BASE_URL.'index.php/?page=mentorCourseDetails&programId='.$programId.'">
                         <img src="'.($data['course_pic'] ?? BASE_URL."assets/img/logos/fep_logo.png").'" class="card-img" alt="Program Image">
                     </a>
                     <div class="course-content">
@@ -2285,7 +2287,7 @@ class Ui {
                             '.$starRating.'
                         </div>
 
-                        <h3><a href="'.BASE_URL.'index.php/?page=programDetails&programId='.$programId.'">'.$data['course_name'].'</a></h3>
+                        <h3><a href="'.BASE_URL.'index.php/?page=courseDetails&courseName='.$urlCourseName.'&courseId='.$courseId.'">'.$data['course_name'].'</a></h3>
                         <p>'.$summary.'</p>
                         <div class="trainer d-flex justify-content-between align-items-center">
                             <div class="trainer-profile d-flex align-items-center">
