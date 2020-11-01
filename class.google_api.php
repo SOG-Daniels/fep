@@ -60,7 +60,13 @@ class GoogleAPI{
                 $google_account_info = $google_oauth->userinfo->get();
                 $result['email'] =  $google_account_info->email;
                 $result['name'] =  $google_account_info->name;
+                $result['verifiedEmail'] = $google_account_info->verifiedEmail;
+                $result['profilePic'] = $google_account_info->picture;
+                $resutl['userId'] = $google_account_info->id;
+                $resutl['gender'] = $google_account_info->gender;
 
+                return $result;
+                
             }
         }
 

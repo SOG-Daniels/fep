@@ -4,11 +4,12 @@
     Functions can also be called in other js files or plugins.
 
 */
+// Constant variable
+var BASE_URL;
 
 var paginationTotalCount = 0;
 
 // SET FUNCTIONS
-
 
 function setPaginationTotalCount(num){
     paginationTotalCount = num;

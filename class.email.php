@@ -1,6 +1,6 @@
 <?php
 	
-	require_once("./assets/vendor/swiftMailer/autoload.php");
+	require_once("./assets/external/swiftmailer/autoload.php");
 
 /**
 * Email class allows for the email to a specified email.
@@ -16,13 +16,12 @@ class Email
 	private $subject;
 	//private $body;
 	
-	function __construct()//link to a site of your choice
+	function __construct($senderName, $senderEmail, $senderPass)//link to a site of your choice
 	{
-		$this->set_Sender_Name("ExportBelize");
-		$this->set_Sender_Email("beltraide.export.belize@gmail.com");
-		$this->set_Sender_Password("Enter123*");
+		$this->set_Sender_Name($senderName);
+		$this->set_Sender_Email($senderEmail);
+		$this->set_Sender_Password($senderPass);
 		//$this->set_Link($link);
-
 	}
 
 	function set_Sender_Email($sender){
@@ -83,7 +82,6 @@ class Email
 	//takes two parameters the recievers name and the recievers email adress
 	function send($recipient, $message){
 
-			
 		    $transport = (new Swift_SmtpTransport('smtp.gmail.com', 587, 'tls'))
 			  ->setUsername ($this->sender_Email)
 			  ->setPassword ($this->sender_Password)

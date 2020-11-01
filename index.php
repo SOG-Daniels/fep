@@ -1,45 +1,61 @@
 <?php 
+    //starting session
+    session_start();
+
     // The Index.php file is the controller of the application, which request data from the DBMS and returns the appropriate view
-    require_once('./class.interface.php');
     require_once('./definitions.php');
+    require_once('./class.interface.php');
+    require_once('./class.process.php');
+    require_once('./class.email.php');
+    require_once('./helper.php');
         
     require_once('./class.facebook_api.php');
     require_once('./class.google_api.php');
 
-
+    
     // echo "<br><br><br><br>";
     // echo "<pre>";
     // print_r($_SESSION);
     // echo "</pre>";
 
     $view = new Ui();
+    $process = new Process();
     $fb = new FacebookAPI(); 
     $google = new GoogleAPI();
+    $email = new Email(EMAIL_SENDER_NAME, EMAIL_SENDER, EMAIL_SENDER_PASS);
 
     //variables will determine if the public or portal website view
-    $header = '';
-    $topbar = '';
-    $sidebar = '';
+    //pages with the exception of pageContent need to be null to make sure isset() returns false
+    $header = null;
+    $topbar = null;
+    $sidebar = null;
     $pageContent = '';
-    $footer = '';
+    $footer = null;
     $currentPage = '';
+    
+    //Variables Keep track of the ajax request being sent
+    $ajaxRequest = false;
+    $ajaxResponse = [];
 
-    $ajaxResponse = '';
+        
 
-
-    if (!empty($_SESSION) && isset($_SESSION['USERDATA'])){
+    if (!empty($_SESSION['USERDATA']) && isset($_SESSION['USERDATA']['access_token'])){
         //User is logged into the portal
-
-        if ($_GET){
+        
+        if ($_GET && isset($_GET['page'])){
             // logged in user wants to access a page
             if($_GET['page'] == 'dashboard'){
-
+                // echo '<br><br><br><br>';
+                // echo '<pre class="pt-5 d-flex justify-content-center">';
+                // print_r($_SESSION);
+                // // echo $view->testEncryption();
+                // echo '</pre>';
                 $currentPage = 'dashboard';
                 $pageContent = $view->dashboard();
             
             }else if($_GET['page'] == 'profile'){
 
-                $pageContent = $view->mentorProfile();
+                $pageContent = $view->profile();
 
             }else if($_GET['page'] == 'mentorList'){
 
@@ -89,6 +105,32 @@
                 
                 $pageContent = $view->programContent();
 
+            }else if($_GET['page'] == 'logout'){
+
+                //ending user session and logging it
+                
+                $wasLoggedOut = $process->logout_account($_SESSION['USERDATA']['access_token']);
+                
+                if ($wasLoggedOut['res_code'] == 1){
+
+                    //Destroys current sessions
+                    session_destroy();
+                    unset($_SESSION['USERDATA']);
+                    $_SESSION = array();
+                    
+                    $currentPage = 'home';
+
+                    // Displaying public webpage signIn page
+                    $header = $view->header();
+                    $topbar = $view->topBar($currentPage);
+                    $sidebar = '';
+                    $pageContent = $view->home();
+                    $footer = $view->footer();
+                    
+                }
+                
+                
+
             }else{
 
                 $pageContent = $view->dashboard();
@@ -120,14 +162,14 @@
         }
        
         //Portal website structure
-        $header =  $view->portalHeader();
-        $topbar = $view->portalTopBar();
-        $sidebar = $view->portalSideBar($data);
-        $footer = $view->portalFooter();
+        $header =  $header ?? $view->portalHeader();
+        $topbar =  $topbar ?? $view->portalTopBar();
+        $sidebar = $sidebar ?? $view->portalSideBar();
+        $footer =  $footer ?? $view->portalFooter();
 
 
     }else{
-        //User is logged out 
+        //User is logged out or visiting the website
         if ($_GET && isset($_GET['page'])){
             if ($_GET['page'] == 'signIn'){
 
@@ -187,6 +229,31 @@
                             ';
                         }
                     }
+                    if (isset($_GET['activationCode'])){
+                        
+                        $data['message'] = '
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>Registration Complete!</strong><br> You have been registered, you can now Sign In to your account now.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        ';
+
+                        $isActivated = $process->activate_account($_GET['activationCode']);
+                       
+                        if ($isActivated['res_code'] != 1){
+                            
+                            $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Oops!</strong><br>The '.$isActivated['message'].'
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                ';
+                        }
+                    }
 
                     $pageContent = $view->signIn($data);
                 }
@@ -216,6 +283,8 @@
                         $data['firstName'] = $result['fb_user_info']['first_name'] ?? '';
                         $data['lastName'] = $result['fb_user_info']['last_name'] ?? '';
                         $data['email'] = $result['fb_user_info']['email'] ?? '';
+                        $data['profilePic'] = $result['fb_user_info']['picture']['data']['url'] ?? '';
+                        $data['api'] = 1;//register with api is true 
                         
 
                     }else{
@@ -237,13 +306,17 @@
                             //If client reloads page an exception will be thrown 
                             $result = $google->getUserInfoByCode($_GET['code']);
                             if (!empty($result)) {
-                                
+                               
                                 //separating name
                                 $name = explode(' ', $result['name']);
 
                                 $data['firstName'] = $name[0] ?? '';
                                 $data['lastName'] = $name[1] ?? '';
                                 $data['email'] = $result['email'] ?? '';
+                                $data['profilePic'] = $result['profilePic'] ?? '';
+                                $data['userId'] = $result['userId'] ?? '';
+                                $data['gender'] = $result['gender'] ?? '';
+                                $data['verifiedEmail'] = $result['verifiedEmail'] ?? '';
                                 $data['api'] = 1;//register with api is true 
 
                             }
@@ -282,50 +355,106 @@
                 $currentPage = 'about';
                 $pageContent = $view->aboutUs();
             
-            }else if($_GET['page'] == 'mentorProfile'){
-                $pageContent = $view->mentorProfile();
+            }else if($_GET['page'] == 'mentorCourseDetails' && isset($_GET['programId'])){
+                //working
+                $programId = decrypt($_GET['programId']);
+                $result['program'] = $process->getProgramById($programId);
 
-            }else if($_GET['page'] == 'mentorCourseDetails'){
-                $pageContent = $view->mentorCourseDetails();
+                if (!empty($result['program'])){
 
-            }else if($_GET['page'] == 'courseDetails'){
+                    $result['mentor'] = $process->getMentorById($result['program']['mentor_id']);
+                    // $result = $process->getMentorByProgramId($programId , 1);//will return the mentor we are looking for by programId
+                    $result['courseOutline'] = $process->getCourseOutline($result['program']['course_id']);
+                    $result['testimonials'] = $process->getprogramTestimonials($result['program']['program_id']);
 
-                $currentPage = 'courseDetails';
-                $pageContent = $view->courseDetails();
+                    $pageContent = $view->mentorCourseDetails($result);
 
-            }else if($_GET['page'] == 'mentorBio'){
+                    
+                }else{
 
-                $currentPage = 'mentorBio';
-                $pageContent = $view->mentorBio();
+                    $pageContent = $view->pageNotFound();
+
+                }
+
+
+            }else if($_GET['page'] == 'courseDetails' && isset($_GET['courseId'])){
+                //working 
+                $courseId = decrypt($_GET['courseId']);
+                $result['course'] = $process->getCourseById($courseId);
+
+                if (!empty($result['course'])){
+                    $courseName = str_replace('+', ' ', $_GET['courseName']);
+    
+
+                    // $result['course'] = $process->getCourseDetail($courseName, $courseId);
+                    $result['courseMentors'] = $process->getMentorsByCourseId($result['course']['course_id']);
+                    $result['courseOutline'] = $process->getCourseOutline($result['course']['course_id']);
+        
+
+                    $currentPage = 'courseDetails';
+                    $pageContent = $view->courseDetails($result);
+
+                }else{
+
+                    $pageContent = $view->pageNotFound();
+
+                }
+               
+
+            }else if($_GET['page'] == 'mentorBio' && isset($_GET['mentorId'])){
+                //working
+                $mentorId = decrypt($_GET['mentorId']);
+                $result['mentor'] = $process->getMentorById($mentorId);
+
+                if (!empty($result['mentor'])){
+                    $result['programs'] = $process->getMentorPrograms($result['mentor']['mentor_id']);
+       
+                    
+                    // $result['mentor'] = $process->getMentorById($result['program']['mentor_id']);
+                    // $result = $process->getMentorByProgramId($programId , 1);//will return the mentor we are looking for by programId
+                    // $result['courseOutline'] = $process->getCourseOutline($result['programs']['course_id']);
+                    if(!empty($result['programs'][0])){
+                        
+                        $result['testimonials'] = $process->getprogramTestimonials($result['programs'][0]['program_id']);
+
+                    }
+
+                    $currentPage = 'mentorBio';
+                    $pageContent = $view->mentorBio($result);
+
+                    
+                }else{
+                    
+                    $pageContent = $view->pageNotFound();
+
+                }
+                
             
             }else if($_GET['page'] == 'mentors'){
             
+
+                $result['mentors'] = $process->getMentorList(); 
+  
                 $currentPage = 'mentors';
-                $pageContent = $view->mentors();
-
-            }else if($_GET['page'] == 'thankyou'){
-                
-                $pageContent = $view->thankYou();
-
-            }else if($_GET['page'] == 'webinars'){
-
-                $currentPage = 'webinars';
-                $pageContent = $view->webinars();
-
-            }else if($_GET['page'] == 'events'){
-
-                $currentPage = 'events';
-                $pageContent = $view->events();
+                $pageContent = $view->mentors($result);
 
             }else if($_GET['page'] == 'courses'){
 
                 $currentPage = 'courses';
-                $pageContent = $view->courses();
+                $result['courses'] = $process->getCourseList(); 
+
+                $pageContent = $view->courses($result);
             
             }else{
 
+                $temp = $process->getMentorList(null, 3);
+                $data['Mentors'] = $process->getMentorList(null, 0);
+                $data['topPrograms'] = $process->getProgramList(null, 3);
+                $data['courses'] = $process->getCourseList();
+                $data['systemSummary'] = $process->getSystemSummary();
+
                 $currentPage = 'home';
-                $pageContent = $view->home();
+                $pageContent = $view->home($data);
                 
             }
 
@@ -333,39 +462,327 @@
 
             if ($_POST['action'] == 'signIn'){
                 
+                $data['message'] = '';
                 //validating user login
                 
+                $result = $process->validateLogin($_POST);
+                
+                if ($result['res_code'] != 1){
+                    //user not found
+                    $data['message'] ='
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Access Denied!</strong><br> Make sure your enter the correct email and password, please try again.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    ';
+
+                    $pageContent = $view->signin($data);
+
+                }else{
+                    //success - displaying login portal
+                    $_SESSION['USERDATA']['access_token'] = $result['access_token'];
+
+                    $header =  $view->portalHeader();
+                    $topbar = $view->portalTopBar();
+                    $sidebar = $view->portalSideBar();
+                    $pageContent = $view->dashboard();
+                    $footer = $view->portalFooter();
+                    
+                }
+                
+            }else if ($_POST['action'] == 'registration'){
+
+                //setting api links
+                $data['fbAuthLink'] = $fb->getFacebookLoginUrl(FB_REDIRECT_URI_REG);
+                $data['googleAuthLink'] = $google->getGoogleAuthUrl(G_REDIRECT_URI_REG);
+
+                $data['message'] = '';
+
+                if($_POST['newPassword'] != $_POST['confirmPassword']){
+                    //checking password
+
+                    $data['message'] .= '
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Registration Cancelled!</strong><br> Password for the <b>new</b> and <b>confirm</b> password fields do not match, please try again.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    ';
+                   
+                    $pageContent = $view->registration($data);
+
+                    
+                }else{
+                    // correct passwords entered
+                    if (isset($_POST['api']) && $_POST['api'] == 1){
+                        // user registering by api - no email verification needed
+                        
+                        $result = $process->registerUser($_POST);
+                        //add user info
+
+                        if ($result['res_code'] == '42000'){
+                            //Pass complexity not matched
+                            $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Registration could not be complete!</strong><br> '.$result['message'].', please try again.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+                            
+                        }else if ($result['res_code'] == 1){
+                            // registration was a success
+                            $data['message'] = '
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>Registration Complete!</strong><br> You have been registered, please <a href="'.BASE_URL.'index.php?page=signIn" >Sign In</a>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+                            $isActivated = $process->activate_account($result['activation_code']);
+
+                            if ($isActivated['res_code'] != 1){
+                                
+                                $data['message'] = '
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong>Oops!</strong><br>The '.$isActivated['res_code'].'.
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                ';
+                            }
+
+
+                        }else{
+                            // registration complete notify success and redirect to signIn
+                            $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Oops!</strong><br> Sorry and error occured while trying to register your information. Please try again.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+
+
+                        }
+                        
+                        //calling registration page to display message
+                        $pageContent = $view->registration($data);
+
+
+                    }else{
+
+                        // registering user
+                        $result = $process->registerUser($_POST);
+
+                        if ($result['res_code'] == 42000){
+                         //Pass complexity not matched
+                                $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Registration could not be complete!</strong><br> '.$result['message'].', please try again.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+                            
+                        }else if ($result['res_code'] == 1){
+                            // registration was a success
+                            $data['message'] = '
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong>Success!</strong><br> To complete the registration process please check your email for further instructions.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+                            
+                            //Verification code for user
+                            $link  = BASE_URL.'index.php/?page=signIn&activationCode='.$result['activation_code'];
+
+                            //HTML structured card for email body
+                            $message = $view->emailCard($link);
+
+                            // sending activation code to email
+                            $email->set_Subject('Female Entrepreneurs Account Activation');
+
+                            //
+                            $emailSent = $email->send($_POST['email'], $message);//sending email
+
+                            if ($emailSent != 1){
+                                
+                                $data['message'] = '
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong>Oops!</strong><br> Sorry, we could not send your account activation code to your email. Please try again later.
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    ';
+                            }
+
+
+                        }else{
+                            // registration complete notify success and redirect to signIn
+                            $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Oops!</strong><br> Sorry and error occured while trying to register your information. Please try again.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+
+
+                        }
+                     
+                        $pageContent = $view->registration($data);
+
+                    }
+
+                }
+
+            }else if ($_POST['action'] == 'contactUsEmail'){
+                //Guest is sending an email 
+
+                //Form data submission
+                $name = $_POST['name'] ?? '';
+                $userEmail = $_POST['email'] ?? '';
+                $subject = $_POST['subject'] ?? '';
+                $message = $_POST['message'] ?? '';
+
+                $data = [];
+
+                //reCaptcha verification
+                $responseKey = $_POST['g-recaptcha-response'];
+                $userIP = $_SERVER['REMOTE_ADDR'];
+                $url = 'https://www.google.com/recaptcha/api/siteverify?secret='.RECAPTCHA_SITE_SECRET.'&response='.$responseKey.'&remoteip='.$userIP.'';
+
+                //verifying if recaptcha was a success
+                $response = file_get_contents($url);
+                $response = json_decode($response);
+
+                if ($response->success){
+                    // verification was succesfull
+                    $data['message'] = '<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Email Sent!</strong><br>Thank you for contacting us! We will get back to you as soon as we can.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+                    //sending email 
+                    
+                    $fullMessage = '<b>Name:</b>'.$name.'<br> <b>Email:</b> '.$userEmail.'<br><b>Subject:</b> '.$subject.'<br><b>Message:</b><br>'.$message.'';
+
+                    $email->set_Subject('ContactUs Email from Guest');
+                    $result = $email->send(EMAIL_RECEIVER, $fullMessage);//sending email
+
+                    if ($result != 1){
+                        // failed to send message
+
+                        $data['message'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Eamil was not sent!</strong><br> Sorry, we could not send the email. Please try agian later.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+                    }
+
+                }else{
+                    $data['message'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>reCaptcha was not selected!</strong><br>Please select confirm that your are not a robot and try again.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+                }
+
+                $currentPage = 'contact';
+                $pageContent = $view->contact($data);
                 
 
-                //redirecting to login portal
-                header('Location: '.BASE_URL.'index.php/?page=dashboard');
+
+            }else if($_POST['action'] == 'courseSearch'){
+               
+                if (isset($_POST['search'])){
+                    //ajax request for autocomplete
+                    $ajaxRequest = true; 
+
+                    $result = $process->getCourseList($_POST['search']);
+
+                    $found = [];
+
+                    //looping to get the course names
+                    foreach($result as $key => $course){
+                        $found[] = $course['course_name'];
+                    }
+
+                    echo json_encode($found);
+
+                }else{
+                    //submitted search form
+                    $result['searchFor'] = $_POST['searchFor'];
+                    $result['courses'] = $process->getCourseList($_POST['searchFor']);
+                    
+                    $currentPage = 'courses';
+                    $pageContent = $view->courses($result);
+
+                }
+
+            }else if($_POST['action'] == 'mentorSearch'){
+                //autocomplete word search
+                if (isset($_POST['search'])){
+                    //ajax request for autocomplete
+                    $ajaxRequest = true; 
+
+                    $result['mentors'] = $process->getMentorList($_POST['search']);
+
+                    $found = [];
+
+                    //looping to get the mentor names
+                    foreach($result['mentors'] as $key => $course){
+                        $found[] = $course['mentor_name'];
+                    }
+
+                    echo json_encode($found);
+
+                }else{
+                    //submitted search form
+                    $currentPage = 'mentors';
+                    $result['mentors'] = $process->getMentorList($_POST['searchFor']); 
+                    $result['searchFor'] = $_POST['searchFor'];
+                    
+                    $pageContent = $view->mentors($result);
+
+
+                }
+            
+            }else{
+
             }
 
         }else{
+
+            $temp = $process->getMentorList(null, 3);
+            $data['Mentors'] = $process->getMentorList(null, 0);
+            $data['topPrograms'] = $process->getProgramList(null, 3);
+            $data['courses'] = $process->getCourseList();
+            $data['systemSummary'] = $process->getSystemSummary();
+
             $currentPage = 'home';
-            $pageContent = $view->home();
+            $pageContent = $view->home($data);
         }
 
         //Public Website structure
-        $header = $view->header();
-        $topbar =  $view->topBar($currentPage);
-        $sidebar = '';
-        $footer =  $view->footer();
+        $header = $header ?? $view->header();
+        $topbar =  $topbar ?? $view->topBar($currentPage);
+        $sidebar = $sidebar ?? '';
+        $footer =  $footer ?? $view->footer();
     }
 
-    if (!isset($_POST['ajaxRequest'])){
+    if (!$ajaxRequest){
         
-        //Displaying webpage structure 
+        // Displaying webpage structure 
         echo $header;
         echo $topbar;
         echo $sidebar;
         echo $pageContent;
         echo $footer;
 
-    }else{
-        //returning ajax response
-        echo json_encode($ajaxResponse);
     }
+    
 
 
 ?>
