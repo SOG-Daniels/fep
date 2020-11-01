@@ -341,3 +341,19 @@
     width:100px;
     bottom:45px;
 }
+
+/* css for course outline content that need bulletings */
+.course-outline-content {
+  list-style: none;
+  padding: 0;
+}
+
+.course-outline-content li {
+  padding-bottom: 10px;
+}
+
+.course-outline-content li i {
+  font-size: 20px;
+  padding-right: 4px;
+  color: #5fcf80;
+}

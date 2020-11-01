@@ -92,6 +92,7 @@ class Process {
 
         return $result;
     }
+    //Logs the logging out of a user by their access_token provided to them
     public function logout_account($accesstoken){
         
         $sql = $this->conn->prepare('call logout_account(?);');
@@ -105,12 +106,17 @@ class Process {
 
         return $result;
     }
-   
-    //gets course by name or all courses if name not specified
-    //@param1 course name if nulls queries all courses
-    //@parma2 the amount of records to return if 0 will return all records
+    //gets a course detail
+    //@param1 the course name 
+    //@parma2 the course id
     //@returns associative array()
-    public function getCourseList($name = null, $limit = 0){
+    // this is not needed
+    public function getCourseDetail($name = null, $courseId = null){
+        
+        $name = $this->sanitize($name);
+        $isFound = 0;
+        $limit = 0;
+        $data = [];
         
         $sql = $this->conn->prepare('call get_course_list(?, ?);');
 
@@ -121,6 +127,37 @@ class Process {
         $sql->execute();
         $result = $sql->fetchAll(PDO::FETCH_ASSOC);
 
+        foreach($result as $key => $course){
+            if ($courseId == $course['course_id']){
+                $data = $course;
+                $isFound = 1;
+            }
+        }
+        if (!$isFound){
+            //no course found 
+            return false;
+        }
+
+        return $data;
+    } 
+    //gets course by name or all courses if name not specified
+    //@param1 course name if nulls queries all courses
+    //@parma2 the amount of records to return if 0 will return all records
+    //@returns associative array()
+    public function getCourseList($name = null, $limit = 0){
+        
+        $name = $this->sanitize($name);
+
+        $sql = $this->conn->prepare('call get_course_list(?, ?);');
+
+        //escaping input
+        $sql->bindParam(1, $name);
+        $sql->bindParam(2, $limit);
+       
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+
         return $result;
     }
     //gets course by name or all courses if name not specified
@@ -129,6 +166,8 @@ class Process {
     //@returns associative array()
     public function getMentorList($name = null, $limit = 0){
         
+        $name = $this->sanitize($name);
+
         $sql = $this->conn->prepare('call get_mentor_list(?, ?);');
 
         //escaping input
@@ -232,28 +271,170 @@ class Process {
         return $result;
         
     }
+
+
     //gets the course outline title and content
-    public function getCourseOutline(){
+    public function getCourseOutline($courseId){
+
+        $data['courseOutline'] = [];
 
         $sql = $this->conn->prepare('
             select
-            cot.summary as title, cos.summary as content
+            cot.summary as title, cos.summary as content, cot.id as title_id, cos.id as content_id
             from
             course_outline cot,
             course_outline cos
             where
-            cot.course_id = 1
+            cot.course_id = ?
             and cot.parent = 0
             and cot.id = cos.parent
             and cos.parent <> 0
-            order by cot.order_id asc
+            order by cot.order_id DESC
         ');
+        
+        $sql->execute(array($courseId));
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
 
+        foreach ($result as $key => $cot){
+
+            if (array_key_exists($cot['title_id'], $data['courseOutline'])){
+                //title exist already append to existing
+                $data['courseOutline'][$cot['title_id']]['contents'][] = $cot['content'];
+
+            }else{
+                //title doest exist add 
+                $data['courseOutline'][$cot['title_id']]['title'] = $cot['title'];
+                $data['courseOutline'][$cot['title_id']]['title_id'] = $cot['title_id'];
+                $data['courseOutline'][$cot['title_id']]['contents'][] = $cot['content'];
+
+            }
+
+        } 
+
+        return $data['courseOutline'];
+    }
+    //returns the top default (3) mentors in a program/course
+    //get mentors that are mentoring a course
+    public function getMentorsByCourseId($courseId, $limit = 3){
+
+        $data = [];
+        $count = 0; 
+        
+        $programs = $this->getProgramList(null, 0);
+        $mentors = $this->getMentorList(null, 0);
+
+        foreach($programs as $key => $program){
+
+            if ($courseId == $program['course_id']){
+                //found course in program 
+                if ($count < $limit){
+                    // finding mentor info assigned to program
+                    foreach ($mentors as $mentorId => $mentor){
+                        if ($program['mentor_id'] == $mentorId){
+                            // we found mentor data
+
+                            //getting mentor and program data as one
+                            $data[$count]['mentor'] = $mentor;
+                            $data[$count]['program'] = $program;
+                            $count++;
+                        }
+                        
+
+                    }
+
+                }else{
+                    //extra mentors that are not at the top
+                    $data['moreMentors']['mentor'] = $mentor;
+                    $data['moreMentors']['program'] = $program;
+
+                }
+
+                
+            }
+
+
+        }
+
+        return $data;
+
+    }
+ 
+    // returns mentor and program details by program id
+    public function getMentorByProgramId($programId){
+
+        $data = [];
+        $isFound = 0;
+
+        $programs = $this->getProgramList(null, 0);
+        $mentors = $this->getMentorList(null, 0);
+
+        foreach($programs as $key => $program){
+
+            if (!$isFound && $programId == $program['program_id']){
+                // Found program id 
+                //searching for mentor that has that program_id
+                foreach ($mentors as $mentorId => $mentor){
+                    if (!$isFound && $program['mentor_id'] == $mentorId){
+                        // we found mentor data
+
+                        //getting mentor and program data as one
+                        $data['mentor'] = $mentor;
+                        $data['program'] = $program;
+                        $isFound = 1;
+                    }
+                }
+            }
+        }
+
+        return $data;
+
+    }
+    // returns the programs the user is mentoring
+    public function getMentorPrograms($mentorId){
+
+        $data['programs'] = [];
        
-        $sql->execute();
-        $result = $sql->fetch(PDO::FETCH_ASSOC);
 
-        return $result;
+        $programs = $this->getProgramList(null, 0);
+
+        foreach($programs as $key => $program){
+
+            if ($program['mentor_id'] == $mentorId){
+                // Found program for mentor
+                
+                $data['programs'][] = $programs[$key];
+                                  
+                
+            }
+        }
+
+        return $data['programs'];
+
+    }
+ 
+    //gets the homepage system summary
+    public function getprogramTestimonials($programId = 0){
+
+        if ($programId != 0){
+            $sql = $this->conn->prepare('
+                select
+                concat(p.first_name, " ", p.last_name) as mentor_name,
+                p.image_src as profile_pic,
+                c.texto
+                from
+                testimonial t, `comment` c, person p, post po
+                where p.id = c.user_id and c.id = t.comment_id and t.status = 1 and c.post_id = po.id and po.program_id = '.$programId.';
+            ');
+
+        
+            $sql->execute();
+            $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+
+        }else{
+            return false;
+        }
     }
 
     //gets the homepage system summary
@@ -276,8 +457,59 @@ class Process {
 
         return $result;
     }
-    
 
+    //gets course infor by Id
+    public function getCourseById($courseId){
+
+        $data = [];
+        $courses  = $this->getCourseList();
+
+        foreach ($courses as $key => $course){
+
+            if ($courseId == $course['course_id']){
+                $data = $course;
+            }
+
+        }
+
+        return $data;
+
+    }
+    //gets course infor by Id
+    public function getProgramById($programId){
+
+        $data = [];
+        $programs  = $this->getProgramList();
+
+        foreach ($programs as $key => $program){
+
+            if ($programId == $program['program_id']){
+                $data = $program;
+            }
+
+        }
+
+        return $data;
+
+    }
+    
+    //gets course infor by Id
+    public function getMentorById($mentorId){
+
+        $data = [];
+        $mentors  = $this->getMentorList();
+
+        foreach ($mentors as $key => $mentor){
+
+            if ($mentorId == $mentor['mentor_id']){
+                $data = $mentor;
+            }
+
+        }
+
+        return $data;
+
+    }
     /*
     *   Functions below are used to help the process class in carring out additional functionality.
     *   Functions below do not communicate with the database.

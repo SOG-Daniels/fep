@@ -355,45 +355,88 @@
                 $currentPage = 'about';
                 $pageContent = $view->aboutUs();
             
-            }else if($_GET['page'] == 'mentorProfile'){
-                $pageContent = $view->mentorProfile();
+            }else if($_GET['page'] == 'mentorCourseDetails' && isset($_GET['programId'])){
+                //working
+                $programId = decrypt($_GET['programId']);
+                $result['program'] = $process->getProgramById($programId);
 
-            }else if($_GET['page'] == 'mentorCourseDetails'){
-                $pageContent = $view->mentorCourseDetails();
+                if (!empty($result['program'])){
 
-            }else if($_GET['page'] == 'courseDetails'){
+                    $result['mentor'] = $process->getMentorById($result['program']['mentor_id']);
+                    // $result = $process->getMentorByProgramId($programId , 1);//will return the mentor we are looking for by programId
+                    $result['courseOutline'] = $process->getCourseOutline($result['program']['course_id']);
+                    $result['testimonials'] = $process->getprogramTestimonials($result['program']['program_id']);
 
-                $currentPage = 'courseDetails';
-                $pageContent = $view->courseDetails();
+                    $pageContent = $view->mentorCourseDetails($result);
 
-            }else if($_GET['page'] == 'mentorBio'){
+                    
+                }else{
 
-                $currentPage = 'mentorBio';
-                $pageContent = $view->mentorBio();
+                    $pageContent = $view->pageNotFound();
+
+                }
+
+
+            }else if($_GET['page'] == 'courseDetails' && isset($_GET['courseId'])){
+                //working 
+                $courseId = decrypt($_GET['courseId']);
+                $result['course'] = $process->getCourseById($courseId);
+
+                if (!empty($result['course'])){
+                    $courseName = str_replace('+', ' ', $_GET['courseName']);
+    
+
+                    // $result['course'] = $process->getCourseDetail($courseName, $courseId);
+                    $result['courseMentors'] = $process->getMentorsByCourseId($result['course']['course_id']);
+                    $result['courseOutline'] = $process->getCourseOutline($result['course']['course_id']);
+        
+
+                    $currentPage = 'courseDetails';
+                    $pageContent = $view->courseDetails($result);
+
+                }else{
+
+                    $pageContent = $view->pageNotFound();
+
+                }
+               
+
+            }else if($_GET['page'] == 'mentorBio' && isset($_GET['mentorId'])){
+                //working
+                $mentorId = decrypt($_GET['mentorId']);
+                $result['mentor'] = $process->getMentorById($mentorId);
+
+                if (!empty($result['mentor'])){
+                    $result['programs'] = $process->getMentorPrograms($result['mentor']['mentor_id']);
+       
+                    
+                    // $result['mentor'] = $process->getMentorById($result['program']['mentor_id']);
+                    // $result = $process->getMentorByProgramId($programId , 1);//will return the mentor we are looking for by programId
+                    // $result['courseOutline'] = $process->getCourseOutline($result['programs']['course_id']);
+                    if(!empty($result['programs'][0])){
+                        
+                        $result['testimonials'] = $process->getprogramTestimonials($result['programs'][0]['program_id']);
+
+                    }
+
+                    $currentPage = 'mentorBio';
+                    $pageContent = $view->mentorBio($result);
+
+                    
+                }else{
+                    
+                    $pageContent = $view->pageNotFound();
+
+                }
+                
             
             }else if($_GET['page'] == 'mentors'){
             
-                $currentPage = 'mentors';
 
                 $result['mentors'] = $process->getMentorList(); 
   
+                $currentPage = 'mentors';
                 $pageContent = $view->mentors($result);
-
-
-
-            }else if($_GET['page'] == 'thankyou'){
-                
-                $pageContent = $view->thankYou();
-
-            }else if($_GET['page'] == 'webinars'){
-
-                $currentPage = 'webinars';
-                $pageContent = $view->webinars();
-
-            }else if($_GET['page'] == 'events'){
-
-                $currentPage = 'events';
-                $pageContent = $view->events();
 
             }else if($_GET['page'] == 'courses'){
 
@@ -404,18 +447,13 @@
             
             }else{
 
-                $data['topMentors'] = $process->getTopMentors();
-                $data['topPrograms'] = $process->getTopPrograms();
-                $data['courses'] = $process->getCourses();
-                $data['courseCount'] = 1;//count($data['courses']);
-                $data['mentorCount'] = 1;//$process->getMentorCount();
-                $data['menteeCount'] = 2;//$process->getMenteeCount();
-                $data['upcomingEventCount'] = 0;//$process->getUpcomingEventCount();                
+                $temp = $process->getMentorList(null, 3);
+                $data['Mentors'] = $process->getMentorList(null, 0);
+                $data['topPrograms'] = $process->getProgramList(null, 3);
+                $data['courses'] = $process->getCourseList();
+                $data['systemSummary'] = $process->getSystemSummary();
 
                 $currentPage = 'home';
-                $data['fbAuthLink'] = $fb->getFacebookLoginUrl(FB_REDIRECT_URI_SIGN);
-                $data['googleAuthLink'] = $google->getGoogleAuthUrl(G_REDIRECT_URI_SIGN);
-
                 $pageContent = $view->home($data);
                 
             }
@@ -718,7 +756,7 @@
         }else{
 
             $temp = $process->getMentorList(null, 3);
-            $data['topMentors'] = $process->getMentorList(null, 3);
+            $data['Mentors'] = $process->getMentorList(null, 0);
             $data['topPrograms'] = $process->getProgramList(null, 3);
             $data['courses'] = $process->getCourseList();
             $data['systemSummary'] = $process->getSystemSummary();

@@ -140,13 +140,17 @@ class Ui {
         $topMentors = '';
         
         if (!empty($data['courses'])){
+
             // courses with icon 
             foreach($data['courses'] as $key => $course){
+                
+                $urlCourseName = str_replace(' ', '+', $course['course_name']);
+
                 $courses .= '
                     <div class="col-lg-3 col-md-4 mt-2">
                         <div class="icon-box">
                         <i class="fa fa-'.$course['course_icon'].' fa-lg" style="color: black;"></i>
-                        <h3><a href="'.BASE_URL.'index.php/?page=courseDetails&courseId='.encrypt($course['course_id']).'">'.$course['course_name'].'</a></h3>
+                        <h3><a href="'.BASE_URL.'index.php/?page=courseDetails&courseName='.$urlCourseName.'&courseId='.encrypt($course['course_id']).'">'.$course['course_name'].'</a></h3>
                         </div>
                     </div>
                 ';
@@ -167,11 +171,14 @@ class Ui {
             $topPrograms = '<h3 class="ml-3">Coming Soon....</h3>';
         }
         //building top mentors
-        if (!empty($data['topMentors'])){
+        if (!empty($data['Mentors'])){
             // mentor cards 
-            foreach($data['topMentors'] as $key => $mentor){
-                
-                $topMentors .= $this->generate_mentor_card_public($mentor);
+            $i = 0;
+            foreach($data['Mentors'] as $key => $mentor){
+                if ($i < 3){
+                    $topMentors .= $this->generate_mentor_card_public($mentor);
+                }
+                $i++;
             }
 
         }else{
@@ -434,37 +441,71 @@ class Ui {
 
         $cards = '';
         $moreMentorCards = '';
-
-        $couseOutline = '';
+        $courseOutlineDownloadLink = '';
+        $courseOutline = '';
         $tabs = '';
         $tabContent = '';
-
+        $viewMoreMentorsBtn = '';
+        $courseOutlineSection = '';
         
-        // if (!empty($data['topMentors'])){
+        //checking if we recieved courseMentors that contain the top mentors
+        if (!empty($data['courseMentors'])){
 
-            for($num =0; $num < 3; $num++){//foreach($data['topMentors'] as $key => $topMentor){
+            foreach($data['courseMentors'] as $key => $top){
                 //creating top mentor cards
-                $cards .= $this->generate_mentor_card_public();
+
+                //giving mentor program rating by replacing mentor overall rating 
+                $top['mentor']['rating'] = $data['courseMentors'][$key]['program']['rating'];
+                $cards .= $this->generate_mentor_card_public($top['mentor']);
                
             }
 
-        // }else{
-        //     $cards = '<h3 class="ml-3">Coming Soon...</h3>';
-        // }
-        // if (!empty($data['Mentors'])){
+        }else{
+            $cards = '<h3 class="ml-3">Coming Soon...</h3>';
+        }
+        //building more mentor cards that are not top 3
+        if (!empty($data['moreMentors'])){
 
-            for($num =0; $num < 6; $num++){//foreach($data['mentors'] as $key => $mentors){
+            foreach($data['moreMentors'] as $key => $mentors){
                 //creating top mentor cards
-                $moreMentorCards .= $this->generate_mentor_card_public();
+                $moreMentorCards .= $this->generate_mentor_card_public($mentors);
             }
-        // }else{
-        //     $cards = '<h3 class="ml-3">Coming Soon...</h3>';
-        // }
+            //view the other mentors link 
+            $viewMoreMentorsBtn = '
+                <span class="d-flex justify-content-center">
+                    <a href="#trainers" id="view-all-mentors" class="btn btn-link mt-3"><i class="fa fa-eye fa-lg"></i> <span id="view-all-mentors-text">View</span> all Mentors</a>
+                </span>
+            ';
+        }else{
+            $moreMentorCards = '';
+        }
 
-        $data = array(array('title'=>'this is the first title', 'content' => 'description'));
-        //creating tabs and tab content
-        $courseOutline = $this->generate_tabbed_content_public($data);
 
+        if (isset($data['course']['outline_scr']) && $data['course']['outline_scr'] != ''){
+            $courseOutlineDownloadLink = '
+                <div class="row col-12 d-flex justify-content-center">
+
+                    <a class="mt-5 text-primary" href="'.$data['course']['outline_scr'].'"><i class="fa fa-download"></i> Download the Course Outline here</a>
+
+                </div>
+            ';
+        }
+        if (!empty($data['courseOutline'])){
+            //creating tabs and tab content
+            $courseOutline = $this->generate_tabbed_content_public($data['courseOutline']);
+            
+            $courseOutlineSection = '
+            <!-- ======= Cource Details Tabs Section ======= -->
+                <section id="cource-details-tabs" class="cource-details-tabs">
+                  <div class="container" data-aos="fade-up">
+            
+                    '.$courseOutline.'
+                    '.$courseOutlineDownloadLink.'
+
+                  </div>
+                </section><!-- End Cource Details Tabs Section -->
+            ';
+        }
         $html = '
             <main id="main">
 
@@ -477,32 +518,29 @@ class Ui {
                 
                         <div class="row">
                             <div class="col-lg-12">
-                                <img src="'.BASE_URL.'assets/img/course-details.jpg" class="img-fluid" alt="">
+                                <span class="d-flex justify-content-center">
+                                    <img src="'.($data['course']['image_src'] ?? BASE_URL."assets/img/logos/fep_logo.png").'" class="img-fluid" alt="">
+                                </span>
                                 <span class="d-flex justify-content-end mt-3 mb-1">
                                     <a href="'.BASE_URL.'index.php/?page=signIn" class="h4 get-started-btn btn-lg mr-0"><i class="fa fa-paper-plane-o fa-lg"></i> Become a Mentor</a>
                                 </span>
-                                <h3>Program Name</h3>
+                                <h3>'.($data['course']['course_name']?? 'Name not listed yet...').'</h3>
                                 <p>
-                                    '.($data['courseInfo'] ?? 'No description has been provided for this course...').'
+                                    '.($data['course']['course_summary']?? 'No description has been provided for this course yet...').'
                                 </p>
                             </div>
                             
                         </div>
                 
                     </div>
-                </section><!-- End Cource Details Section -->
+                </section><!-- End Course Details Section -->
                 
                 <!-- ======= Cource Details Tabs Section ======= -->
                 <section id="cource-details-tabs" class="cource-details-tabs">
                   <div class="container" data-aos="fade-up">
             
                     '.$courseOutline.'
-                    
-                    <div class="row col-12 d-flex justify-content-center">
-
-                        <a class="mt-5 text-primary" href="'.($data['courseOutline'] ?? '#').'"><i class="fa fa-download"></i> Download the Course Outline here</a>
-
-                    </div>
+                    '.$courseOutlineDownloadLink.'
 
                   </div>
                 </section><!-- End Cource Details Tabs Section -->
@@ -529,9 +567,7 @@ class Ui {
 
                             </div>
                         </span>
-                        <span class="d-flex justify-content-center">
-                            <a href="#trainers" id="view-all-mentors" class="btn btn-link mt-3"><i class="fa fa-eye fa-lg"></i> <span id="view-all-mentors-text">View</span> all Mentors</a>
-                        </span>
+                        '.$viewMoreMentorsBtn.'
 
                     </div>
                 </section><!-- End Trainers Section -->
@@ -541,32 +577,55 @@ class Ui {
         return $html;
     }
     // Displays the mentor Course details
-    public function mentorCourseDetails(){
+    public function mentorCourseDetails($data = []){
 
         $testimonialSection = '';
         $courseOutline= '';
-        $rating = $data['rating'] ?? 3;
+        $rating = $data['program']['rating'] ?? 0;
 
-
-        $data = array(array('title'=>'this is the first title', 'content' => 'description'));
         //creating tabs and tab content
-        $courseOutline = $this->generate_tabbed_content_public($data);
+        $courseOutline = $this->generate_tabbed_content_public($data['courseOutline']);
 
-        $data = array(
-            array('name' => 'Mia Chan' , 'jobTitle' => 'Engineer', 'description' => 'Wow this is very useful information')
-        );
         //generating testimonials
-        $testimonialSection = $this->generate_testimonials_public($data);
+        $testimonialSection = $this->generate_testimonials_public($data['testimonials']);
 
         $starRating = $this->create_start_rating($rating);
+       
+        $occupation = '';
         
+        //getting occupation
+        if (!empty($data['mentor']['professions']) && $data['mentor']['professions'][0] != ''){
+            foreach($data['mentor']['professions'] as $key => $profession){
+                $occupation .= ($key == 0 ? '': ', ').$data['mentor']['professions'][$key];
+            }
+        }else{
+            $occupation = 'N/a';
+        }
+
+        if ($courseOutline != ''){
+            $couresOutlineSection = '
+            <!-- ======= Cource Details Tabs Section ======= -->
+            <section id="cource-details-tabs" class="cource-details-tabs">
+              <div class="container" data-aos="fade-up">
         
+                '.$courseOutline.'
+                
+                <div class="row col-12 d-flex justify-content-center">
+    
+                    <a class="mt-5 text-primary" href="'.($data['courseOutline'] ?? '#').'"><i class="fa fa-download"></i> Download the Course Outline here</a>
+    
+                </div>
+    
+              </div>
+            </section><!-- End Cource Details Tabs Section -->
+            ';
+        }
         
         $html = '
         
         <main id="main">
 
-        '.$this->banner('Mentor Program Details', 'Program Detail provided by a Mentor.').'
+        '.$this->banner('Mentor Program Details', 'Check out this mentors Course profile, if you like what you see why not try requesting mentorship!').'
         
     
         <!-- ======= Cource Details Section ======= -->
@@ -575,27 +634,27 @@ class Ui {
     
             <div class="row">
               <div class="col-lg-8">
-                <img src="'.BASE_URL.'assets/img/course-details.jpg" class="img-fluid" alt="">
-                <h3>Program Name</h3>
+                <img src="'.($data['program']['course_pic'] ?? BASE_URL."assets/img/logos/fep_logo.png").'" class="img-fluid" alt="">
+                <h3>'.($data['program']['course_name']).'</h3>
                 <p>
-                 Discription about the mentorship programs being provided.
+                 '.($data['program']['summary']??'Course Summary is not set yet....').'
                 </p>
               </div>
               <div class="col-lg-4">
     
                 <div class="course-info d-flex justify-content-between align-items-center">
-                  <h5>Mentor</h5>
-                  <a href="'.BASE_URL.'index.php/?page=mentorBio&mendorId=" c>Walter White</a>
+                  <h5>Mentor:</h5>
+                  <a href="'.BASE_URL.'index.php/?page=mentorBio&mendorId='.encrypt($data['mentor']['mentor_id']??'').'">'.($data['mentor']['mentor_name']).'</a>
                 </div>
     
                 <div class="course-info d-flex justify-content-between align-items-center">
-                  <h5>Occupation</h5>
-                  <p>Principal</p>
+                  <h5>Occupation:</h5>
+                  <p ml-1>'.$occupation.'</p>
                 </div>
 
                 <div class="course-info d-flex justify-content-between align-items-center">
-                  <h5>Mentees</h5>
-                  <p>30</p>
+                  <h5>Mentees:</h5>
+                  <p>'.($data['program']['total_enrollment']).'</p>
                 </div>
                 <div class="course-info d-flex justify-content-between align-items-center">
                     <h5>Rating:</h5>
@@ -616,20 +675,7 @@ class Ui {
           </div>
         </section><!-- End Cource Details Section -->
        
-        <!-- ======= Cource Details Tabs Section ======= -->
-        <section id="cource-details-tabs" class="cource-details-tabs">
-          <div class="container" data-aos="fade-up">
-    
-            '.$courseOutline.'
-            
-            <div class="row col-12 d-flex justify-content-center">
-
-                <a class="mt-5 text-primary" href="'.($data['courseOutline'] ?? '#').'"><i class="fa fa-download"></i> Download the Course Outline here</a>
-
-            </div>
-
-          </div>
-        </section><!-- End Cource Details Tabs Section -->
+      
 
         '.$testimonialSection.'
             
@@ -647,24 +693,57 @@ class Ui {
         $courseTags = '';
         $testimonials = '';
         $testimonialSection = '';
-        $rating = $data['rating'] ?? 3;
+        $rating = $data['mentor']['rating'] ?? 3;
 
-        $courseId = (isset($data['courseId'])? encrypt($data['courseId']) : 0);
+        
 
-        for($num=0; $num<3; $num++){
+        //generating testimonials
+        $testimonialSection = $this->generate_testimonials_public($data['testimonials']);
+
+        $starRating = $this->create_start_rating($rating);
+       
+        $occupation = '';
+        $socialIcons = '';
+
+        //getting social media links
+        if (!empty($data['mentor']['social_networks'])){
+
+            foreach($data['mentor']['social_networks'] as $key => $socialNetwork){
+
+                $socialIcons .= '
+                        <a href="'.$socialNetwork['sn_url'].'"><i class="'.$socialNetwork['sn_icon'].'"></i></a>
+                ';
+            }
+            $socialIcons = '
+                <div class="social">
+                '.$socialIcons.'
+                </div>
+            ';
+
+        }
+
+        //getting occupation
+        if (!empty($data['mentor']['professions']) && $data['mentor']['professions'][0] != ''){
+            foreach($data['mentor']['professions'] as $key => $profession){
+                $occupation .= ($key == 0 ? '': ', ').$data['mentor']['professions'][$key];
+            }
+        }else{
+            $occupation = 'N/a';
+        }
+        // $courseId = (isset($data[]['courseId'])? encrypt($data['courseId']) : 0);
+
+        foreach($data['programs'] as $key => $program){
             
             $courseTags .= '
-            <a href="'.BASE_URL.'index.php/?page=mentorCourseDetails&courseId='.$courseId.'">
-                <span class="badge badge-pill badge-secondary mt-2"><i class="fa fa-tag fa-lg"></i>'.($data['courseName'] ?? 'N/A').'</span>
+            <a href="'.BASE_URL.'index.php/?page=mentorCourseDetails&programId='.encrypt($program['program_id']).'">
+                <span class="badge badge-pill badge-secondary mt-2"><i class="fa fa-tag fa-lg"></i> '.($program['course_name'] ?? 'N/A').'</span>
             </a>
             ';
         }
 
-        $data = array(
-            array('name' => 'Mia Chan' , 'jobTitle' => 'Engineer', 'description' => 'Wow this is very useful information')
-        );
+        
         //generating testimonials
-        $testimonialSection = $this->generate_testimonials_public($data);
+        $testimonialSection = $this->generate_testimonials_public($data['testimonials']);
 
         $starRating = $this->create_start_rating($rating);
         
@@ -687,16 +766,11 @@ class Ui {
                                         <div data-aos="zoom-in" data-aos-delay="100">
                                             <div class="d-flex align-items-stretch">
                                                 <div class="member">
-                                                    <img src="'.BASE_URL.'assets/img/trainers/trainer-1.jpg" class="img-fluid mb-3" alt="">
+                                                    <img src="'.($data['mentor']['profile_pic'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" class="img-fluid mb-3" alt="">
                                                    
                                                     <div class="member-content">
-                                                        <h4>Walter White</h4>
-                                                        <div class="social">
-                                                        <a href=""><i class="icofont-twitter"></i></a>
-                                                        <a href=""><i class="icofont-facebook"></i></a>
-                                                        <a href=""><i class="icofont-instagram"></i></a>
-                                                        <a href=""><i class="icofont-linkedin"></i></a>
-                                                        </div>
+                                                        <h4>'.($data['mentor']['mentor_name'] ?? 'N/a').'</h4>
+                                                        '.$socialIcons.'
                                                     <div class="d-flex justify-content-center">
                                                         <a href="'.BASE_URL.'index.php/?page=signIn" class="get-started-btn  mt-3 mr-0 ml-0"><i class="fa fa-paper-plane-o fa-lg"></i> Request Mentorship</a>
                                                     </div>
@@ -718,7 +792,7 @@ class Ui {
                     
                                 <div class="course-info d-flex justify-content-between align-items-center">
                                 <p class="font-weight-bold h5">Occupation:</p>
-                                <h6 class="mt-2">Web Developer</h6>
+                                <h6 class="mt-2">'.($occupation ?? 'N/a').'</h6>
                                 </div>
 
                                 <div class="course-info d-md-flex justify-content-md-between align-items-md-center">
@@ -740,7 +814,7 @@ class Ui {
                                     <p class="font-weight-bold h5" >About Mentor:</p>
                                     <br>
                                     <h6>
-                                            Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut aut
+                                        '.($data['mentor']['about']?? 'Mentor has not set a their Bio as yet....').'
                                     </h6>
                                 </div>
                     
@@ -1246,11 +1320,33 @@ class Ui {
     }
     //Displays a 404 page error
     public function pageNotFound(){
-        $html = '
-       
-        
+        $html = $this->banner('Oops! The page was not found', 'Sorry we could not find the page your were looking for').'
+            <main id="main">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-12 col-md-5">
+                            <div class="card mt-4 login-form shadow-lg ">
+                                <div class="card-header"
+                                <div class="card-body">
+                                    <h3 class="text-center">404 Page Not Found</h3>		
+                                    <hr>
+                                    <div class="form-group">
+                                        <p class="text-center">
+                                            <a href="'.BASE_URL.'"><i class="fa fa-home"></i> Go to Home</a>
+                                        </p>
+                                    </div>
+                                </div>    
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </main>    
+                        
+
         ';
         return $html;
+        
     }
     // Displays a signIn form
     public function signIn($data = []){
@@ -1669,7 +1765,7 @@ class Ui {
                                     <h3 class="text-center">Thank You for Registering!</h3>		
                                     <hr>
                                     <div class="form-group">
-                                        <p>
+                                        <p class="text-center">
                                         Please follow the intructions sent to your email to complete the registration process.
                                         </p>
                                     </div>
@@ -2010,12 +2106,12 @@ class Ui {
             $testimonials .= '
                 <div class="testimonial-wrap">
                     <div class="testimonial-item">
-                        <img src="'.($testimonial['profileImg'] ?? BASE_URL."assets/img/testimonials/testimonials-2.jpg").'" class="testimonial-img" alt="">
-                        <h3>'.($testimonial['name'] ?? 'N/A').'</h3>
-                        <h4>'.($testimonial['jobTitle']).'</h4>
+                        <img src="'.($testimonial['profileImg'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" class="testimonial-img" alt="">
+                        <h3>'.($testimonial['mentor_name'] ?? 'No text to display....').'</h3>
+                        <h4>'.($testimonial['jobTitle'] ?? 'No Job Title listed....').'</h4>
                         <p>
                         <i class="bx bxs-quote-alt-left quote-icon-left"></i>
-                        '.($testimonial['description'] ?? 'N/A').'
+                        '.($testimonial['textto'] ?? 'N/A').'
                         <i class="bx bxs-quote-alt-right quote-icon-right"></i>
                         </p>
                     </div>
@@ -2053,46 +2149,71 @@ class Ui {
         $tabContent = '';
 
         $count = 1;
-
-        foreach($data as $key => $tab){
+        if (!empty($data)){
+            foreach($data as $key => $tab){
                 
-            $tabs .= '
-                <li class="nav-item">
-                    <a class="nav-link '.(($count == 1)? 'active show' : '').'" data-toggle="tab" href="#tab-'.$count.'">'.($tab['title']).'</a>
-                </li>
-            ';
-            $tabContent .= '
-                <div class="tab-pane '.(($count == 1)? 'active show' : '').'" id="tab-'.$count.'">
-                    <div class="row">
-                    <div class="col-lg-8 details order-2 order-lg-1">
-                        <h3>'.($tab['title'] ?? 'No title was test').'</h3>
-                        <!--<p class="font-italic"></p>-->
-                        <p>'.($tab['content'] ?? "No content to display...").'</p>
-                    </div>
-                    <div class="col-lg-4 text-center order-1 order-lg-2">
-                        <img src="assets/img/course-details-tab-1.png" alt="" class="img-fluid">
-                    </div>
-                    </div>
-                </div>
-            ';
-            $count++;
-        }
-        // creating course outline display
-        $tabContent = '
-            <div class="row">
-                <div class="col-lg-3">
-                    <ul class="nav nav-tabs flex-column">
-                    '.$tabs.'
-                    </ul>
-                </div>
-                <div class="col-lg-9 mt-4 mt-lg-0">
-                    <div class="tab-content">
-                    '.$tabContent.'
-                    </div>
-                </div>
+                $tabs .= '
+                    <li class="nav-item">
+                        <a class="nav-link '.(($count == 1)? 'active show' : '').'" data-toggle="tab" href="#tab-'.$count.'">'.($tab['title']).'</a>
+                    </li>
+                ';
+    
+                $text = '';
+    
+                //building tab with multiple content
+                foreach($tab['contents'] as $key => $content){
+                    
+                    if ($key > 0 && $tab['title'] != 'Requirements'){
+                        $text .= '<br>';
+                    }
+                    if ($tab['title'] == 'Requirements'){
+                        $text .= '<li><i class="icofont-check-circled"></i>'.$content.'</li>';
+                    }else{
+                        
+                        $text .= $content;
+    
+                    }
+                }
+                if ($tab['title'] == 'Requirements'){
         
-            </div>
-        ';
+                    $text = '<ul class="course-outline-content">'.$text.'</ul>';
+    
+                }
+    
+                $tabContent .= '
+                    <div class="tab-pane '.(($count == 1)? 'active show' : '').'" id="tab-'.$count.'">
+                        <div class="row">
+                        <div class="col-lg-8 details order-2 order-lg-1">
+                            <h3>'.($tab['title'] ?? 'No title was test').'</h3>
+                            <!--<p class="font-italic"></p>-->
+                            <p>'.($text ?? "No content to display...").'</p>
+                        </div>
+                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                            <img src="assets/img/course-details-tab-1.png" alt="" class="img-fluid">
+                        </div>
+                        </div>
+                    </div>
+                ';
+                $count++;
+            }
+            // creating course outline display
+            $tabContent = '
+                <div class="row">
+                    <div class="col-lg-3">
+                        <ul class="nav nav-tabs flex-column">
+                        '.$tabs.'
+                        </ul>
+                    </div>
+                    <div class="col-lg-9 mt-4 mt-lg-0">
+                        <div class="tab-content">
+                        '.$tabContent.'
+                        </div>
+                    </div>
+            
+                </div>
+            ';
+
+        }
        
 
         return $tabContent;
@@ -2107,21 +2228,23 @@ class Ui {
         $rating = ($data['rating'] != 0)? $data['rating'] : 0;
         $starRating = $this->create_start_rating($rating, 'mr-3');
         
+        $urlCourseName = str_replace(' ', '+', $data['course_name']);
+        
         $summary = $this->make_text_shorter($data['course_summary']);
         
         $html = '
             <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
                 <div class="course-item shadow-lg">
-                    <a href="'.BASE_URL.'index.php/?page=courseDetails&courseId='.$courseId.'">
-                        <img src="'.($data['image_src'] ?? '').'" class="card-img" alt="...">
+                    <a href="'.BASE_URL.'index.php/?page=courseDetails&courseName='.$urlCourseName.'&courseId='.$courseId.'">
+                        <img src="'.($data['image_src'] ?? BASE_URL."assets/img/logos/fep_logo.png").'" class="card-img" alt="...">
                     </a>
                     <div class="course-content">
                         <div class="row d-flex justify-content-between align-items-center mb-3">
-                            <a href="'.BASE_URL.'index.php/?page=courseDetails&courseId='.$courseId.'" class="text-light"><h4><i class="fa fa-eye fa-lg"></i> View Course</h4></a>
+                            <a href="'.BASE_URL.'index.php/?page=courseDetails&courseName='.$urlCourseName.'&courseId='.$courseId.'" class="text-light"><h4><i class="fa fa-eye fa-lg"></i> View Course</h4></a>
                             '.$starRating.'
                         </div>
 
-                        <h3><a href="'.BASE_URL.'index.php/?page=courseDetails&courseId='.$courseId.'">'.($data['course_name'] ?? 'N/A').'</a></h3>
+                        <h3><a href="'.BASE_URL.'index.php/?page=courseDetails&courseName='.$urlCourseName.'&courseId='.$courseId.'">'.($data['course_name'] ?? 'N/A').'</a></h3>
                         <p>'.$summary.'</p>
                     
                     </div>
@@ -2154,7 +2277,7 @@ class Ui {
             <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3 mt-md-0">
                 <div class="course-item shadow">
                     <a href="'.BASE_URL.'index.php/?page=mentorProgramDetails&programId='.$programId.'">
-                        <img src="'.($data['profile_pic'] ?? BASE_URL."assets/img/logos/fep_logo.png").'" class="img-fluid" alt="Program Image">
+                        <img src="'.($data['course_pic'] ?? BASE_URL."assets/img/logos/fep_logo.png").'" class="card-img" alt="Program Image">
                     </a>
                     <div class="course-content">
                         <div class="row d-flex justify-content-between align-items-center mb-3">
@@ -2166,7 +2289,7 @@ class Ui {
                         <p>'.$summary.'</p>
                         <div class="trainer d-flex justify-content-between align-items-center">
                             <div class="trainer-profile d-flex align-items-center">
-                                <img src="'.($data['mentorProfilePic'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" class="img-fluid" alt="">
+                                <img src="'.($data['profile_pic'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" class="img-fluid" alt="">
                                 <span><a href="'.BASE_URL.'index.php/?page=mentorCourseDetails&programId='.$programId.'">'.($data['mentor_name'] ?? 'N/A').'</a></span>
                             </div>
                             <div class="trainer-rank d-flex align-items-center">
@@ -2185,7 +2308,7 @@ class Ui {
     // mentor id, name, overall rating, profle image, mentor bio, job title
     // array(socialMediaLinks) => link, icon 
     public function generate_mentor_card_public($data = []){
-
+        
         // $courseId = (isset($data['courseId'])? encrypt($data['courseId']) : 0); 
         $mentorId = (isset($data['mentor_id'])? encrypt($data['mentor_id']) : 0);
         $rating = $data['rating'] ?? 0;
@@ -2215,7 +2338,7 @@ class Ui {
             foreach($data['social_networks'] as $key => $socialNetwork){
 
                 $socialIcons .= '
-                        <a href="'.$socialNetwork['sn_url'].'"><i class="fa fa-'.strtolower($socialNetwork['sn_icon']).'"></i></a>
+                        <a href="'.$socialNetwork['sn_url'].'"><i class="'.$socialNetwork['sn_icon'].'"></i></a>
                 ';
             }
             $socialIcons = '
@@ -2229,7 +2352,7 @@ class Ui {
         $html = '
             <div class="col-12 col-lg-4 col-md-6 d-flex align-items-stretch mt-2 mt-md-0">
                 <div class="member shadow-lg">
-                    <img src="'.($data['profile_pic'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" class="img-fluid" alt="">
+                    <img src="'.($data['profile_pic'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" class="img-fluid mb-3" alt="">
                     <div class="member-content mb-5">
                         <h4 class="mb-2"><a href="'.BASE_URL.'index.php/?page=mentorBio&mentorId='.$mentorId.'">'.($data['mentor_name'] ?? 'N/A').'</a></h4>
                         '.$starRating.'
@@ -2247,6 +2370,7 @@ class Ui {
                 </div>
             </div>              
         ';
+        
         return $html;
     }
 
