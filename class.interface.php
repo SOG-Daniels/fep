@@ -2636,6 +2636,12 @@ class Ui {
                                 </a>
                             </li>
                             <li>
+                                <a href="'.BASE_URL.'index.php/?page=courseCategories" class="dropdown-toggle no-arrow">
+                                    <span class="micon fa fa-book"></span><span class="mtext">Course Categories</span>
+                                </a>
+                            </li>
+                           
+                            <li>
                                 <a href="'.BASE_URL.'index.php/?page=viewCourses" class="dropdown-toggle no-arrow">
                                     <span class="micon fa fa-book"></span><span class="mtext">View Courses</span>
                                 </a>
@@ -3566,7 +3572,7 @@ class Ui {
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
                                     <div class="title">
-                                        <h4>Add New Course</h4>
+                                        <h4>Add Course</h4>
                                     </div>
                                     <nav aria-label="breadcrumb" role="navigation">
                                         <ol class="breadcrumb">
@@ -3578,54 +3584,56 @@ class Ui {
                                 </div>
                             </div>
                         </div>
-                        <div class="pd-20 card-box height-100-p">
-                            <div class="row">
+
+                        <div class="pd-20 card-box shadow">
                                 <form action="'.BASE_URL.'" method="POST" class="profile-edit-list">
-                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-30">
-
-                                        <div class="profile-photo">
-                                            <input id="profile-pic-upload" type="file" class="d-none" name="profilePic" accept="image/*" required>
-                                            <a href="#" id="upload-course-pic"  class="edit-avatar"><i class="fa fa-camera"></i></a>
-                                            <img id="course-pic" src="'.BASE_URL.'img/profileImg/default-profile-pic.png" alt="" class="avatar-photo">
-                                        </div>
-                                
-                                    </div>  
-                                    
-                                    <h4 class="text-blue h5 pl-20">Course Info</h4>
-                                    <hr>
                                     <input type="hidden" name="action" value="addNewCourse">
+                                        <h4 class="text-blue h5 pl-20">Course Info</h4>
+                                        <hr>
+                                     <div class="row">
 
-                                    <div class="form-group col-12 col-md-6">
-                                        <label>Course Name</label>
-                                        <input class="form-control name="courseName" value="" form-control-lg" type="text">
-                                    </div>
-                                    
-                                    <div class="form-group col-12 col-md-6">
-                                        <label>Course Advisor</label>
-                                        <select class="selectpicker form-control form-control-lg" name="advisor"  title="Not Chosen">
-                                            <option>Advisor 1</option>
-                                            <option>Advisor 2</option>
-                                            <option>Advisor 3</option>
-                                            <option>Advisor 4</option>
-                                            <option>Advisor 5</option>
-                                            <option>Advisor 6</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="form-group col-12 col-md-12">
-                                        <label>What do you want people to know about you?</label>
-                                        <textarea class="form-control" name="description"></textarea>
-                                    </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-6 col-sm-12 mb-30">
 
-                                    <div class="mb-10 d-flex justify-content-end mr-20">
-                                        <input type="submit" class="btn btn-primary" value="Save & Update">
+                                            <div class="profile-photo">
+                                                <input id="profile-pic-upload" type="file" class="d-none" name="profilePic" accept="image/*" required>
+                                                <a href="#" id="upload-course-pic"  class="edit-avatar"><i class="fa fa-camera mt-2"></i></a>
+                                                <img id="course-pic" src="'.BASE_URL.'img/profileImg/default-profile-pic.png" alt="" class="avatar-photo">
+                                            </div>
+                                    
+                                        </div>  
+
+
+                                        <div class="form-group col-12 col-md-6">
+                                            <label>Course Name</label>
+                                            <input class="form-control name="courseName" value="" form-control-lg" type="text">
+                                        </div>
+                                        
+                                        <div class="form-group col-12 col-md-6">
+                                            <label>Course Advisor</label>
+                                            <select class="selectpicker form-control form-control-lg" name="advisor"  title="Not Chosen">
+                                                <option>Advisor 1</option>
+                                                <option>Advisor 2</option>
+                                                <option>Advisor 3</option>
+                                                <option>Advisor 4</option>
+                                                <option>Advisor 5</option>
+                                                <option>Advisor 6</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group col-12 col-md-12">
+                                            <label>Description about Couse</label>
+                                            <textarea class="form-control" name="courseDescription"></textarea>
+                                        </div>
+
+                                        <div class="mb-10 d-flex justify-content-end mr-20">
+                                            <button type="submit" class="btn btn-primary"><ic class="fa fa" ></i></button>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
         ';
         return $html;
     }
@@ -3750,6 +3758,224 @@ class Ui {
         ';
 
         return $html;
+    
+    
+    
+    
+    }
+    //Displays a list of Courses available in the system
+    public function courseCategories($data = array()){
+
+        $tr = '';
+        if (!empty($data['categories'])){
+            $i = 1;
+            foreach($data['categories']as $key => $category){
+
+                $courseCatId = encrypt($category['id']);
+
+                $tr .= '
+                    <tr>
+                        <td class="table-plus">'.$i.'</td>
+                        <td>'.($category['name'] ?? '').'</td>
+                        <td>'.($category['icon'] ?? '').'</td>
+                        <td>'.($category['creation_date'] ?? '').'</td>
+                        <td>
+                            <div class="dropdown">
+                                <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                                    <i class="dw dw-more"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                                    <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=editCourseCat&courseCatId='.$courseCatId.'"><i class="dw dw-edit2"></i> Edit</a>
+                                    <a class="dropdown-item text-danger" href="'.BASE_URL.'index.php/?page=deleteCourseCat&couserCatId='.encrypt($courseCatId).'" data-toggle="modal" data-target="#remove-course-modal"><i class="dw dw-delete-3"></i> Remove</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                ';
+                $i++;
+
+            }
+        }
+        $html = $this->preloader().'
+            <div class="main-container">
+                <div class="pd-ltr-20 xs-pd-20-10">
+                    <div class="min-height-200px">
+                        <div class="page-header">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="title">
+                                        <h4>Course Categories</h4>
+                                    </div>
+                                    
+                                    <nav aria-label="breadcrumb" role="navigation">
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item"><a href="'.BASE_URL.'index.php/?page=dashboard">Home</a></li>
+                                            <li class="breadcrumb-item active" aria-current="page">Course Categories</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                        '.($data['message'] ?? '').'
+                        <!-- Simple Datatable start -->
+                        <div class="card-box mb-30">
+                            <div class="pd-20">
+                                <h4 class="text-blue h4 d-inline">Courses</h4>
+                                <span class="float-right">
+                                    <a href="'.BASE_URL.'index.php/?page=addCourseCategory" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add Course Category</a>
+                                </span>
+                            </div>
+                            <div class="pb-20">
+                                <table id="mentor-table" class="table stripe hover nowrap">
+                                    <thead>
+                                        <tr>
+                                           
+                                            <th class="table-plus">#</th>
+                                            <th>Name</th>
+                                            <th class="datatable-nosort">Icon</th>
+                                            <th>Data Created</th>
+                                            <th class="datatable-nosort">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    '.$tr.'
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Simple Datatable End -->
+                    
+                    </div>
+                
+                </div>
+            </div>
+        ';
+
+        return $html;
+    }   
+    //displays the add courser category page
+    public function editCourseCategory($data = []){
+        // echo '<br><br><br><br>';
+        // echo '<pre class="pt-5 d-flex justify-content-center">';
+        // print_r($data);
+        // echo '</pre>';
+        $html = $this->preloader().'
+            <div class="main-container">
+                <div class="pd-ltr-20 ">
+                    <div class="">
+                        <div class="page-header">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="title">
+                                        <h4>Course Category</h4>
+                                    </div>
+                                    <nav aria-label="breadcrumb" role="navigation">
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item"><a href="'.BASE_URL.'index.php/?page=dashboard">Home</a></li>
+                                            <li class="breadcrumb-item"><a href="'.BASE_URL.'index.php/?page=courseCategories">Edit Courses Category</a></li>
+                                            <li class="breadcrumb-item active" aria-current="page">Edit Category</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form action="'.BASE_URL.'" method="POST" class="profile-edit-list">
+                            <div class="pd-20 card-box shadow">
+                                <input type="hidden" name="action" value="updateCourseCategory">
+                                <input type="hidden" name="courseCatId" value ="'.(encrypt($data['id'] ?? '')).'">
+                                <div class="row d-flex justify-content-center">
+
+
+                                    <div class="form-group col-md-12 col-12">
+                                    
+                                        <h4 class="text-blue h5 pl-0">Course Category Info</h4>
+                                        <hr>
+                                    </div>
+
+                                    <div class="form-group col-md-6 col-12">
+                                        <label>Course Name</label>
+                                        <input class="form-control  form-control-lg" name="courseName" value="'.($data['name'] ?? '').'" placeholder="Accounting...." type="text" required>
+                                    </div>
+                                    <div class="form-group col-12 col-md-6">
+                                        <label>Course icon</label>
+                                        <input class="form-control form-control-lg" name="courseIcon" value="'.($data['icon'] ?? '').'" placeholder="fa fa-briefcase...." type="text" required>
+                                    </div>
+                                                                    
+
+                                    <div class="col-12 col-md-12 mb-10 d-flex justify-content-end mr-20">
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-pencil"></i> update</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        ';
+        return $html;
+
+    }
+    //displays the add courser category page
+    public function addCourseCategory($data = []){
+
+        $html = $this->preloader().'
+            <div class="main-container">
+                <div class="pd-ltr-20 xs-pd-20-10">
+                    <div class="min-height-200px">
+                        <div class="page-header">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="title">
+                                        <h4>Course Category</h4>
+                                    </div>
+                                    <nav aria-label="breadcrumb" role="navigation">
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item"><a href="'.BASE_URL.'index.php/?page=dashboard">Home</a></li>
+                                            <li class="breadcrumb-item"><a href="'.BASE_URL.'index.php/?page=courseCategories">Add Courses Categories</a></li>
+                                            <li class="breadcrumb-item active" aria-current="page">Add Categories</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pd-20 card-box shadow">
+                                <form action="'.BASE_URL.'" method="POST" class="profile-edit-list">
+                                    <input type="hidden" name="action" value="addNewCourseCategory">
+                                     <div class="row">
+
+
+                                    <div class="form-group col-12 col-md-12">
+                                    
+                                        <h4 class="text-blue h5 pl-0">Course Category Info</h4>
+                                        <hr>
+                                    </div>
+
+                                    <div class="form-group col-12 col-md-6">
+                                        <label>Course Name</label>
+                                        <input class="form-control  form-control-lg" name="courseName" value="" placeholder="Accounting...." type="text" required>
+                                    </div>
+                                    <div class="form-group col-12 col-md-6">
+                                        <label>Course Name</label>
+                                        <input class="form-control form-control-lg" name="courserIcon" value="" placeholder="fa fa-briefcase...." type="text" required>
+                                    </div>
+                                                                      
+
+                                    <div class="col-12 col-md-12 mb-10 d-flex justify-content-end mr-20">
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Add Category</button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ';
+        return $html;
+
     }
     //Displays a list of all the mentors in the system for a mentee
     public function viewMentors(){
@@ -7697,6 +7923,10 @@ class Ui {
             <script src="'.BASE_URL.'assets/js/pagination.js"></script>
 
             <script>
+                //ignoring form resubmission alert
+                if ( window.history.replaceState ) {
+                    window.history.replaceState( null, null, window.location.href );
+                }
                 plyr.setup({
                     tooltips: {
                         controls: !0

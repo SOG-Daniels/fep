@@ -542,6 +542,119 @@ class Process {
         return $data;
 
     }
+
+    /*
+    *   Functions below are used mostly for the backend portal
+    */
+
+    //adds a new course category
+    public function addNewCourseCategory($name, $icon){
+        
+        $name = $this->sanitize($name);
+        $icon = $this->sanitize($icon);
+
+        $sql = $this->conn->prepare('
+            insert into course_category (name, icon) values(?, ?)
+        ');
+
+        //escaping input
+        $sql->bindParam(1, $name);
+        $sql->bindParam(2, $icon);
+       
+        if ($sql->execute()){
+            return true ;
+        }
+        
+        return false;
+
+    }
+    //gets active course category
+    public function getCourseCategories($status = 1){
+        
+        $sql = $this->conn->prepare('
+           Select
+                id, creation_date, name, icon
+           from  
+                course_category
+           where
+                status = ?
+        ');
+
+        //escaping input
+        $sql->bindParam(1, $status);
+       
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+    //gets a category that contains the id passed
+    public function getCourseCategory($courseCatId){
+
+        $categories = $this->getCourseCategories();
+        $data = [];
+
+        foreach ($categories as $category){
+
+            if ($courseCatId == $category['id']){
+                //found category
+                $data = $category;
+                break;
+            }
+        }
+        return $data;
+    }
+    //gets active course category
+    public function updateCourseCategories($name, $icon, $courseCatId){
+        
+        $name = $this->sanitize($name);
+        $icon = $this->sanitize($icon);
+
+        $sql = $this->conn->prepare('
+            UPDATE 
+                course_category as cc 
+            SET 
+                name = ?,
+                icon = ?
+            WHERE 
+                cc.id = ?
+        ');
+
+        //escaping input
+        $sql->bindParam(1, $name);
+        $sql->bindParam(2, $icon);
+        $sql->bindParam(3, $courseCatId);
+    
+        if ($sql->execute()){
+            return true ;
+        }
+        
+        return false;
+    }
+    //gets active course category
+    public function removeCourseCategory($courseCatId){
+        
+        $sql = $this->conn->prepare('
+            UPDATE 
+                course_category as cc 
+            SET 
+                cc.status = 3
+            WHERE 
+                ?  = cc.id
+        ');
+
+        //escaping input
+        $sql->bindParam(1, $courseCatId);
+    
+        if ($sql->execute()){
+            return true ;
+        }
+        
+        return false;
+    }
+
+
+
     /*
     *   Functions below are used to help the process class in carring out additional functionality.
     *   Functions below do not communicate with the database.

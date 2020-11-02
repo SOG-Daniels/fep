@@ -17,6 +17,7 @@
     // echo "<pre>";
     // print_r($_SESSION);
     // echo "</pre>";
+                    echo '<br><br><br><br>';
 
     $view = new Ui();
     $process = new Process();
@@ -37,7 +38,11 @@
     $ajaxRequest = false;
     $ajaxResponse = [];
 
-        
+    // echo '<br><br><br><br>';
+    // echo '<pre class="pt-5 d-flex justify-content-center">';
+    // print_r($_SESSION);
+    // // echo $view->testEncryption();
+    // echo '</pre>';
 
     if (!empty($_SESSION['USERDATA']) && isset($_SESSION['USERDATA']['access_token'])){
         //User is logged into the portal
@@ -45,11 +50,7 @@
         if ($_GET && isset($_GET['page'])){
             // logged in user wants to access a page
             if($_GET['page'] == 'dashboard'){
-                // echo '<br><br><br><br>';
-                // echo '<pre class="pt-5 d-flex justify-content-center">';
-                // print_r($_SESSION);
-                // // echo $view->testEncryption();
-                // echo '</pre>';
+               
                 $currentPage = 'dashboard';
                 $pageContent = $view->dashboard();
             
@@ -70,13 +71,48 @@
                 $pageContent = $view->viewMentorProfile();
 
             }else if($_GET['page'] == 'addCourse'){
+                $result['categories'] = $process->getCourseCategories();
                 
                 $pageContent = $view->addNewCourse();
 
             }else if($_GET['page'] == 'courseInfo'){
 
                 $pageContent = $view->courseInfo();
+            
+            }else if($_GET['page'] == 'addCourseCategory'){
 
+                $pageContent = $view->addCourseCategory();
+            
+            }else if($_GET['page'] == 'editCourseCat' && isset($_GET['courseCatId'])){
+                // editing course category
+                $courseCatId  = decrypt($_GET['courseCatId']);
+                
+                $category = $process->getCourseCategory($courseCatId);
+
+                $pageContent = $view->editCourseCategory($category);
+            
+            }else if($_GET['page'] == 'deleteCourseCat' && isset($_GET['courseCatId'])){
+                
+                $courseCatId  = decrypt($_GET['courseCatId']);
+
+                $result['category'] = $process->getCourseCategory($courseCatId);
+                
+                if (!empty($result)){
+                    // valid courseCatid 
+
+                }else{{
+                    //display 404 error
+
+                }}
+ 
+
+            }else if($_GET['page'] == 'courseCategories'){
+                
+                $result['categories'] = $process->getCourseCategories();
+   
+                
+                $pageContent = $view->courseCategories($result);
+            
             }else if($_GET['page'] == 'courseList'){
 
                 $pageContent = $view->courseList();
@@ -119,12 +155,20 @@
                     $_SESSION = array();
                     
                     $currentPage = 'home';
-
-                    // Displaying public webpage signIn page
+                   
+                    //data for home page
+                    $data['Mentors'] = $process->getMentorList(null, 0);
+                    $data['topPrograms'] = $process->getProgramList(null, 3);
+                    $data['courses'] = $process->getCourseList();
+                    $data['systemSummary'] = $process->getSystemSummary();
+        
+                    $currentPage = 'home';
+                    
+                    // Displaying font end home page
                     $header = $view->header();
                     $topbar = $view->topBar($currentPage);
                     $sidebar = '';
-                    $pageContent = $view->home();
+                    $pageContent = $view->home($data);
                     $footer = $view->footer();
                     
                 }
@@ -140,16 +184,76 @@
             if ($_POST && isset($_POST['action'])){
                 // logged in user wasnt to perform an action 
 
-                if ($_POST['action'] == ''){
+                if ($_POST['action'] == 'addNewCourseCategory'){
 
-                }else{
+                    $result = $process->addNewCourseCategory($_POST['courseName'], $_POST['courserIcon']);
 
-                }
+                    if ($result){
+                        //success 
+                        $data['message'] ='
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>Success!</strong> New Category was Added.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        ';
 
-            }else if(isset($_POST['ajaxRequest'])){
-                //Handles all ajax request made from client side 
+                    }else{
+                        //failed to insert
+                        $data['message'] ='
+                            <div class="alert alert-waring  alert-dismissible fade show" role="alert">
+                                <strong>!</strong> New Category was Added.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        ';
 
-                if($_POST['ajaxRequest'] == 'rating'){
+                    }
+                    $data['categories'] = $process->getCourseCategories();
+                    
+                    $pageContent = $view->courseCategories($data);
+
+
+                }else if ($_POST['action'] == 'updateCourseCategory'){
+                    //updating course category after form submission
+                    $courseCatId = decrypt($_POST['courseCatId']);
+                         echo '<br><br><br><br>';
+                        echo '<pre class="pt-5 d-flex justify-content-center">';
+                        print_r($_POST);
+                        // echo $view->testEncryption();
+                        echo '</pre>';
+
+                    $result = $process->updateCourseCategories($_POST['courseName'], $_POST['courseIcon'], $courseCatId);
+                    
+                    if ($result){
+                        //success 
+                        $data['message'] ='
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>Success!</strong> Category was Updated.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        ';
+
+                    }else{
+                        //failed to insert
+                        $data['message'] ='
+                            <div class="alert alert-waring  alert-dismissible fade show" role="alert">
+                                <strong>Oops!</strong> We could not update the Course Category
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        ';
+
+                    }
+                    $data['categories'] = $process->getCourseCategories();
+                    
+                    $pageContent = $view->courseCategories($data);
+
 
                 }else{
 
