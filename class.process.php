@@ -45,6 +45,37 @@ class Process {
 
 
     }
+    //generates a access token if the for the user 
+    public function requestPassReset($email){
+        
+        $email = $this->sanitize($email);
+
+        $sql = $this->conn->prepare('call request_forgot_password(?);');
+
+        //escaping input
+        $sql->bindParam(1, $email);
+       
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+
+
+        return $result;
+    }
+    //confirm a password reset
+    public function confirmForgotPass($activationCode, $pass){
+
+        $sql = $this->conn->prepare('call confirm_forgot_password(?, ?);');
+
+        //escaping input
+        $sql->bindParam(1, $activationCode);
+        $sql->bindParam(2, $pass);
+       
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+
+
+        return $result;
+    }
     //registers a users to the system
     public function registerUser($data = []){
         
@@ -418,7 +449,7 @@ class Process {
         if ($programId != 0){
             $sql = $this->conn->prepare('
                 select
-                concat(p.first_name, " ", p.last_name) as mentor_name,
+                concat(p.first_name, " ", p.last_name) as mentee_name,
                 p.image_src as profile_pic,
                 c.texto
                 from
@@ -437,6 +468,7 @@ class Process {
         }
     }
 
+    
     //gets the homepage system summary
     public function getSystemSummary(){
 

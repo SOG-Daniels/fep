@@ -383,7 +383,7 @@
                 $result['course'] = $process->getCourseById($courseId);
 
                 if (!empty($result['course'])){
-                    $courseName = str_replace('+', ' ', $_GET['courseName']);
+                    // $courseName = str_replace('+', ' ', $_GET['courseName']);
     
 
                     // $result['course'] = $process->getCourseDetail($courseName, $courseId);
@@ -437,6 +437,12 @@
   
                 $currentPage = 'mentors';
                 $pageContent = $view->mentors($result);
+
+            }else if ($_GET['page'] == 'changePass' && isset($_GET['activationCode'])){
+
+                $data['activationCode'] = $_GET['activationCode'];
+
+                $pageContent = $view->changePass($data);
 
             }else if($_GET['page'] == 'courses'){
 
@@ -682,7 +688,7 @@
                     if ($result != 1){
                         // failed to send message
 
-                        $data['message'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Eamil was not sent!</strong><br> Sorry, we could not send the email. Please try agian later.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+                        $data['message'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Email was not sent!</strong><br> Sorry, we could not send the email. Please try agian later.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
                     }
 
                 }else{
@@ -749,13 +755,84 @@
 
                 }
             
+            }else if($_POST['action'] == 'forgotPassword'){
+
+                $result = $process->requestPassReset($_POST['email']);
+                
+                $data['message'] = '<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Success, Email Sent!</strong><br> Please check your email and follow the intructions specified.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+
+                if ($result['res_code'] == 1){
+                    // send email
+                    $fullMessage = 'Hello '.$_POST['email'].', we\'ve noticed that you have requested a password reset. <a href="'.BASE_URL.'?page=changePass&activationCode='.$result['activation_code'].'"> Please click here to change your password</a><br> The activation code is valid for 24 hours.';
+                    
+                    //sending email 
+                    $email->set_Subject('Password Reset');
+                    $result = $email->send($_POST['email'], $fullMessage);//sending email
+
+                    if ($result != 1){
+                        // failed to send message
+
+                        $data['message'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Email was not sent!</strong><br> Sorry, we could not send the email. Please try agian later.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+                    }
+
+                }else{
+                    //error
+                    $data['message'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Oops!</strong><br> Sorry, '.$result['message'].'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+                }
+                
+                $pageContent = $view->forgotPassword($data);
+                
+                            
+
+            }else if ($_POST['action'] == 'passReset'){
+                    
+                $data['activationCode'] =  $_POST['activationCode'];
+                $confirmPass = $_POST['confirmPassword'];
+
+                $data['message'] = '<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Success!!</strong><br> Your password has been changed, Please sign in.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+
+                if($_POST['confirmPassword'] == $_POST['newPassword']){
+                    //request pass reset
+                
+                    $result = $process->confirmForgotPass($data['activationCode'], $confirmPass);
+
+                    if ($result['res_code'] == 1){
+                        // success
+                        $data['fbAuthLink'] = $fb->getFacebookLoginUrl(FB_REDIRECT_URI_SIGN);
+                        $data['googleAuthLink'] = $google->getGoogleAuthUrl(G_REDIRECT_URI_SIGN);
+                        
+                        $pageContent = $view->signIn($data);
+
+                    }else{
+                        $data['message'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Oops!</strong><br> Sorry, '.$result['message'].'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+                        $pageContent = $view->changePass($data);
+                    }
+               
+                }else{
+                
+                    $data['message'] = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Passwords do not match!</strong><br> Please make sure your new password matches your confirm password, click the eye icon to see your password.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+                    $pageContent = $view->changePass($data);
+                    
+                }
+
+               
+                
+
             }else{
+
+                $data['Mentors'] = $process->getMentorList(null, 0);
+                $data['topPrograms'] = $process->getProgramList(null, 3);
+                $data['courses'] = $process->getCourseList();
+                $data['systemSummary'] = $process->getSystemSummary();
+
+                $pageContent = $view->home($data);
 
             }
 
         }else{
 
-            $temp = $process->getMentorList(null, 3);
             $data['Mentors'] = $process->getMentorList(null, 0);
             $data['topPrograms'] = $process->getProgramList(null, 3);
             $data['courses'] = $process->getCourseList();

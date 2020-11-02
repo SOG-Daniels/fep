@@ -765,7 +765,7 @@ class Ui {
                                     <div class="container" data-aos="fade-up">
                                         <div data-aos="zoom-in" data-aos-delay="100">
                                             <div class="d-flex align-items-stretch">
-                                                <div class="member">
+                                                <div class="member shadow">
                                                     <img src="'.($data['mentor']['profile_pic'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" class="img-fluid mb-3" alt="">
                                                    
                                                     <div class="member-content">
@@ -1453,6 +1453,57 @@ class Ui {
         ';
         return $html;
     }
+    //display a change password form
+    public function changePass($data){
+             
+        $html = $this->banner('Password Reset', 'Please enter a new pasword to login to the system.').'
+            <main id="main">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-12 col-md-5">
+                            <div class="card mt-4 login-form shadow-lg">
+                                <div class="card-body">
+                                    <form action="'.BASE_URL.'" method="post">
+                                        <input type="hidden" name="action" value="passReset">
+                                        <input type="hidden" name="activationCode" value="'.($data['activationCode']?? '').'">
+                                        <h3 class="text-center">Password Reset</h3> 
+                                        '.($data['message'] ?? '').'
+                                        <hr>
+                                        <div class="row">		 
+                                            <div class="col-12 pb-2">
+                                                <label class="">New Password</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text show-pass" id="basic-addon1"><i class="fa fa-eye fa-lg"></i></span>
+                                                    </div>
+                                                    <input type="password" class="form-control" name="newPassword" placeholder="**********" aria-label="password" aria-describedby="basic-addon1" required="required">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 pb-2">
+                                                <label class="">Confirm Password</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text show-pass" id="basic-addon1"><i class="fa fa-eye fa-lg"></i></span>
+                                                    </div>
+                                                    <input type="password" class="form-control" name="confirmPassword" placeholder="**********" aria-label="password" aria-describedby="basic-addon1" required="required">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-success btn-block login-btn">Change Password</button>
+                                        <div class="clearfix pt-2 text-center">
+                                            <a href="'.BASE_URL.'index.php/?page=signIn" class="text-success">I remember my password</a>
+                                        </div>  
+                                    </form>
+                                </div>    
+                            </div>  
+                        </div>
+                    </div>
+                        
+                </div>
+            </main>    
+        ';
+        return $html;
+    } 
     // Displays a registration from
     public function registration($data = null){
              
@@ -1781,7 +1832,7 @@ class Ui {
         return $html;
     }
     //Displays the forgot password card
-    public function forgotPassword(){
+    public function forgotPassword($data = []){
         $html = $this->banner('Sign In', 'Sign in using your facebook, google or custom Sign In credentials').'
             <main id="main">
                 <div class="container">
@@ -1792,12 +1843,13 @@ class Ui {
                                     <form action="'.BASE_URL.'" method="post">
                                         <input type="hidden" name="action" value="forgotPassword">
                                         <h3 class="text-center mb-3">Request Password Reset</h3>		
+                                        '.($data['message'] ?? '').'
                                         <div class="form-group">
                                             <div class="input-group mb-3">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-envelope fa-lg"></i></span>
                                                 </div>
-                                                <input type="text" class="form-control" aria-label="emial" aria-describedby="basic-addon1" placeholder="Enter your email" required="required">
+                                                <input type="text" class="form-control" aria-label="emial" name="email" aria-describedby="basic-addon1" placeholder="Enter your email" required="required">
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-success btn-block login-btn">Send Request</button>
@@ -2101,17 +2153,17 @@ class Ui {
 
         $testimonials = '';
 
-        foreach($data as $key => $testimonial){
+        foreach($data as $testimonial){
        
             $testimonials .= '
                 <div class="testimonial-wrap">
-                    <div class="testimonial-item">
-                        <img src="'.($testimonial['profileImg'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" class="testimonial-img" alt="">
-                        <h3>'.($testimonial['mentor_name'] ?? 'No text to display....').'</h3>
-                        <h4>'.($testimonial['jobTitle'] ?? 'No Job Title listed....').'</h4>
+                    <div class="testimonial-item shadow">
+                        <img src="'.($testimonial['profileImg'] ?? BASE_URL."img/profileImg/default-profile-pic.png").'" class="testimonial-img" alt="">
+                        <h3>'.($testimonial['mentee_name'] ?? 'No text to display....').'</h3>
+                        <!--<h4>'.($testimonial['jobTitle'] ?? 'No Job Title listed....').'</h4>-->
                         <p>
                         <i class="bx bxs-quote-alt-left quote-icon-left"></i>
-                        '.($testimonial['textto'] ?? 'N/A').'
+                        '.($testimonial['texto'] ?? 'N/A').'
                         <i class="bx bxs-quote-alt-right quote-icon-right"></i>
                         </p>
                     </div>
