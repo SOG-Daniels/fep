@@ -311,16 +311,16 @@ class Process {
 
         $sql = $this->conn->prepare('
             select
-            cot.summary as title, cos.summary as content, cot.id as title_id, cos.id as content_id
+                cot.summary as title, cos.summary as content, cot.id as title_id, cos.id as content_id
             from
-            course_outline cot,
-            course_outline cos
+                course_outline cot,
+                course_outline cos
             where
-            cot.course_id = ?
-            and cot.parent = 0
-            and cot.id = cos.parent
-            and cos.parent <> 0
-            order by cot.order_id DESC
+                cot.course_id = ?
+                and cot.parent = 0
+                and cot.id = cos.parent
+                and cos.parent <> 0
+                order by cot.order_id DESC
         ');
         
         $sql->execute(array($courseId));

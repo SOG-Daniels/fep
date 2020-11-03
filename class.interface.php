@@ -2440,12 +2440,12 @@ class Ui {
             <head>
                 <!-- Basic Page Info -->
                 <meta charset="utf-8">
-                <title>DeskApp - Bootstrap Admin Dashboard HTML Template</title>
+                <title>Female Entrepreneurship</title>
             
                 <!-- Site favicon -->
-                <link rel="apple-touch-icon" sizes="180x180" href="'.BASE_URL.'vendors/images/apple-touch-icon.png">
-                <link rel="icon" type="image/png" sizes="32x32" href="'.BASE_URL.'vendors/images/favicon-32x32.png">
-                <link rel="icon" type="image/png" sizes="16x16" href="'.BASE_URL.'vendors/images/favicon-16x16.png">
+                <link rel="" type="image/png" sizes="180x180" href="'.BASE_URL.'assets/img/logos/fep_logo.png">
+                <link rel="" type="image/png" sizes="32x32" href="'.BASE_URL.'assets/img/logos/fep_logo.png">
+                <link rel="" type="image/png" sizes="16x16" href="'.BASE_URL.'assets/img/logos/fep_logo.png">
             
                 <!-- Mobile Specific Metas -->
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -3562,7 +3562,32 @@ class Ui {
         return $html;
     }
     //Displays the form to add a new course to the system
-    public function addNewCourse(){
+    public function addNewCourse($data = []){
+
+        // echo '<br><br><br><br>';
+        // echo '<pre class="pt-5 d-flex justify-content-center">';
+        // print_r($data);
+        // echo '</pre>';
+        $categoryOptions = '';
+        $courseOutlineCards = '';
+
+        if (!empty($data['course_outline'])){
+
+            foreach($data['course_outline'] as $key => $outline){
+                //displaying all cards entered
+                $courseOutlineCards .= $this->create_course_outline_topic_card($outline);
+            }
+        }else{
+            //will display one card for input
+            $courseOutlineCards = $this->create_course_outline_topic_card();
+
+        }
+
+        foreach($data['categories'] as $key => $category){
+            $categoryOptions .= '
+                <option value="'.(encrypt($category['id'])).'">'.$category['name'].'</option>
+            ';
+        }
 
         $html = $this->preloader().'
             <div class="main-container">
@@ -3586,47 +3611,66 @@ class Ui {
                         </div>
 
                         <div class="pd-20 card-box shadow">
-                                <form action="'.BASE_URL.'" method="POST" class="profile-edit-list">
-                                    <input type="hidden" name="action" value="addNewCourse">
-                                        <h4 class="text-blue h5 pl-20">Course Info</h4>
+                                <form action="'.BASE_URL.'" method="POST" id="course-outline-list">
+                                    <input type="hidden" name="action" value="addCourse">
+                                        <h4 class="text-blue h5">Course Info</h4>
                                         <hr>
-                                     <div class="row">
+                                    <div class="row">
 
-                                        <div class="col-xl-12 col-lg-12 col-md-6 col-sm-12 mb-30">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-30">
 
-                                            <div class="profile-photo">
-                                                <input id="profile-pic-upload" type="file" class="d-none" name="profilePic" accept="image/*" required>
-                                                <a href="#" id="upload-course-pic"  class="edit-avatar"><i class="fa fa-camera mt-2"></i></a>
-                                                <img id="course-pic" src="'.BASE_URL.'img/profileImg/default-profile-pic.png" alt="" class="avatar-photo">
+                                            <div class="profile-photo card shadow img-fluid" style="width: 700px;height:auto;">
+                                                <input id="profile-pic-upload" type="file" class="d-none" name="coursePicture" accept="image/*" required>
+                                                <a href="#" id="upload-course-pic"  class="edit-avatar bg-white" style="margin-top: 41%;"><i class="fa fa-upload text-dark mt-2"></i></a>
+                                                <img id="course-pic" src="'.BASE_URL.'assets/img/logos/fep_logo.png" alt=""  >
                                             </div>
                                     
                                         </div>  
 
 
-                                        <div class="form-group col-12 col-md-6">
+                                        <div class="form-group col-12 col-md-4">
                                             <label>Course Name</label>
-                                            <input class="form-control name="courseName" value="" form-control-lg" type="text">
+                                            <input class="form-control name="courseName" value="" placeholder="e.g. Programming...." form-control-lg" type="text">
+                                        </div>
+                                        <div class="form-group col-12 col-md-4">
+                                            <label>Course Icon</label> <i class="fa fa-info-circle fa-lg" data-toggle="tooltip" data-placement="top" title="Search for icons at https://fontawesome.com/v4.7.0/icons/ and enter the icon name as started below."></i>
+                                            <input class="form-control name="courseName" placeholder="e.g. fa fa-star...." value="" form-control-lg" type="text">
                                         </div>
                                         
-                                        <div class="form-group col-12 col-md-6">
-                                            <label>Course Advisor</label>
-                                            <select class="selectpicker form-control form-control-lg" name="advisor"  title="Not Chosen">
-                                                <option>Advisor 1</option>
-                                                <option>Advisor 2</option>
-                                                <option>Advisor 3</option>
-                                                <option>Advisor 4</option>
-                                                <option>Advisor 5</option>
-                                                <option>Advisor 6</option>
+                                        <div class="form-group col-12 col-md-4">
+                                            <label>Course Category</label>
+                                            <select class="selectpicker form-control" name="courseCategory"  title="Choose a category" required>
+                                                '.$categoryOptions.'
                                             </select>
                                         </div>
                                         
                                         <div class="form-group col-12 col-md-12">
-                                            <label>Description about Couse</label>
+                                            <label>Upload a PDF Copy of the Course Outline</label>
+                                            <input type="file" class="form-control-file form-control height-auto" accept="" required>
+                                        </div>
+                                        
+                                        <div class="form-group col-12 col-md-12">
+                                            <label>Description about the Course</label>
                                             <textarea class="form-control" name="courseDescription"></textarea>
                                         </div>
 
-                                        <div class="mb-10 d-flex justify-content-end mr-20">
-                                            <button type="submit" class="btn btn-primary"><ic class="fa fa" ></i></button>
+                                    </div>
+
+                                    <h4 class="text-blue h5">Course Outline Topics</h4>
+                                    <hr>
+                                    <span id="course-outline-container">
+                                        '.$courseOutlineCards.'                                    
+                                    </span>
+
+
+                                    <div class="mt-3 d-flex justify-content-center mb-4">
+                                        <a href="#" id="add-course-card" class="btn btn-light btn-sm text-primary"><i class="fa fa-plus fa-lg text-primary"></i></a>
+                                    </div>
+                                    
+                                         
+                                    <div class="row">
+                                        <div class="col-12 d-flex justify-content-end">
+                                            <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-plus" ></i> Add Course</button>
                                         </div>
                                     </div>
                                 </form>
@@ -7897,6 +7941,9 @@ class Ui {
             <script src="'.BASE_URL.'src/plugins/datatables/js/pdfmake.min.js"></script>
             <script src="'.BASE_URL.'src/plugins/datatables/js/vfs_fonts.js"></script>
             
+            <!-- Script for Autocomplete-->
+            <!--<script src="https://code.jquery.com/jquery-1.12.4.js"></script>-->
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
             
             <!-- bootpag pagination plugin-->
             <script src="'.BASE_URL.'/js/jquery.bootpag.min.js"></script>
@@ -7916,9 +7963,12 @@ class Ui {
             <!-- jQuery file for forums discussion -->
             <script src="'.BASE_URL.'js/jqueryDiscussion.js"></script>
             
-            <!-- jQuery file for forums discussion -->
+            <!-- jQuery custom script -->
             <script src="'.BASE_URL.'js/customScript.js"></script>
             
+            <!-- Custome jQuery for bootpag pagination plugin-->
+            <script src="'.BASE_URL.'assets/js/jQueryForUI.js"></script>
+
             <!-- Custome jQuery for bootpag pagination plugin-->
             <script src="'.BASE_URL.'assets/js/pagination.js"></script>
 
@@ -7977,6 +8027,49 @@ class Ui {
         return $course;
     }
 
+    public function create_course_outline_topic_card($data = []){
+        $html = '
+            <div class="pd-20 mt-2 card-box shadow border rounded-0 course-outline-card">
+                <div class="row">
+                    <div class="col-8">
+                        <h4 class="text-blue h5">Outline Topic</h4>
+                    </div>
+                    <div class="col-4 d-flex justify-content-end">
+                        <a href="'.BASE_URL.'index.php/?page=deleteCourseOutline&courseOutlineId='.(encrypt($data['course_outline_id'] ?? '')).'" class="btn btn-light btn-sm remove-topic"><i class="fa fa-trash fa-lg text-danger"></i></a>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="form-group col-12 col-md-12">
+                        <label>Topic</label>
+                        <input class="form-control name="course[][outline][title]" placeholder="e.g. Introduction...." value="'.($data['title'] ?? '').'" form-control-lg" type="text" required>
+                    </div>
+                </div>
+                <span class="topic-content-container">
+                    <div class="row content-list">
+                        <div class="form-group col-12 col-md-12 mb-0">
+                            <label>Topic Content </label> <i class="fa fa-info-circle"></i> 
+                            <div class="input-group">
+                                <textarea class="form-control" name="course[][outline][summary]" placeholder="This course wil help you understand...." style="height: 110px;" required>'.($data['summary'] ?? '').'</textarea>
+                                <div class="input-group-append">
+                                    <button href="'.BASE_URL.'index.php/?page=removeTopicContent&contentId='.(encrypt($data['content_id'] ?? '#')).'" class="btn btn-danger remove-content" type="">
+                                        <i class="fa fa-trash fa-lg text-white">                
+                                    </i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center mb-4">
+                        <a href="#" class="more-topic-content" class="btn btn-link text-primary btn-sm"><i class="fa fa-plus fa-lg m-auto"></i> Add More Content</a>
+                    </div>
+                </span>
+                
+            </div> 
+        ';
+
+        return $html;
+    }
     
     /***************************************************************************************
         Functions below can be used for Public and the  Portal/ Backend

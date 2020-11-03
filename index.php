@@ -17,7 +17,7 @@
     // echo "<pre>";
     // print_r($_SESSION);
     // echo "</pre>";
-                    echo '<br><br><br><br>';
+                    // echo '<br><br><br><br>';
 
     $view = new Ui();
     $process = new Process();
@@ -41,7 +41,6 @@
     // echo '<br><br><br><br>';
     // echo '<pre class="pt-5 d-flex justify-content-center">';
     // print_r($_SESSION);
-    // // echo $view->testEncryption();
     // echo '</pre>';
 
     if (!empty($_SESSION['USERDATA']) && isset($_SESSION['USERDATA']['access_token'])){
@@ -71,9 +70,11 @@
                 $pageContent = $view->viewMentorProfile();
 
             }else if($_GET['page'] == 'addCourse'){
+
+                //getting course categories
                 $result['categories'] = $process->getCourseCategories();
                 
-                $pageContent = $view->addNewCourse();
+                $pageContent = $view->addNewCourse($result);
 
             }else if($_GET['page'] == 'courseInfo'){
 
@@ -100,10 +101,10 @@
                 if (!empty($result)){
                     // valid courseCatid 
 
-                }else{{
+                }else{
                     //display 404 error
 
-                }}
+                }
  
 
             }else if($_GET['page'] == 'courseCategories'){
@@ -185,7 +186,7 @@
                 // logged in user wasnt to perform an action 
 
                 if ($_POST['action'] == 'addNewCourseCategory'){
-
+                    //working
                     $result = $process->addNewCourseCategory($_POST['courseName'], $_POST['courserIcon']);
 
                     if ($result){
@@ -219,12 +220,7 @@
                 }else if ($_POST['action'] == 'updateCourseCategory'){
                     //updating course category after form submission
                     $courseCatId = decrypt($_POST['courseCatId']);
-                         echo '<br><br><br><br>';
-                        echo '<pre class="pt-5 d-flex justify-content-center">';
-                        print_r($_POST);
-                        // echo $view->testEncryption();
-                        echo '</pre>';
-
+                    
                     $result = $process->updateCourseCategories($_POST['courseName'], $_POST['courseIcon'], $courseCatId);
                     
                     if ($result){
@@ -253,6 +249,15 @@
                     $data['categories'] = $process->getCourseCategories();
                     
                     $pageContent = $view->courseCategories($data);
+
+
+                }else if($_POST['action'] == 'addCourse'){
+
+                        echo '<br><br><br><br>';
+                        echo '<pre class="pt-5 d-flex justify-content-center">';
+                        print_r($_POST);
+                        echo '</pre>';
+
 
 
                 }else{
