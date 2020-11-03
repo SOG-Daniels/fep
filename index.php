@@ -74,7 +74,7 @@
                 //getting course categories
                 $result['categories'] = $process->getCourseCategories();
                 
-                $pageContent = $view->addNewCourse($result);
+                $pageContent = $view->addCourse($result);
 
             }else if($_GET['page'] == 'courseInfo'){
 
@@ -116,7 +116,10 @@
             
             }else if($_GET['page'] == 'courseList'){
 
-                $pageContent = $view->courseList();
+                $result['courses'] = $process->getCourseList();
+
+
+                $pageContent = $view->courseList($result);
 
             }else if($_GET['page'] == 'viewMentors'){
 

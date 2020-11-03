@@ -3562,7 +3562,7 @@ class Ui {
         return $html;
     }
     //Displays the form to add a new course to the system
-    public function addNewCourse($data = []){
+    public function addCourse($data = []){
 
         // echo '<br><br><br><br>';
         // echo '<pre class="pt-5 d-flex justify-content-center">';
@@ -3570,6 +3570,7 @@ class Ui {
         // echo '</pre>';
         $categoryOptions = '';
         $courseOutlineCards = '';
+        $cardCount = 1;
 
         if (!empty($data['course_outline'])){
 
@@ -3611,18 +3612,18 @@ class Ui {
                         </div>
 
                         <div class="pd-20 card-box shadow">
-                                <form action="'.BASE_URL.'" method="POST" id="course-outline-list">
+                                <form action="'.BASE_URL.'" method="POST" id="course-outline-list" enctype="multipart/form-data">
                                     <input type="hidden" name="action" value="addCourse">
                                         <h4 class="text-blue h5">Course Info</h4>
                                         <hr>
                                     <div class="row">
 
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-30">
-
+                                            <!--style="opacity:0;width:0;float:left;"-->
                                             <div class="profile-photo card shadow img-fluid" style="width: 700px;height:auto;">
-                                                <input id="profile-pic-upload" type="file" class="d-none" name="coursePicture" accept="image/*" required>
-                                                <a href="#" id="upload-course-pic"  class="edit-avatar bg-white" style="margin-top: 41%;"><i class="fa fa-upload text-dark mt-2"></i></a>
-                                                <img id="course-pic" src="'.BASE_URL.'assets/img/logos/fep_logo.png" alt=""  >
+                                                <input id="course-pic-upload" type="file" class="d-none" name="coursePicture" accept=".jpg,.jpeg,.png"  oninvalid="alert(\'You must uploade a course picture!\');" required />
+                                                <a href="#" id="upload-course-pic"  class="edit-avatar bg-white" style="margin-top: auto;"><i class="fa fa-upload text-dark mt-2"></i></a>
+                                                <img id="course-pic" src="'.BASE_URL.'assets/img/logos/fep_logo.png" alt="" style="width:auto;height:auto;">
                                             </div>
                                     
                                         </div>  
@@ -3630,28 +3631,28 @@ class Ui {
 
                                         <div class="form-group col-12 col-md-4">
                                             <label>Course Name</label>
-                                            <input class="form-control name="courseName" value="" placeholder="e.g. Programming...." form-control-lg" type="text">
+                                            <input class="form-control name="courseName" value="Programming" placeholder="e.g. Programming...." form-control-lg" type="text">
                                         </div>
                                         <div class="form-group col-12 col-md-4">
                                             <label>Course Icon</label> <i class="fa fa-info-circle fa-lg" data-toggle="tooltip" data-placement="top" title="Search for icons at https://fontawesome.com/v4.7.0/icons/ and enter the icon name as started below."></i>
-                                            <input class="form-control name="courseName" placeholder="e.g. fa fa-star...." value="" form-control-lg" type="text">
+                                            <input class="form-control name="courseIcon" placeholder="e.g. fa fa-star...." value="fa fa-laptop" form-control-lg" type="text">
                                         </div>
                                         
                                         <div class="form-group col-12 col-md-4">
                                             <label>Course Category</label>
-                                            <select class="selectpicker form-control" name="courseCategory"  title="Choose a category" required>
+                                            <select class="selectpicker form-control" name="courseCategoryId"  title="Choose a category" required>
                                                 '.$categoryOptions.'
                                             </select>
                                         </div>
                                         
                                         <div class="form-group col-12 col-md-12">
                                             <label>Upload a PDF Copy of the Course Outline</label>
-                                            <input type="file" class="form-control-file form-control height-auto" accept="" required>
+                                            <input type="file" class="form-control-file form-control height-auto" name="digitalCourseOutline" accept=".pdf" required>
                                         </div>
                                         
                                         <div class="form-group col-12 col-md-12">
                                             <label>Description about the Course</label>
-                                            <textarea class="form-control" name="courseDescription"></textarea>
+                                            <textarea class="form-control" name="courseDescription">Basic description, testing</textarea>
                                         </div>
 
                                     </div>
@@ -3678,22 +3679,31 @@ class Ui {
                         </div>
                     </div>
                 </div>
+                <script>
+                    setCourserOutlineCardCount('.$cardCount.');
+                </script>
         ';
         return $html;
     }
      //Displays a list of Courses available in the system
     public function courseList($data = array()){
+                // echo '<br><br><br><br>';
+                // echo '<pre class="pt-5 d-flex justify-content-center" style="margin-left: 200px; padding-left:600px;">';
+                // print_r($data);
+                // echo '</pre>';
 
         $tr = '';
 
-        for ($i = 1; $i < 2; $i++){
+        // for admin 
+        $count = 1;
+        foreach($data['courses'] as $key => $course){
 
             $tr .= '
                 <tr>
-                    <td class="table-plus">Marketing</td>
-                    <td>Danielson Correa</td>
-                    <td>20</td>
-                    <td>10</td>
+                    <td class="table-plus">'.$count.'</td>
+                    <td>'.$course['course_name'].'</td>
+                    <td>'.$course['rating'].'</td>
+                    <td></td>
                     <td>4.0</td>
                     <td>29-03-2018</td>
                     <td>
@@ -3778,12 +3788,12 @@ class Ui {
                                             <th>Forum Total</th>
                                             <th>Overall Rating</th>
                                             <th class="datatable-nosort">Action</th>-->
-                                            <th class="table-plus">Course Name</th>
-                                            <th>Advisor</th>
-                                            <th>Mentee Total</th>
-                                            <th>Forum Total</th>
-                                            <th>Rating</th>
-                                            <th>Date Joined</th>
+
+                                            <th class="table-plus">#</th>
+                                            <th>Name</th>
+                                            <th>Overall Rating</th>
+                                            <th>Course Outline</th>
+                                            <th>Course Icon</th>
                                             <th class="datatable-nosort">Action</th>
                                         </tr>
                                     </thead>
@@ -7974,9 +7984,9 @@ class Ui {
 
             <script>
                 //ignoring form resubmission alert
-                if ( window.history.replaceState ) {
-                    window.history.replaceState( null, null, window.location.href );
-                }
+                // if ( window.history.replaceState ) {
+                //     window.history.replaceState( null, null, window.location.href );
+                // }
                 plyr.setup({
                     tooltips: {
                         controls: !0
@@ -8027,9 +8037,9 @@ class Ui {
         return $course;
     }
 
-    public function create_course_outline_topic_card($data = []){
+    public function create_course_outline_topic_card($data = [], $key = 0){
         $html = '
-            <div class="pd-20 mt-2 card-box shadow border rounded-0 course-outline-card">
+            <div class="pd-20 mt-2 card-box shadow border rounded-0 course-outline-card" data-card-count="'.$key.'">
                 <div class="row">
                     <div class="col-8">
                         <h4 class="text-blue h5">Outline Topic</h4>
@@ -8042,7 +8052,7 @@ class Ui {
                 <div class="row">
                     <div class="form-group col-12 col-md-12">
                         <label>Topic</label>
-                        <input class="form-control name="course[][outline][title]" placeholder="e.g. Introduction...." value="'.($data['title'] ?? '').'" form-control-lg" type="text" required>
+                        <input class="form-control" name="outline['.$key.'][title]" placeholder="e.g. Introduction...." value="'.($data['title'] ?? '').'"  type="text" required>
                     </div>
                 </div>
                 <span class="topic-content-container">
@@ -8050,7 +8060,7 @@ class Ui {
                         <div class="form-group col-12 col-md-12 mb-0">
                             <label>Topic Content </label> <i class="fa fa-info-circle"></i> 
                             <div class="input-group">
-                                <textarea class="form-control" name="course[][outline][summary]" placeholder="This course wil help you understand...." style="height: 110px;" required>'.($data['summary'] ?? '').'</textarea>
+                                <textarea class="form-control" name="outline['.$key.'][content]['.$key.']" placeholder="This course wil help you understand...." style="height: 110px;" required>'.($data['summary'] ?? '').'</textarea>
                                 <div class="input-group-append">
                                     <button href="'.BASE_URL.'index.php/?page=removeTopicContent&contentId='.(encrypt($data['content_id'] ?? '#')).'" class="btn btn-danger remove-content" type="">
                                         <i class="fa fa-trash fa-lg text-white">                

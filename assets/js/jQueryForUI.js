@@ -1,6 +1,56 @@
 
 $(document).ready(function (){
 
+    //attaches image uploaded to be displayed
+    var setCurseImg = function(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#course-pic').attr('src', e.target.result);
+            }
+            
+            // // Displays the delete icon
+            // $('#remove-profile-pic').addClass('d-block');
+    
+            // //Displays the delete icon
+            // $('#remove-course-pic').addClass('d-block');
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }   
+
+    $("#course-pic-upload").on('change', function(){
+        setCurseImg(this);
+        // var data = new FormData(document.getElementById("upload-img-form-2"));
+        
+       // console.log(data);
+        //sends a request to the change_profile_pic() function in the user controller
+        // to change the users profile pic
+        // $.ajax({
+        //     url: base_url+'update-profile-picture',  
+        //     type: 'POST',
+        //     data: data,
+        //     success:function(data){
+        //         // location.reload(true);//reloading the current page from server not from cache
+        //         location.reload(true);//reloading current page from server and not from cache
+        //         console.log(data);
+        //         alert(data);
+        //     },
+        //     cache: false,
+        //     contentType: false,
+        //     processData: false
+        // });
+    });
+    // click trigger to course image upload
+    $('#upload-course-pic').on('click', function(e){
+
+        e.preventDefault();
+
+        $('#course-pic-upload').click();
+
+    });
+
     //shows and hides password
     $('.show-pass').click(function (e){
         e.preventDefault();
@@ -117,7 +167,9 @@ $(document).ready(function (){
     //adds a new course outline card
     $('#add-course-card').click(function(e){
         e.preventDefault();
-        var courseOutlineCard = '<div class="pd-20 mt-2 card-box shadow border rounded-0 course-outline-card">'+
+        var key = getCourserOutlineCardCount();
+
+        var courseOutlineCard = '<div class="pd-20 mt-2 card-box shadow border rounded-0 course-outline-card" data-card-count="'+key+'">'+
                                     '<div class="row">'+
                                         '<div class="col-8">'+
                                             '<h4 class="text-blue h5">Outline Topic</h4>'+
@@ -130,7 +182,7 @@ $(document).ready(function (){
                                     '<div class="row">'+
                                         '<div class="form-group col-12 col-md-12">'+
                                             '<label>Topic</label>'+
-                                            '<input class="form-control name="course[][outline][title]" placeholder="e.g. Introduction...." value="" form-control-lg" type="text" required>'+
+                                            '<input class="form-control" name="outline['+key+'][title]" placeholder="e.g. Introduction...." value="" type="text" required>'+
                                         '</div>'+
                                     '</div>'+
                                     '<span class="topic-content-container">'+
@@ -138,10 +190,10 @@ $(document).ready(function (){
                                             '<div class="form-group col-12 col-md-12 mb-0">'+
                                                 '<label>Topic Content </label> <i class="fa fa-info-circle"></i> '+
                                                 '<div class="input-group">'+
-                                                    '<textarea class="form-control" name="course[][outline][summary]" placeholder="This course wil help you understand...." style="height: 110px;" required></textarea>'+
+                                                    '<textarea class="form-control" name="outline['+key+'][content][]" placeholder="This course wil help you understand...." style="height: 110px;" required></textarea>'+
                                                     '<div class="input-group-append">'+
                                                         '<button href="'+BASE_URL+'index.php/?page=removeTopicContent&contentId=#" class="btn btn-danger remove-content" type="">'+
-                                                            '<i class="fa fa-trash fa-lg text-white">  '+             
+                                                            '<i class="fa fa-trash fa-lg text-white">'+             
                                                         '</i></button>'+
                                                     '</div>'+
                                                 '</div>'+
@@ -155,6 +207,7 @@ $(document).ready(function (){
                                     
                                 '</div>';
 
+        setCourserOutlineCardCount(++key);
        
         $('#course-outline-container').append($(courseOutlineCard).hide().fadeIn(777));
 
@@ -163,20 +216,22 @@ $(document).ready(function (){
     //adds more textare fields for course topic
     $('#course-outline-container').on('click', '.more-topic-content', function(e){
         e.preventDefault();
+        var parentCard = $(this).parent().parent().parent();
+        var parentCardId = $(parentCard).attr('data-card-count');
+
         var contentInput = '<div class="form-group col-12 col-md-12 mb-0">'+
                                 '<label>Topic Content </label>'+
                                 '<div class="input-group">'+
-                                    '<textarea class="form-control" name="course[][outline][summary]" placeholder="This course wil help you understand...." style="height: 110px;" required></textarea>'+
+                                    '<textarea class="form-control" name="outline['+parentCardId+'][content][]" placeholder="This course wil help you understand...." style="height: 110px;" required></textarea>'+
                                     '<div class="input-group-append">'+
                                         '<button href="'+BASE_URL+'index.php/?page=removeTopicContent&contentId=#" class="btn btn-danger remove-content" type=""><i class="fa fa-trash fa-lg text-white"></i></button>'+
                                     '</div>'+
                                 '</div>'+
                             '</div>';
-        
+
+
         // content-list
         var contentContainer = $(this).parent().parent().find('.content-list');
-        console.log($(contentContainer)[0]);
-
 
         $(contentContainer).append($(contentInput).hide().fadeIn(777));
         
@@ -190,7 +245,9 @@ $(document).ready(function (){
         var removeCard = $(this).parent().parent().parent();
 
         //do a get request and on success remove the card
-        $(removeCard).fadeOut(777);
+        $(removeCard).fadeOut(777, function(){
+            $(removeCard).remove();
+        });
 
     });
 
@@ -201,10 +258,10 @@ $(document).ready(function (){
         var deleteUrl = $(this).attr('href');
         var removeCard = $(this).parent().parent().parent();
 
-        console.log(deleteUrl);
-
         //do a get request and on success remove the card
-        $(removeCard).fadeOut(777);
+        $(removeCard).fadeOut(777, function(){
+            $(removeCard).remove();
+        });
         
 
 

@@ -8,15 +8,30 @@
 var BASE_URL;
 
 var paginationTotalCount = 0;
+var courseOutlineCardCount = 0;
+var couseOutlineContentCount = 0;
 
 // SET FUNCTIONS
 
 function setPaginationTotalCount(num){
     paginationTotalCount = num;
 }
+function setCourserOutlineCardCount(num){
+    courseOutlineCardCount = num;
+}
+function setCouseOutlineContentCount(num){
+    couseOutlineContentCount = num;
+}
+
 
 // GET FUNCTIONS
 
+function getCourserOutlineCardCount(){
+    return courseOutlineCardCount;
+}
+function getCouseOutlineContentCount(){
+    return couseOutlineContentCount;
+}
 function getPaginationTotalCount(){
     return paginationTotalCount;
 }
