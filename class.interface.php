@@ -2878,24 +2878,7 @@ class Ui {
 
             foreach($data['programs'] as $key => $program){
                 $programId = encrypt($program['id']);
-                $courses .= '
-                    <div class="col-xl-3 mb-30">
-                        <a href="'.BASE_URL.'index.php/?page=programContent&programId='.$programId.'">
-                            <div class="card-box height-100-p widget-style1 shadow-lg">
-                                <div class="d-flex flex-wrap align-items-center">
-                                    <div class="progress-data text-center">
-                                        <!--<div id="chart"></div>-->
-                                        <i class="icon-copy dw dw-suitcase h1"></i>
-                                    </div>
-                                    <div class="widget-data">
-                                        <div class="h4 mb-0" data-toggle="tooltip" data-placement="top" title="Mentee total"><i class="fa fa-user"></i> '.$program['mentee_total'].'</div>
-                                        <div class="weight-600 font-14">'.$program['name'].'</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                ';
+                $courses .= $this->create_basic_course_card();
             }
 
         }else{
@@ -2931,164 +2914,15 @@ class Ui {
 
             for($num = 0; $num < 3; $num++){//foreach($data['topMentors'] as $key => $topMentor){
 
-                $mentorIndicators .= '
-                    <li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="'.$num.'" class="'.(($num  == 0)? 'active' : '').'"></li>
-                ';
-                $mentorCards .= '
-                <div class="carousel-item '.(($num == 0)? 'active' : '').'">
-                    <div class="clearfix">
-                        
-                            <div class="da-card">
-                                <div class="da-card-photo">
-                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                    <div class="da-overlay da-slide-top">
-                                        <div class="da-social">
-                                            <ul class="clearfix">
-                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="da-card-content text-center">
-                                    <h5 class="h5 mb-0"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
-                                    <p class="mb-0">Marketing</p>
-                                    <span class="d-flex justify-content-center mb-2" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                        <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                    </span>
-                                    <span>
-                                        <a href="#" class="btn btn-success btn-sm"><i class="fa fa-paper-plane-o"></i> Request Mentorship</a>
-                                    </span>
-                                </div>
-                            </div>
-                        
-                    </div>
-                </div>
-                ';
+                $mentorCards .= $this->create_mentor_card();
             }
             $topMentors = '
+                <h3 class="h3 text-blue">Top Mentors</h3>
                 <div class="row">
-                    <div class="col-12 col-md-4">
-                        <h3 class="h3 text-blue">Popular Mentors</h3>
-
-                        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                            <ol class="carousel-indicators">
-                                '.$mentorIndicators.'
-                                <!--<li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                                <li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                                <li class="bg-secondary" data-target="#carouselExampleIndicators" data-slide-to="2"></li>-->
-                            </ol>
-                            <div class="carousel-inner pb-1">
-                                '.$mentorCards.'
-                                <!--<div class="carousel-item active">
-                                    <div class="clearfix">
-                                        
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content text-center">
-                                                    <h5 class="h5"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
-                                                   <p class="mb-0">Marketing</p>
-                                                    <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        
-                                    </div>
-                                </div>
-                                <div class="carousel-item">
-                                    <div class="clearfix">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo2.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content text-center">
-                                                    <h5 class="h5"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
-                                                    <p class="mb-0">Marketing</p>
-                                                    <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                    </div>                            
-                                </div>
-                                <div class="carousel-item">
-                                    <div class="clearfix">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo3.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="da-card-content text-center">
-                                                    <h5 class="h5"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
-                                                    <p class="mb-0">Marketing</p>
-                                                    <span class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="4.0" >
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star-half-o fa-lg"></i></span>
-                                                        <span class=""><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                    </div>
-                                </div>-->
-                            </div>
-                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                                <span class="carousel-control-prev-icon bg-secondary" aria-hidden="true"></span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                                <span class="carousel-control-next-icon bg-secondary" aria-hidden="true"></span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        </div>
-
-                    </div>
-                    <div class="col-12 col-md-6">
-                    </div>
+        
+                    '.$mentorCards.'
+                           
+                         
                 </div>
             ';
         // }
@@ -3102,7 +2936,7 @@ class Ui {
                         '.$courses.'
                        
                     </div>
-
+                    
                     '.$topMentors.'
                     
                    <!-- Calendar for user-->
@@ -3630,7 +3464,7 @@ class Ui {
                                             <input class="form-control name="courseName" value="Programming" placeholder="e.g. Programming...." form-control-lg" type="text">
                                         </div>
                                         <div class="form-group col-12 col-md-4">
-                                            <label>Course Icon</label> <i class="fa fa-info-circle fa-lg" data-toggle="tooltip" data-placement="top" title="Search for icons at https://fontawesome.com/v4.7.0/icons/ and enter the icon name as started below."></i>
+                                            <label>Course Icon</label>
                                             <input class="form-control name="courseIcon" placeholder="e.g. fa fa-star...." value="fa fa-laptop" form-control-lg" type="text">
                                         </div>
                                         
@@ -3653,7 +3487,7 @@ class Ui {
 
                                     </div>
 
-                                    <h4 class="text-blue h5">Course Outline Topics</h4>
+                                    <h4 class="text-blue h5">Course Outline Sections</h4>
                                     <hr>
                                     <span id="course-outline-container">
                                         '.$courseOutlineCards.'                                    
@@ -4665,32 +4499,6 @@ class Ui {
             for ($num = 0; $num < 6; $num++){//foreach($data['mentors'] as $key => $mentor){
                 
                 $cards .= '
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-2">
-                        <div class="card shadow">
-                            <a href="'.BASE_URL.'index.php/?page=programDetails">
-                                <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
-                            </a>
-                            <div class="card-body">
-                                <h5 class="mb-1"><a href="'.BASE_URL.'index.php/?page=programDetails">Website Design</a></h5>
-                                
-                                <span class="d-flex justify-content-start align-items-center">
-                                    <p class="" data-toggle="tooltip" data-placement="top" title="4.0">
-                                        <span class="float-right"><i class="text-warning fa fa-star-o "></i></span>
-                                        <span class="float-right"><i class="text-warning fa fa-star "></i></span>
-                                        <span class="float-right"><i class="text-warning fa fa-star "></i></span>
-                                        <span class="float-right"><i class="text-warning fa fa-star "></i></span>
-                                        <span class="float-right"><i class="text-warning fa fa-star "></i></span>
-                                    </p>
-                                </span>                                    
-
-                                <p class="">Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                <!--<span class="d-flex justify-content-end">
-                                    <a href="'.BASE_URL.'index.php/?page=" class="btn btn-success btn-sm"><i class="fa fa-paper-plane-o "></i> Request Mentorship</a>
-                                </span>-->
-                            
-                            </div>
-                        </div>
-                    </div> <!-- End Course Item-->
                 ';
                
                 if ($count == ($possibleCardTotal-1)){
@@ -8110,37 +7918,37 @@ class Ui {
     //@param3 the icon for the course
     //@param4 the total amount of mentees in the course
     //@return the contructed html start rating or an empty string if rating is zero 
-    public function create_simple_course_card_portal($courseId = 0, $name = null, $icon = null, $count = 0){
-        
-        $id = encrypt($courseId);
-        $course = '
+    public function create_basic_course_card($data = []){
+
+
+        $html = '
             <div class="col-xl-3 mb-30">
-                <a href="'.BASE_URL.'index.php/?page=programContent&programId='.$id.'">
+                <a href="'.BASE_URL.'index.php/?page=programContent&programId='.$courseId.'">
                     <div class="card-box height-100-p widget-style1 shadow-lg">
                         <div class="d-flex flex-wrap align-items-center">
                             <div class="progress-data text-center">
                                 <!--<div id="chart"></div>-->
-                                <i class="'.($icon ?? 'fa fa-book').' h1"></i>
+                                <!--<i class="icon-copy dw dw-suitcase h1"></i>-->
+                                <i class="'.($data['coures_icon'] ?? '').' h1"></i>
                             </div>
                             <div class="widget-data">
-                                <div class="h4 mb-0" data-toggle="tooltip" data-placement="top" title="Mentee total"><i class="fa fa-user"></i> '.$program['mentee_total'].'</div>
-                                <div class="weight-600 font-14">'.$program['name'].'</div>
+                                <div class="h4 mb-0" data-toggle="tooltip" data-placement="top" title="Mentee total"><i class="fa fa-user"></i> '.($data['mentee_total'] ?? 'N/a').'</div>
+                                <div class="weight-600 font-14">'.($data['coures_name'] ?? 'N/a').'</div>
                             </div>
                         </div>
                     </div>
                 </a>
-            </div>
+            </div>  
         ';
-
-        return $course;
     }
 
+    //creates a card for the section in add course
     public function create_course_outline_topic_card($data = [], $key = 0){
         $html = '
             <div class="pd-20 mt-2 card-box shadow border rounded-0 course-outline-card" data-card-count="'.$key.'">
                 <div class="row">
                     <div class="col-8">
-                        <h4 class="text-blue h5">Outline Topic</h4>
+                        <h4 class="text-blue h5">Section</h4>
                     </div>
                     <div class="col-4 d-flex justify-content-end">
                         <a href="'.BASE_URL.'index.php/?page=deleteCourseOutline&courseOutlineId='.(encrypt($data['course_outline_id'] ?? '')).'" class="btn btn-light btn-sm remove-topic"><i class="fa fa-trash fa-lg text-danger"></i></a>
@@ -8149,14 +7957,14 @@ class Ui {
                 <hr>
                 <div class="row">
                     <div class="form-group col-12 col-md-12">
-                        <label>Topic</label>
+                        <label>Title</label>
                         <input class="form-control" name="outline['.$key.'][title]" placeholder="e.g. Introduction...." value="'.($data['title'] ?? '').'"  type="text" required>
                     </div>
                 </div>
                 <span class="topic-content-container">
                     <div class="row content-list">
                         <div class="form-group col-12 col-md-12 mb-0">
-                            <label>Topic Content </label> <i class="fa fa-info-circle"></i> 
+                            <label>Content </label>
                             <div class="input-group">
                                 <textarea class="form-control" name="outline['.$key.'][content]['.$key.']" placeholder="This course wil help you understand...." style="height: 110px;" required>'.($data['summary'] ?? '').'</textarea>
                                 <div class="input-group-append">
@@ -8178,7 +7986,77 @@ class Ui {
 
         return $html;
     }
-    
+  
+    //creates a mentor card for 
+    public function create_mentor_card($data = []){
+
+        $rating = $data['rating'] ?? 0;
+
+        $starRating = $this->create_start_rating($rating);
+
+        $html = '
+            <div class="col-lg-4 col-md-4 col-12 d-flex align-items-stretch">
+                <div class="da-card">
+                    <div class="da-card-photo">
+                        <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
+                        <div class="da-overlay da-slide-top">
+                            <div class="da-social">
+                                <ul class="clearfix">
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="da-card-content text-center">
+                        <h5 class="h5 mb-0"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
+                        <p class="mb-0">Marketing</p>
+                        '.$starRating.'
+                        <span>
+                            <a href="#" class="btn btn-success btn-sm"><i class="fa fa-paper-plane-o"></i> Request Mentorship</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+                        
+        ';
+
+        return $html;
+
+    } 
+
+    public function create_course_card($data = []){
+
+        $rating = $data['rating'] ?? 0;
+        $starRating = $this->create_start_rating($rating, 'justify-content-start align-items-center');
+
+        $html = '
+        
+            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-2">
+                <div class="card shadow">
+                    <a href="'.BASE_URL.'index.php/?page=programDetails">
+                        <img src="'.($data['course_img'] ?? BASE_URL.'assets/img/course-1.jpg').'" class="img-fluid" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="mb-1"><a href="'.BASE_URL.'index.php/?page=programDetails">'.($data['course_name']??'N/a').'</a></h5>
+                        
+                        '.$starRating.'                
+
+                        <p class="">'.$data['course_about'].'</p>
+                        <!--<span class="d-flex justify-content-end">
+                            <a href="'.BASE_URL.'index.php/?page=" class="btn btn-success btn-sm"><i class="fa fa-paper-plane-o "></i> Request Mentorship</a>
+                        </span>-->
+                    
+                    </div>
+                </div>
+            </div> <!-- End Course Item-->
+        
+        ';
+
+        return $html;
+    }
+
     /***************************************************************************************
         Functions below can be used for Public and the  Portal/ Backend
     ****************************************************************************************/

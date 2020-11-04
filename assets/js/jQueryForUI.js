@@ -181,14 +181,14 @@ $(document).ready(function (){
                                     '<hr>'+
                                     '<div class="row">'+
                                         '<div class="form-group col-12 col-md-12">'+
-                                            '<label>Topic</label>'+
+                                            '<label>Title</label>'+
                                             '<input class="form-control" name="outline['+key+'][title]" placeholder="e.g. Introduction...." value="" type="text" required>'+
                                         '</div>'+
                                     '</div>'+
                                     '<span class="topic-content-container">'+
                                         '<div class="row content-list">'+
                                             '<div class="form-group col-12 col-md-12 mb-0">'+
-                                                '<label>Topic Content </label> <i class="fa fa-info-circle"></i> '+
+                                                '<label>Content </label> <i class="fa fa-info-circle"></i> '+
                                                 '<div class="input-group">'+
                                                     '<textarea class="form-control" name="outline['+key+'][content][]" placeholder="This course wil help you understand...." style="height: 110px;" required></textarea>'+
                                                     '<div class="input-group-append">'+
@@ -220,7 +220,7 @@ $(document).ready(function (){
         var parentCardId = $(parentCard).attr('data-card-count');
 
         var contentInput = '<div class="form-group col-12 col-md-12 mb-0">'+
-                                '<label>Topic Content </label>'+
+                                '<label>Content </label>'+
                                 '<div class="input-group">'+
                                     '<textarea class="form-control" name="outline['+parentCardId+'][content][]" placeholder="This course wil help you understand...." style="height: 110px;" required></textarea>'+
                                     '<div class="input-group-append">'+

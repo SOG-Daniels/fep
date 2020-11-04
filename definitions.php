@@ -13,6 +13,7 @@
 
     // define('BASE_URL', 'https://femaleentrepreneurs.bz/fep/');
     define('BASE_URL', 'http://dev.femaleentrepreneurs.bz/');
+    // define('BASE_URL', 'https://localhost/fep/');
     
     // fb defines
     define('FB_APP_ID', '719611568906304');

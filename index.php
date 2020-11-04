@@ -298,6 +298,8 @@
 
                                     if(move_uploaded_file($_FILES["coursePicture"]["tmp_name"], $newName)){
                                         echo "your file has been successfully uploaded";
+                                    }else{
+                                        
                                     }
                                 }else{
 
