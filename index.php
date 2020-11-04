@@ -675,7 +675,10 @@
                 //validating user login
                 
                 $result = $process->validateLogin($_POST);
-                
+                    // echo '<br><br><br><br>';
+                    // echo '<pre>';
+                    // print_r($_SESSION);
+                    // echo '</pre>';
                 if ($result['res_code'] != 1){
                     //user not found
                     $data['message'] ='
@@ -691,13 +694,17 @@
 
                 }else{
                     //success - displaying login portal
-                    $_SESSION['USERDATA']['access_token'] = $result['access_token'];
+                    // $_SESSION['USERDATA']['access_token'] = $result['access_token'];
+                    echo '<br><br><br><br>';
+                    echo '<pre>';
+                    print_r($result);
+                    echo '</pre>';
 
-                    $header =  $view->portalHeader();
-                    $topbar = $view->portalTopBar();
-                    $sidebar = $view->portalSideBar();
-                    $pageContent = $view->dashboard();
-                    $footer = $view->portalFooter();
+                    // $header =  $view->portalHeader();
+                    // $topbar = $view->portalTopBar();
+                    // $sidebar = $view->portalSideBar();
+                    // $pageContent = $view->dashboard();
+                    // $footer = $view->portalFooter();
                     
                 }
                 
