@@ -114,6 +114,19 @@
                 
                 $pageContent = $view->courseCategories($result);
             
+            }else if($_GET['page'] == 'editCourse' && isset($_GET['courseId'])){
+                
+                //decrypting courseId 
+                $courseId  = decrypt($_GET['courseId']);
+                $isFound = $process->getCourseById($courseId);
+
+                if($isFound){
+                    //found course
+                    $pageContent = $view->editCourse($isFound);
+                }else{
+                    //display 404 error page 
+                }
+
             }else if($_GET['page'] == 'courseList'){
 
                 $result['courses'] = $process->getCourseList();
@@ -259,9 +272,66 @@
                         echo '<br><br><br><br>';
                         echo '<pre class="pt-5 d-flex justify-content-center">';
                         print_r($_POST);
+                        print_r($_FILES);
                         echo '</pre>';
+                        $data['message'] = '
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <strong>Registration Complete!</strong><br> You have been registered, please <a href="'.BASE_URL.'index.php?page=signIn" >Sign In</a>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        ';
 
+                        if (!empty($_FILES['coursePicture']) && !empty($_FILES['digitalCourseOutline'])){
 
+                            //UPLAODING FILES
+                            if ($_FILES['coursePicture']['error'] == 0){
+                                //uploade file
+
+                            }else{
+                                // error occured                                
+                                $data['message'] = '
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong>Error!</strong><br> Please make sure you upload a course image or a digital copy of the courser outline.
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                ';   
+                            }
+                            
+                            //UPLAODING FILES
+                            if ($_FILES['digitalCourseOutline']['error'] == 0){
+                                //uploade file
+
+                            }else{
+                                // error occured                                
+                                $data['message'] = '
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong>Error!</strong><br> Please make sure you upload a course image or a digital copy of the courser outline.
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                ';   
+                            }
+                            
+                            
+                            
+
+                        }else{
+                            $data['message'] = '
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Error!</strong><br> Please make sure you upload a course image or a digital copy of the courser outline.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            ';
+
+                        }
+                    // 
 
                 }else{
 

@@ -3564,6 +3564,126 @@ class Ui {
     //Displays the form to add a new course to the system
     public function addCourse($data = []){
 
+        $categoryOptions = '';
+        $courseOutlineCards = '';
+        $cardCount = 1;
+
+        if (!empty($data['course_outline'])){
+
+            foreach($data['course_outline'] as $key => $outline){
+                //displaying all cards entered
+                $courseOutlineCards .= $this->create_course_outline_topic_card($outline);
+            }
+        }else{
+            //will display one card for input
+            $courseOutlineCards = $this->create_course_outline_topic_card();
+
+        }
+
+        foreach($data['categories'] as $key => $category){
+            $categoryOptions .= '
+                <option value="'.(encrypt($category['id'])).'">'.$category['name'].'</option>
+            ';
+        }
+
+        $html = $this->preloader().'
+            <div class="main-container">
+                <div class="pd-ltr-20 xs-pd-20-10">
+                    <div class="min-height-200px">
+                        <div class="page-header">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="title">
+                                        <h4>Add Course</h4>
+                                    </div>
+                                    <nav aria-label="breadcrumb" role="navigation">
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item"><a href="'.BASE_URL.'index.php/?page=dashboard">Home</a></li>
+                                            <li class="breadcrumb-item"><a href="'.BASE_URL.'index.php/?page=courseList">Courses</a></li>
+                                            <li class="breadcrumb-item active" aria-current="page">Add Course</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pd-20 card-box shadow">
+                                <form action="'.BASE_URL.'" method="POST" id="course-outline-list" enctype="multipart/form-data">
+                                    <input type="hidden" name="action" value="addCourse">
+                                        <h4 class="text-blue h5">Course Info</h4>
+                                        <hr>
+                                    <div class="row">
+
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-30">
+                                            <!--style="opacity:0;width:0;float:left;"-->
+                                            <div class="profile-photo card shadow img-fluid" style="width: 700px;height:auto;">
+                                                <input id="course-pic-upload" type="file" class="d-none" name="coursePicture" accept=".jpg,.jpeg,.png"  oninvalid="alert(\'You must uploade a course picture!\');" required />
+                                                <a href="#" id="upload-course-pic"  class="edit-avatar bg-white" style="margin-top: auto;"><i class="fa fa-upload text-dark mt-2"></i></a>
+                                                <img id="course-pic" src="'.BASE_URL.'assets/img/logos/fep_logo.png" alt="" style="width:auto;height:auto;">
+                                            </div>
+                                    
+                                        </div>  
+
+
+                                        <div class="form-group col-12 col-md-4">
+                                            <label>Course Name</label>
+                                            <input class="form-control name="courseName" value="Programming" placeholder="e.g. Programming...." form-control-lg" type="text">
+                                        </div>
+                                        <div class="form-group col-12 col-md-4">
+                                            <label>Course Icon</label> <i class="fa fa-info-circle fa-lg" data-toggle="tooltip" data-placement="top" title="Search for icons at https://fontawesome.com/v4.7.0/icons/ and enter the icon name as started below."></i>
+                                            <input class="form-control name="courseIcon" placeholder="e.g. fa fa-star...." value="fa fa-laptop" form-control-lg" type="text">
+                                        </div>
+                                        
+                                        <div class="form-group col-12 col-md-4">
+                                            <label>Course Category</label>
+                                            <select class="selectpicker form-control" name="courseCategoryId"  title="Choose a category" required>
+                                                '.$categoryOptions.'
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group col-12 col-md-12">
+                                            <label>Upload a PDF Copy of the Course Outline</label>
+                                            <input type="file" class="form-control-file form-control height-auto" name="digitalCourseOutline" accept=".pdf" required>
+                                        </div>
+                                        
+                                        <div class="form-group col-12 col-md-12">
+                                            <label>Description about the Course</label>
+                                            <textarea class="form-control" name="courseDescription">Basic description, testing</textarea>
+                                        </div>
+
+                                    </div>
+
+                                    <h4 class="text-blue h5">Course Outline Topics</h4>
+                                    <hr>
+                                    <span id="course-outline-container">
+                                        '.$courseOutlineCards.'                                    
+                                    </span>
+
+
+                                    <div class="mt-3 d-flex justify-content-center mb-4">
+                                        <a href="#" id="add-course-card" class="btn btn-light btn-sm text-primary"><i class="fa fa-plus fa-lg text-primary"></i></a>
+                                    </div>
+                                    
+                                         
+                                    <div class="row">
+                                        <div class="col-12 d-flex justify-content-end">
+                                            <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-plus" ></i> Add Course</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    setCourserOutlineCardCount('.$cardCount.');
+                </script>
+        ';
+        return $html;
+    }
+        //Displays the form to add a new course to the system
+    public function editCourse($data = []){
+
         // echo '<br><br><br><br>';
         // echo '<pre class="pt-5 d-flex justify-content-center">';
         // print_r($data);
@@ -3695,52 +3815,30 @@ class Ui {
         $tr = '';
 
         // for admin 
-        $count = 1;
+        $i = 1;
         foreach($data['courses'] as $key => $course){
 
             $tr .= '
                 <tr>
-                    <td class="table-plus">'.$count.'</td>
-                    <td>'.$course['course_name'].'</td>
-                    <td>'.$course['rating'].'</td>
-                    <td></td>
-                    <td>4.0</td>
-                    <td>29-03-2018</td>
+                    <td class="table-plus">'.$i.'</td>
+                    <td>'.($course['course_name']??'N/a').'</td>
+                    <td>'.(sprintf("%.1f", $course['rating']?? null) ??'N/a').'</td>
+                    <td>'.(isset($course['outline_src'])? '<a href="'.BASE_URL.$course['outline_src'].'"></a>' : 'N/a').'</td>
+                    <td>'.($course['course_icon']??'N/a').'</td>
                     <td>
                         <div class="dropdown">
                             <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
                                 <i class="dw dw-more"></i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=viewCoureDetail"><i class="dw dw-eye"></i> View</a>
-                                <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=editCourse&mentorId="><i class="dw dw-edit2"></i> Edit</a>
-                                <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=forums"><i class="dw dw-chat-11"></i> Forums</a>
-                                <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#remove-course-modal"><i class="dw dw-delete-3"></i> Remove</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-plus">Programming</td>
-                    <td>Danielson Correa</td>
-                    <td>10</td>
-                    <td>20</td>
-                    <td>4.0</td>
-                    <td>29-03-2018</td>
-                    <td>
-                        <div class="dropdown">
-                            <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-                                <i class="dw dw-more"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=forums"><i class="dw dw-chat-11"></i> Forums</a>
-                                <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#remove-course-modal"><i class="dw dw-delete-3"></i> Remove</a>
+                                <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=editCourse&courseId='.(encrypt($course['course_id']) ?? '').'"><i class="dw dw-edit2"></i> Edit</a>
+                                <a class="dropdown-item text-danger" href="'.BASE_URL.'index.php/?page=removeCourse&courseId='.(encrypt($course['course_id']??'')).'" data-toggle="modal" data-target="#remove-course-modal"><i class="dw dw-delete-3"></i> Remove</a>
                             </div>
                         </div>
                     </td>
                 </tr>
             ';
-
+            $i++;
         }
         $html = $this->preloader().'
             <div class="main-container">
@@ -3793,7 +3891,7 @@ class Ui {
                                             <th>Name</th>
                                             <th>Overall Rating</th>
                                             <th>Course Outline</th>
-                                            <th>Course Icon</th>
+                                            <th>Icon</th>
                                             <th class="datatable-nosort">Action</th>
                                         </tr>
                                     </thead>

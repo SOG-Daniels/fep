@@ -468,7 +468,6 @@ class Process {
         }
     }
 
-    
     //gets the homepage system summary
     public function getSystemSummary(){
 
