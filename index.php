@@ -285,9 +285,28 @@
 
                         if (!empty($_FILES['coursePicture']) && !empty($_FILES['digitalCourseOutline'])){
 
+                            
                             //UPLAODING FILES
                             if ($_FILES['coursePicture']['error'] == 0){
                                 //uploade file
+                                $targetDir = './uploads/courseImages';
+                                $targetFile = $targetDir . basename($_FILES['coursePicture']['name']);
+                                $imageFileType = strtolower(pathinfo($targetFile,PATHINFO_EXTENSION));
+                                $newName = $targetDir.'FEPCourse.'.time().$imageFileType;
+
+                                if ($imageFileType != 'jpg' || $imageFileType != 'jpeg' || $imageFileType != 'png'){
+
+                                    if(move_uploaded_file($_FILES["coursePicture"]["tmp_name"], $newName)){
+                                        echo "your file has been successfully uploaded";
+                                    }
+                                }else{
+
+                                }
+
+
+
+
+
 
                             }else{
                                 // error occured                                
