@@ -1,19 +1,19 @@
 <?php 
     //constant variable uses throughout the php scripts
-    // define('DB_USER', 'fepbelize');
-    // define('DB_PASS', '2DsM-3=5L7Nj');
-    // define('DB_HOST', '107.180.54.183');
-    // define('DB_NAME', 'fepbelize');
+    define('DB_USER', 'fepbelize');
+    define('DB_PASS', '2DsM-3=5L7Nj');
+    define('DB_HOST', '107.180.54.183');
+    define('DB_NAME', 'fepbelize');
     
     //localhost definition
-    define('DB_USER', 'root');
-    define('DB_PASS', '');
-    define('DB_HOST', 'localhost');
-    define('DB_NAME', 'fepbelize');
+    // define('DB_USER', 'root');
+    // define('DB_PASS', '');
+    // define('DB_HOST', 'localhost');
+    // define('DB_NAME', 'fepbelize');
 
     // define('BASE_URL', 'https://femaleentrepreneurs.bz/fep/');
-    // define('BASE_URL', 'http://dev.femaleentrepreneurs.bz/');
-    define('BASE_URL', 'https://localhost/fep/');
+    define('BASE_URL', 'http://dev.femaleentrepreneurs.bz/');
+    // define('BASE_URL', 'https://localhost/fep/');
     
     // fb defines
     define('FB_APP_ID', '719611568906304');
