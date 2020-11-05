@@ -45,13 +45,38 @@
 
     if (!empty($_SESSION['USERDATA']) && isset($_SESSION['USERDATA']['access_token'])){
         //User is logged into the portal
-        
+       
         if ($_GET && isset($_GET['page'])){
             // logged in user wants to access a page
             if($_GET['page'] == 'dashboard'){
                
                 $currentPage = 'dashboard';
-                $pageContent = $view->dashboard();
+                $userType = $_SESSION['USERDATA']['type'];
+                $userId = $_SESSION['USERDATA']['id'];
+                $result = [];
+                
+                $result['courses'] = $process->getCourseList();
+                $result['mentors'] = $process->getMentorList(null, 0);
+                $result['topPrograms'] = $process->getProgramList(null, 3);
+
+                switch ($userType) {
+                    case 'mentor':
+                
+                        $result['programs'] = $process->getMentorPrograms($userId);
+                        
+                        break;
+                    case 'mentee':
+                        $result['programs'] = $process->getMenteeCoursePrograms($userId);
+
+                        break;
+                                        
+                    default:
+                        //no programs
+                        $result['programs'] = [];
+                }
+
+
+               $pageContent = $view->dashboard($result);
             
             }else if($_GET['page'] == 'profile'){
 
@@ -98,7 +123,7 @@
 
                 $result['category'] = $process->getCourseCategory($courseCatId);
                 
-                if (!empty($result)){
+                if (!empty($result['category'])){
                     // valid courseCatid 
 
                 }else{
@@ -120,7 +145,7 @@
                 $courseId  = decrypt($_GET['courseId']);
                 $isFound = $process->getCourseById($courseId);
 
-                if($isFound){
+                if($isFound['courseId'] == $courseId){
                     //found course
                     $pageContent = $view->editCourse($isFound);
                 }else{
@@ -131,16 +156,19 @@
 
                 $result['courses'] = $process->getCourseList();
 
-
                 $pageContent = $view->courseList($result);
+
 
             }else if($_GET['page'] == 'viewMentors'){
 
-                $pageContent = $view->viewMentors();
+                $result['mentors'] = $process->getMentorList();
+                $pageContent = $view->viewMentors($result);
 
             }else if($_GET['page'] == 'viewCourses'){
+                
+                $result['courses'] = $process->getCourseList();
 
-                $pageContent = $view->viewCourses();
+                $pageContent = $view->viewCourses($result);
 
             }else if($_GET['page'] == 'menteeList'){
 
@@ -194,10 +222,37 @@
 
             }else{
 
-                $pageContent = $view->dashboard();
+                $currentPage = 'dashboard';
+                $userType = $_SESSION['USERDATA']['type'];
+                $userId = $_SESSION['USERDATA']['id'];
+                $result = [];
+                
+                $result['courses'] = $process->getCourseList();
+                $result['mentors'] = $process->getMentorList(null, 0);
+                $result['topPrograms'] = $process->getProgramList(null, 3);
+
+                switch ($userType) {
+                    case 'mentor':
+                
+                        $result['programs'] = $process->getMentorPrograms($userId);
+                        
+                        break;
+                    case 'mentee':
+                        $result['programs'] = $process->getMenteeCoursePrograms($userId);
+
+                        break;
+                                        
+                    default:
+                        //no programs
+                        $result['programs'] = [];
+                }
+
+
+               $pageContent = $view->dashboard($result);
             }
 
         }else{
+            
             if ($_POST && isset($_POST['action'])){
                 // logged in user wasnt to perform an action 
 
@@ -354,13 +409,95 @@
                         }
                     // 
 
-                }else{
+                }else if ($_POST['action'] == 'courseSearch'){
+                    if (isset($_POST['search'])){
+                        //ajax request for autocomplete
+                        $ajaxRequest = true; 
 
+                        $result = $process->getCourseList($_POST['search']);
+
+                        $found = [];
+
+                        //looping to get the course names
+                        foreach($result as $key => $course){
+                            $found[] = $course['course_name'];
+                        }
+
+                        echo json_encode($found);
+
+                    }else{
+                        //submitted search form
+                        $result['searchFor'] = $_POST['searchFor'];
+                        $result['courses'] = $process->getCourseList($_POST['searchFor']);
+                        
+                        $currentPage = 'courses';
+                        $pageContent = $view->viewCourses($result);
+
+                    }
+
+                    
+
+
+                }else{
+                    //post not found 
+                    $currentPage = 'dashboard';
+                    $userType = $_SESSION['USERDATA']['type'];
+                    $userId = $_SESSION['USERDATA']['id'];
+                    $result = [];
+                    
+                    $result['courses'] = $process->getCourseList();
+                    $result['mentors'] = $process->getMentorList(null, 0);
+                    $result['topPrograms'] = $process->getProgramList(null, 3);
+    
+                    switch ($userType) {
+                        case 'mentor':
+                    
+                            $result['programs'] = $process->getMentorPrograms($userId);
+                            
+                            break;
+                        case 'mentee':
+                            $result['programs'] = $process->getMenteeCoursePrograms($userId);
+    
+                            break;
+                                            
+                        default:
+                            //no programs
+                            $result['programs'] = [];
+                    }
+    
+                    //action was not found
+                    $pageContent = $view->dashboard($result);
                 }
 
             }else{
+
+                $currentPage = 'dashboard';
+                $userType = $_SESSION['USERDATA']['type'];
+                $userId = $_SESSION['USERDATA']['id'];
+                $result = [];
+                
+                $result['courses'] = $process->getCourseList();
+                $result['mentors'] = $process->getMentorList(null, 0);
+                $result['topPrograms'] = $process->getProgramList(null, 3);
+
+                switch ($userType) {
+                    case 'mentor':
+                
+                        $result['programs'] = $process->getMentorPrograms($userId);
+                        
+                        break;
+                    case 'mentee':
+                        $result['programs'] = $process->getMenteeCoursePrograms($userId);
+
+                        break;
+                                        
+                    default:
+                        //no programs
+                        $result['programs'] = [];
+                }
+
                 //action was not found
-                $pageContent = $view->dashboard();
+                $pageContent = $view->dashboard($result);
             }
         }
        
@@ -691,12 +828,42 @@
 
                 }else{
                     //success - displaying login portal
-                    $_SESSION['USERDATA']['access_token'] = $result['access_token'];
+                    $_SESSION['USERDATA']['access_token'] = $result['access_token'] ?? '';
+                    $_SESSION['USERDATA']['type'] = $result['user_type'] ?? '';
+                    $_SESSION['USERDATA']['id'] = $result['user_id'] ?? '';
+                    $_SESSION['USERDATA']['full_name'] = $result['full_name'] ?? '';
+                    $_SESSION['USERDATA']['profile_pic'] = $result['profile_pic'] ?? null;
+                
+                    $currentPage = 'dashboard';
+                    $userType = $_SESSION['USERDATA']['type'];
+                    $userId = $_SESSION['USERDATA']['id'];
+
+                    $result = [];
+                    
+                    $result['courses'] = $process->getCourseList();
+                    $result['mentors'] = $process->getMentorList(null, 0);
+                    $result['topPrograms'] = $process->getProgramList(null, 3);
+                    
+                    switch ($userType) {
+                        case 'mentor':
+                    
+                            $result['programs'] = $process->getMentorPrograms($userId);
+                            
+                            break;
+                        case 'mentee':
+                            $result['programs'] = $process->getMenteeCoursePrograms($userId);
+
+                            break;
+                                            
+                        default:
+                            //no programs
+                            $result['programs'] = [];
+                    }
 
                     $header =  $view->portalHeader();
                     $topbar = $view->portalTopBar();
                     $sidebar = $view->portalSideBar();
-                    $pageContent = $view->dashboard();
+                    $pageContent = $view->dashboard($result);
                     $footer = $view->portalFooter();
                     
                 }

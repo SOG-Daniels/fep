@@ -4,12 +4,80 @@ class Ui {
 
     private $title = '';
     private $footer = '';
+    private $pages = [];
     
     function __construct(){
         $this->title = 'Female Entrepreneurship';
-        $this->footer = '
-            
-        ';
+        $this->pages = array(
+            ['page'=>'
+                <li>
+                    <a href="'.BASE_URL.'index.php/?page=mentorList" class="dropdown-toggle no-arrow">
+                        <span class="micon fa fa-users"></span><span class="mtext">Mentors</span>
+                    </a>
+                </li>
+            ', 'userAcess' => array('admin', 'advisor')],
+
+            ['page'=>'
+                <li>
+                    <a href="'.BASE_URL.'index.php/?page=menteeList" class="dropdown-toggle no-arrow">
+                        <span class="micon fa fa-users"></span><span class="mtext">Mentees</span>
+                    </a>
+                </li>
+            ', 'userAcess' => array('admin','mentor', 'advisor')],
+            ['page'=>'
+                <li>
+                    <a href="'.BASE_URL.'index.php/?page=courseList" class="dropdown-toggle no-arrow">
+                        <span class="micon fa fa-book"></span><span class="mtext">Courses</span>
+                    </a>
+                </li>
+            ', 'userAcess' => array('admin')],
+            ['page'=>'
+                <li>
+                    <a href="'.BASE_URL.'index.php/?page=courseCategories" class="dropdown-toggle no-arrow">
+                        <span class="micon fa fa-book"></span><span class="mtext">Course Categories</span>
+                    </a>
+                </li>
+            ', 'userAcess' => array('admin')],
+            ['page'=>'
+                <li>
+                    <a href="'.BASE_URL.'index.php/?page=viewCourses" class="dropdown-toggle no-arrow">
+                        <span class="micon fa fa-book"></span><span class="mtext">View Courses</span>
+                    </a>
+                </li>
+            ', 'userAcess' => array('admin','mentor', 'mentee')],
+            ['page'=>'
+                <li>
+                    <a href="'.BASE_URL.'index.php/?page=viewMentors" class="dropdown-toggle no-arrow">
+                        <span class="micon fa fa-users"></span><span class="mtext">View Mentors</span>
+                    </a>
+                </li>
+            ', 'userAcess' => array('admin','advisor', 'mentee')],
+            ['page'=>'
+                <li>
+                    <a href="'.BASE_URL.'index.php/?page=mentorCourses" class="dropdown-toggle no-arrow">
+                        <span class="micon fa fa-book"></span><span class="mtext">My Courses</span>
+                    </a>
+                </li>
+            ', 'userAcess' => array('admin','advisor', 'mentor')],
+            ['page'=>'
+                <li class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle">
+                        <span class="micon fa fa-wechat"></span><span class="mtext">Forums</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="'.BASE_URL.'index.php/?page=forums&program=programName">Marketing</a></li>
+                        <li><a href="'.BASE_URL.'index.php/?page=forums&program=programName">Programming</a></li>
+                        <li><a href="'.BASE_URL.'index.php/?page=forums&program=programName">Psychology</a></li>
+                        <li><a href="'.BASE_URL.'index.php/?page=forums&program=programName">Maths</a></li>
+                    </ul>
+                </li>
+            ', 'userAcess' => array('admin','mentor', 'mentee', 'advisor'), ],
+
+
+
+
+        );
+
     }
     // returns the starting header of html page structure
     public function header(){
@@ -1213,7 +1281,7 @@ class Ui {
         ';
         return $html;
     }
-    // Will display all the mentorship programs available
+    // Will display all the mentorship course available
     public function courses($data = []){
 
       
@@ -2579,9 +2647,9 @@ class Ui {
                         <div class="dropdown">
                             <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
                                 <span class="user-icon">
-                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
+                                    <img src="'.($_SESSION['USERDATA']['profile_pic'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" alt="">
                                 </span>
-                                <span class="user-name">Ross C. Lopez</span>
+                                <span class="user-name">'.($_SESSION['USERDATA']['full_name']??'').'</span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                                 <a class="dropdown-item" href="'.BASE_URL.'index.php/?page=profile"><i class="dw dw-user1"></i> Profile</a>
@@ -2599,6 +2667,17 @@ class Ui {
     //Displays a sidebar for users that are logged in portal
     public function portalSideBar($currentPage = ''){
         
+        $options = '';
+
+        foreach ($this->pages as $key => $page){
+            
+            if (in_array($_SESSION['USERDATA']['type'], $page['userAcess'])){
+                $options .= $page['page'];
+            }
+            
+        }
+        
+        
         $html = '
             <div class="left-side-bar">
                 <div class="brand-logo">
@@ -2614,229 +2693,12 @@ class Ui {
                 <div class="menu-block customscroll">
                     <div class="sidebar-menu">
                         <ul id="accordion-menu">
-                            
                             <li>
                                 <a href="'.BASE_URL.'index.php/?page=dashboard" class="dropdown-toggle no-arrow">
                                     <span class="micon fa fa-tachometer"></span><span class="mtext">Dashboard</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="'.BASE_URL.'index.php/?page=menteeList" class="dropdown-toggle no-arrow">
-                                    <span class="micon fa fa-users"></span><span class="mtext">Mentees</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="'.BASE_URL.'index.php/?page=mentorList" class="dropdown-toggle no-arrow">
-                                    <span class="micon fa fa-users"></span><span class="mtext">Mentors</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="'.BASE_URL.'index.php/?page=courseList" class="dropdown-toggle no-arrow">
-                                    <span class="micon fa fa-book"></span><span class="mtext">Courses</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="'.BASE_URL.'index.php/?page=courseCategories" class="dropdown-toggle no-arrow">
-                                    <span class="micon fa fa-book"></span><span class="mtext">Course Categories</span>
-                                </a>
-                            </li>
-                           
-                            <li>
-                                <a href="'.BASE_URL.'index.php/?page=viewCourses" class="dropdown-toggle no-arrow">
-                                    <span class="micon fa fa-book"></span><span class="mtext">View Courses</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="'.BASE_URL.'index.php/?page=viewMentors" class="dropdown-toggle no-arrow">
-                                    <span class="micon fa fa-users"></span><span class="mtext">View Mentors</span>
-                                </a>
-                            </li>
-                            <li class="dropdown">
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon fa fa-wechat"></span><span class="mtext">Forums</span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="'.BASE_URL.'index.php/?page=forums&program=programName">Marketing</a></li>
-                                    <li><a href="'.BASE_URL.'index.php/?page=forums&program=programName">Programming</a></li>
-                                    <li><a href="'.BASE_URL.'index.php/?page=forums&program=programName">Psychology</a></li>
-                                    <li><a href="'.BASE_URL.'index.php/?page=forums&program=programName">Maths</a></li>
-                                </ul>
-                            </li>
-                            <!--
-                            <li class="dropdown">
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon dw dw-edit2"></span><span class="mtext">Forms</span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="form-basic.html">Form Basic</a></li>
-                                    <li><a href="advanced-components.html">Advanced Components</a></li>
-                                    <li><a href="form-wizard.html">Form Wizard</a></li>
-                                    <li><a href="html5-editor.html">HTML5 Editor</a></li>
-                                    <li><a href="form-pickers.html">Form Pickers</a></li>
-                                    <li><a href="image-cropper.html">Image Cropper</a></li>
-                                    <li><a href="image-dropzone.html">Image Dropzone</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon dw dw-library"></span><span class="mtext">Tables</span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="basic-table.html">Basic Tables</a></li>
-                                    <li><a href="datatable.html">DataTables</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="calendar.html" class="dropdown-toggle no-arrow">
-                                    <span class="micon dw dw-calendar1"></span><span class="mtext">Calendar</span>
-                                </a>
-                            </li>
-                            <li class="dropdown">
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon dw dw-apartment"></span><span class="mtext"> UI Elements </span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="ui-buttons.html">Buttons</a></li>
-                                    <li><a href="ui-cards.html">Cards</a></li>
-                                    <li><a href="ui-cards-hover.html">Cards Hover</a></li>
-                                    <li><a href="ui-modals.html">Modals</a></li>
-                                    <li><a href="ui-tabs.html">Tabs</a></li>
-                                    <li><a href="ui-tooltip-popover.html">Tooltip &amp; Popover</a></li>
-                                    <li><a href="ui-sweet-alert.html">Sweet Alert</a></li>
-                                    <li><a href="ui-notification.html">Notification</a></li>
-                                    <li><a href="ui-timeline.html">Timeline</a></li>
-                                    <li><a href="ui-progressbar.html">Progressbar</a></li>
-                                    <li><a href="ui-typography.html">Typography</a></li>
-                                    <li><a href="ui-list-group.html">List group</a></li>
-                                    <li><a href="ui-range-slider.html">Range slider</a></li>
-                                    <li><a href="ui-carousel.html">Carousel</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon dw dw-paint-brush"></span><span class="mtext">Icons</span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="font-awesome.html">FontAwesome Icons</a></li>
-                                    <li><a href="foundation.html">Foundation Icons</a></li>
-                                    <li><a href="ionicons.html">Ionicons Icons</a></li>
-                                    <li><a href="themify.html">Themify Icons</a></li>
-                                    <li><a href="custom-icon.html">Custom Icons</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon dw dw-analytics-21"></span><span class="mtext">Charts</span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="highchart.html">Highchart</a></li>
-                                    <li><a href="knob-chart.html">jQuery Knob</a></li>
-                                    <li><a href="jvectormap.html">jvectormap</a></li>
-                                    <li><a href="apexcharts.html">Apexcharts</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon dw dw-right-arrow1"></span><span class="mtext">Additional Pages</span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="video-player.html">Video Player</a></li>
-                                    <li><a href="login.html">Login</a></li>
-                                    <li><a href="forgot-password.html">Forgot Password</a></li>
-                                    <li><a href="reset-password.html">Reset Password</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon dw dw-browser2"></span><span class="mtext">Error Pages</span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="400.html">400</a></li>
-                                    <li><a href="403.html">403</a></li>
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="500.html">500</a></li>
-                                    <li><a href="503.html">503</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="dropdown">
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon dw dw-copy"></span><span class="mtext">Extra Pages</span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="blank.html">Blank</a></li>
-                                    <li><a href="contact-directory.html">Contact Directory</a></li>
-                                    <li><a href="blog.html">Blog</a></li>
-                                    <li><a href="blog-detail.html">Blog Detail</a></li>
-                                    <li><a href="product.html">Product</a></li>
-                                    <li><a href="product-detail.html">Product Detail</a></li>
-                                    <li><a href="faq.html">FAQ</a></li>
-                                    <li><a href="profile.html">Profile</a></li>
-                                    <li><a href="gallery.html">Gallery</a></li>
-                                    <li><a href="pricing-table.html">Pricing Tables</a></li>
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon dw dw-list3"></span><span class="mtext">Multi Level Menu</span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="javascript:;">Level 1</a></li>
-                                    <li><a href="javascript:;">Level 1</a></li>
-                                    <li><a href="javascript:;">Level 1</a></li>
-                                    <li class="dropdown">
-                                        <a href="javascript:;" class="dropdown-toggle">
-                                            <span class="micon fa fa-plug"></span><span class="mtext">Level 2</span>
-                                        </a>
-                                        <ul class="submenu child">
-                                            <li><a href="javascript:;">Level 2</a></li>
-                                            <li><a href="javascript:;">Level 2</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="javascript:;">Level 1</a></li>
-                                    <li><a href="javascript:;">Level 1</a></li>
-                                    <li><a href="javascript:;">Level 1</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="sitemap.html" class="dropdown-toggle no-arrow">
-                                    <span class="micon dw dw-diagram"></span><span class="mtext">Sitemap</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="chat.html" class="dropdown-toggle no-arrow">
-                                    <span class="micon dw dw-chat3"></span><span class="mtext">Chat</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="invoice.html" class="dropdown-toggle no-arrow">
-                                    <span class="micon dw dw-invoice"></span><span class="mtext">Invoice</span>
-                                </a>
-                            </li>
-                            <li>
-                                <div class="dropdown-divider"></div>
-                            </li>
-                            <li>
-                                <div class="sidebar-small-cap">Extra</div>
-                            </li>
-                            <li>
-                                <a href="javascript:;" class="dropdown-toggle">
-                                    <span class="micon dw dw-edit-2"></span><span class="mtext">Documentation</span>
-                                </a>
-                                <ul class="submenu">
-                                    <li><a href="introduction.html">Introduction</a></li>
-                                    <li><a href="getting-started.html">Getting Started</a></li>
-                                    <li><a href="color-settings.html">Color Settings</a></li>
-                                    <li><a href="third-party-plugins.html">Third Party Plugins</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="https://dropways.github.io/deskapp-free-single-page-website-template/" target="_blank" class="dropdown-toggle no-arrow">
-                                    <span class="micon dw dw-paper-plane1"></span>
-                                    <span class="mtext">Landing Page <img src="vendors/images/coming-soon.png" alt="" width="25"></span>
-                                </a>
-                            </li>
-                            -->
+                            '.$options.'
                         </ul>
                     </div>
                 </div>
@@ -2867,77 +2729,100 @@ class Ui {
     //Displays summary of content when logged in
     public function dashboard($data = []){
         
-        $courses = '';
+        
+        $programs = '';
 
         $topMentors = '';
-        $mentorCards = '';
-        $mentorIndicators = '';
-
-        //programs the user is linked too as a mentor or mentee
+        // $mentorCards = '';
+        $topPrograms = '';
+        // $mentorIndicators = '';
+        // $content = [];
+       
         if (!empty($data['programs'])){
+            //is assinged to a program
 
-            foreach($data['programs'] as $key => $program){
-                $programId = encrypt($program['id']);
-                $courses .= $this->create_basic_course_card();
+            foreach ($data['programs'] as $key => $program){
+                
+                $programId = $program['program']['program_id'] ?? '#';
+                $name = $program['program']['course_name'] ?? 'N/a';
+                $icon = $program['course_detail']['course_icon'] ?? 'fa fa-book';
+                $menteeTotal = null;
+
+                if ($_SESSION['USERDATA']['type'] != 'mentee'){
+                    $menteeTotal = $data['program']['total_enrollement'] ?? 0;
+                }
+                
+                $programs .= $this->create_basic_course_card($programId, $name, $icon, $menteeTotal);
             }
 
         }else{
-            // user is not linked any programs
-            for($num =0; $num < 4; $num++){//foreach($data['courses'] as $key => $course){
-                $courseId = encrypt(1);
-                $course['mentee_total'] = 2;
-                $course['name'] = 'Marketing';
+            //display all courses
+            foreach ($data['programs'] as $key => $program){
+                
+                $programId = $program['program']['program_id'] ?? '#';
+                $name = $program['program']['course_name'] ?? 'N/a';
+                $icon = $program['course_detail']['course_icon'] ?? 'fa fa-book';
+                $menteeTotal = null;
 
-                $courses .= '
-                    <div class="col-xl-3 mb-30">
-                        <a href="'.BASE_URL.'index.php/?page=programContent&programId='.$courseId.'">
-                            <div class="card-box height-100-p widget-style1 shadow-lg">
-                                <div class="d-flex flex-wrap align-items-center">
-                                    <div class="progress-data text-center">
-                                        <!--<div id="chart"></div>-->
-                                        <i class="icon-copy dw dw-suitcase h1"></i>
-                                    </div>
-                                    <div class="widget-data">
-                                        <div class="h4 mb-0" data-toggle="tooltip" data-placement="top" title="Mentee total"><i class="fa fa-user"></i> '.$course['mentee_total'].'</div>
-                                        <div class="weight-600 font-14">'.$course['name'].'</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>  
-                ';
+                $programs .= $this->create_basic_course_card($programId, $name, $icon, $menteeTotal);
             }
 
-        }  
-        //top mentors 
-        // if (!empty($data['topMentors'])){
+        }
 
-            for($num = 0; $num < 3; $num++){//foreach($data['topMentors'] as $key => $topMentor){
+        if (!empty($data['mentors'])){
+            $i = 0;
+            foreach ($data['mentors'] as $key => $mentor){
 
-                $mentorCards .= $this->create_mentor_card();
+                if ($i < 3){
+                    $topMentors .= $this->create_mentor_card($mentor);
+                }else{
+                    break;
+                }
+                $i++;
             }
+        }else{
             $topMentors = '
-                <h3 class="h3 text-blue">Top Mentors</h3>
-                <div class="row">
-        
-                    '.$mentorCards.'
-                           
-                         
-                </div>
+                <h4 class="h4 text-secondary">Coming Soon ....</h4>
             ';
-        // }
-        // echo '<br><br><br><br>';
-        // var_dump($courses);
+        }
+        if (!empty($data['topPrograms'])){
+            $i = 0;
+            foreach ($data['mentors'] as $key => $topProgram){
+
+                if ($i < 3){
+                    $topPrograms .= $this->create_program_card($topProgram);
+                }else{
+                    break;
+                }
+                $i++;
+            }
+        }else{
+            $topPrograms = '
+                <h4 class="h4 text-secondary">Coming Soon ....</h4>
+            ';
+        }
+        
+
+
         $html = $this->preloader().'
             <div class="main-container">
                 <div class="pd-ltr-20">
                     <h3 class="h3 text-blue">Courses</h3>
                     <div class="row">
-                        '.$courses.'
+                        '.$programs.'
+                       
+                    </div>
+                    <h3 class="h3 text-blue">Popular Mentors</h3>
+                    <div class="row">
+                        '.$topMentors.'
+                       
+                    </div>
+                    <h3 class="h3 text-blue">Popular Programs</h3>
+                    <div class="row">
+                        '.$topPrograms.'
                        
                     </div>
                     
-                    '.$topMentors.'
                     
                    <!-- Calendar for user-->
                     <!--<div class="pd-20 card-box mb-30">
@@ -3641,10 +3526,6 @@ class Ui {
     }
      //Displays a list of Courses available in the system
     public function courseList($data = array()){
-                // echo '<br><br><br><br>';
-                // echo '<pre class="pt-5 d-flex justify-content-center" style="margin-left: 200px; padding-left:600px;">';
-                // print_r($data);
-                // echo '</pre>';
 
         $tr = '';
 
@@ -3841,10 +3722,7 @@ class Ui {
     }   
     //displays the add courser category page
     public function editCourseCategory($data = []){
-        // echo '<br><br><br><br>';
-        // echo '<pre class="pt-5 d-flex justify-content-center">';
-        // print_r($data);
-        // echo '</pre>';
+        
         $html = $this->preloader().'
             <div class="main-container">
                 <div class="pd-ltr-20 ">
@@ -3964,7 +3842,82 @@ class Ui {
 
     }
     //Displays a list of all the mentors in the system for a mentee
-    public function viewMentors(){
+    public function viewMentors($data = []){
+
+        $mentors = '';
+        // echo '<br><br><br><br>';
+        // echo '<pre class="pt-5 d-flex justify-content-center" style="padding-left: 600px;">';
+        // print_r($data['mentors']);
+        // echo '</pre>';
+
+        $cards = '';                            //holds all the card html markup
+        $count = 0;                             //keeps track of how much cards have been made
+        $maxCardPerPage = 6;                    //capacity of course cards per page for pagination
+        $possibleCardTotal = $maxCardPerPage;   //gets added +6 everytime course cards reach maxCoursePerPage;
+        $pageCount = 0;                         //page count for pagination
+        $pages = '';                            //hold a the pages for the pagination
+        $pageContent = '';                      //contains all the pages and pagination elements
+
+        // echo '<br><br><br><br>';
+        // echo '<pre class="pt-5 d-flex justify-content-center" style="padding-left: 600px;">';
+        // print_r($data['courses']);
+        // echo '</pre>';
+
+
+        // if(!empty($data['mentors'])){
+            
+            foreach($data['mentors'] as $key => $mentor){
+                
+                $cards .= $this->create_mentor_card($mentor);
+               
+                if ($count == ($possibleCardTotal-1)){
+                    //creating page because we reached out maximum cards per page
+                    $pageCount++;
+                    $pages .= '
+                        <div id="page-'.$pageCount.'"> 
+                            <div class="row" data-aos="zoom-in" data-aos-delay="100">
+                            '.$cards.'
+                            </div>
+                        </div>
+                    ';
+                    $cards = '';
+                    $possibleCardTotal += $maxCardPerPage; // increasing count for another page to be added
+                }
+
+                $count++;
+
+
+            }
+            // Creating a page for the remaining Course Cards
+            if ($count <= $possibleCardTotal){
+                
+                if ($count != ($possibleCardTotal - $maxCardPerPage)){
+                    //if we have more cards than the maximum amount we will add another page
+                    $pageCount++;
+                }
+                $pages .= '
+                    <div id="page-'.$pageCount.'"> 
+                        <div class="row" data-aos="zoom-in" data-aos-delay="100">
+                            '.$cards.'
+                        </div>
+                    </div>
+                ';
+            }
+
+            // creating pagination 
+            $pageContent = '
+                <div id="pagination-content">
+                    '.$pages.'
+                </div>
+                <div class="row pt-3">
+                    <div class="col-12 d-flex justify-content-center">
+                        <div id="pagination-btn"> 
+                        </div>  
+                    </div>
+                </div>
+            ';
+        // }
+
 
         $html = $this->preloader().'
             <div class="main-container">
@@ -3979,17 +3932,17 @@ class Ui {
                                     <nav aria-label="breadcrumb" role="navigation">
                                         <ol class="breadcrumb">
                                             <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                                            <li class="breadcrumb-item active" aria-current="page">View Mentors</li>
+                                            <li class="breadcrumb-item active" aria-current="page">View Courses</li>
                                         </ol>
                                     </nav>
                                 </div>
-                                <div class="col-md-6 col-sm-12 pt-3">
-                                    <form>
-                                        <input type="hidden" name="action" value="mentorSearch">
+                                <div class="col-md-6 col-sm-12 pt-3 pt-md-0">
+                                    <form action="'.BASE_URL.'" method="post">
+                                        <input type="hidden" name="action" value="courseSearch">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" name="search" placeholder="Search for a course..." aria-label="Search for a course" aria-describedby="basic-addon2">
+                                            <input type="text" id="id="courseSearch"" class="form-control" name="searchFor" value="'.($data['searchFor'] ?? '').'" type="text" placeholder="Search for a course..." aria-label="Search for a course" aria-describedby="basic-addon2">
                                             <div class="input-group-append">
-                                            <button class="btn btn-outline-primary" type="button"><i class="fa fa-search"></i></button>
+                                            <button class="btn btn-outline-primary" type="submit"><i class="fa fa-search"></i></button>
                                             </div>
                                         </div>
 
@@ -3999,391 +3952,14 @@ class Ui {
                         </div>
                         
                         <div class="product-wrap">
-                            <div id="pagination-content"> 
-                                <div id="page-1"> 
-                                    <div class="row">
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch">
-                                            <div class="da-card shadow">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <a href="'.BASE_URL.'index.php/?page=mentorProfile">
-                                                    <h5 class="h5 mb-0">Don H. Rabon</h5>
-                                                    </a>
-                                                    <span class="d-flex justify-content-start align-items-center">
-                                                        <span data-toggle="tooltip" data-placement="top" title="4.0">
-                                                            <span class="float-right"><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        </span>
-                                                    </span>                                    
-                                                    <p class="mb-0 font-weight-bold">Job Title</p>
-                                                    <p class="mb-3">Description of what this person does</p>
-
-                                                    
-                                                    
-                                                    <span class="d-flex justify-content-end">
-                                                        <a href="'.BASE_URL.'index.php/?page=" class="btn btn-success btn-sm" data-toggle="modal" data-target="#mentorship-request-success-modal"><i class="fa fa-paper-plane-o "></i> Request Mentorship</a>
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-                                    </div>                                     
-                                    <div class="row pt-3">
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-                                    </div>                                     
-                                </div>
-                                <div id="page-2"> 
-
-                                    <div class="row" >
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-3 col-md-3 col-12 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="da-card">
-                                                <div class="da-card-photo">
-                                                    <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                                                    <div class="da-overlay da-slide-top">
-                                                        <div class="da-social">
-                                                            <ul class="clearfix">
-                                                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                                                <li><a href="#"><i class="fa fa-envelope-o"></i></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="da-card-content">
-                                                    <h5 class="h5 mb-10">Don H. Rabon</h5>
-                                                    <p class="mb-0">Lorem ipsum dolor sit amet</p>
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-                                    </div>                                     
-                                                                    
-                                </div>
-                                <div id="page-3"> 
-                                    <div class="row" data-aos="zoom-in" data-aos-delay="100">
-                                        <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
-                                            <div class="card">
-                                                <a href="'.BASE_URL.'index.php/?page=programDetails">
-                                                    <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
-                                                </a>
-                                                <div class="card-body">
-                                                    <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Maths</a></h3>
-                                                    
-                                                    <span class="d-flex justify-content-start align-items-center">
-                                                        <p class="" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                            <span class="float-right"><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        </p>
-                                                    </span>                                    
-
-                                                    <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                                    <span class="d-flex justify-content-end">
-                                                        <a href="'.BASE_URL.'index.php/?page=" class="btn btn-success btn-sm"><i class="fa fa-paper-plane-o "></i> Request Mentorship</a>
-                                                    </span>
-
-                                                
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="card">
-                                                <a href="'.BASE_URL.'index.php/?page=programDetails">
-                                                    <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
-                                                </a>
-                                                <div class="card-body">
-                                                    <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Maths</a></h3>
-                                                    
-                                                    <span class="d-flex justify-content-start align-items-center">
-                                                        <p class="" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                            <span class="float-right"><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        </p>
-                                                    </span>                                    
-
-                                                    <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                                    <span class="d-flex justify-content-end">
-                                                        <a href="'.BASE_URL.'index.php/?page=" class="btn btn-success btn-sm"><i class="fa fa-paper-plane-o "></i> Request Mentorship</a>
-                                                    </span>
-
-                                                
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-
-                                        <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0">
-                                            <div class="card">
-                                                <a href="'.BASE_URL.'index.php/?page=programDetails">
-                                                    <img src="'.BASE_URL.'assets/img/course-1.jpg" class="img-fluid" alt="...">
-                                                </a>
-                                                <div class="card-body">
-                                                    <h3><a href="'.BASE_URL.'index.php/?page=programDetails">Maths</a></h3>
-                                                    
-                                                    <span class="d-flex justify-content-start align-items-center">
-                                                        <p class="" data-toggle="tooltip" data-placement="top" title="4.0">
-                                                            <span class="float-right"><i class="text-warning fa fa-star-o fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                            <span class="float-right"><i class="text-warning fa fa-star fa-lg"></i></span>
-                                                        </p>
-                                                    </span>                                    
-
-                                                    <p>Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.</p>
-                                                    <span class="d-flex justify-content-end">
-                                                        <a href="'.BASE_URL.'index.php/?page=" class="btn btn-success btn-sm"><i class="fa fa-paper-plane-o "></i> Request Mentorship</a>
-                                                    </span>
-
-                                                
-                                                </div>
-                                            </div>
-                                        </div> <!-- End Course Item-->      
-                                    </div>                                     
-                                </div>
-                            </div>
-                            <div class="row pt-3">
-                                <div class="col-12 d-flex justify-content-center">
-                                    <div id="pagination-btn"> 
-                                    </div>  
-                                </div>
-                            </div>
+                            '.$pageContent.'
                         </div>
                     </div>
-                   
+                
                 </div>
             </div>
             <script>
-                setPaginationTotalCount(3);
+                setPaginationTotalCount('.$pageCount.');
             </script>
         ';
         
@@ -4484,7 +4060,7 @@ class Ui {
         return $html;
     }
     //Display a list of all the available courses for a mentee
-    public function viewCourses(){
+    public function viewCourses($data = []){
 
         $cards = '';                            //holds all the card html markup
         $count = 0;                             //keeps track of how much cards have been made
@@ -4494,12 +4070,17 @@ class Ui {
         $pages = '';                            //hold a the pages for the pagination
         $pageContent = '';                      //contains all the pages and pagination elements
 
+        // echo '<br><br><br><br>';
+        // echo '<pre class="pt-5 d-flex justify-content-center" style="padding-left: 600px;">';
+        // print_r($data['courses']);
+        // echo '</pre>';
+
+
         // if(!empty($data['mentors'])){
             
-            for ($num = 0; $num < 6; $num++){//foreach($data['mentors'] as $key => $mentor){
+            foreach($data['courses'] as $key => $course){
                 
-                $cards .= '
-                ';
+                $cards .= $this->create_course_card($course);
                
                 if ($count == ($possibleCardTotal-1)){
                     //creating page because we reached out maximum cards per page
@@ -4567,10 +4148,10 @@ class Ui {
                                     </nav>
                                 </div>
                                 <div class="col-md-6 col-sm-12 pt-3 pt-md-0">
-                                    <form>
+                                    <form action="'.BASE_URL.'" method="post">
                                         <input type="hidden" name="action" value="courseSearch">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" name="search" placeholder="Search for a course..." aria-label="Search for a course" aria-describedby="basic-addon2">
+                                            <input type="text" id="id="courseSearch"" class="form-control" name="searchFor" value="'.($data['searchFor'] ?? '').'" type="text" placeholder="Search for a course..." aria-label="Search for a course" aria-describedby="basic-addon2">
                                             <div class="input-group-append">
                                             <button class="btn btn-outline-primary" type="submit"><i class="fa fa-search"></i></button>
                                             </div>
@@ -7829,12 +7410,18 @@ class Ui {
 
             <!-- END OF MODAL FOR SUCCESS ALERT -->
 
+            <!-- Script for Autocomplete-->
+            <!--<script src="https://code.jquery.com/jquery-1.12.4.js"></script>-->
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 
             <!-- js -->
             <script src="'.BASE_URL.'vendors/scripts/core.js"></script>
+            
+
             <script src="'.BASE_URL.'vendors/scripts/script.js"></script>
             <script src="'.BASE_URL.'vendors/scripts/process.js"></script>
+            
             <script src="'.BASE_URL.'vendors/scripts/layout-settings.js"></script>
             
             <!-- Video Players js files -->
@@ -7857,9 +7444,7 @@ class Ui {
             <script src="'.BASE_URL.'src/plugins/datatables/js/pdfmake.min.js"></script>
             <script src="'.BASE_URL.'src/plugins/datatables/js/vfs_fonts.js"></script>
             
-            <!-- Script for Autocomplete-->
-            <!--<script src="https://code.jquery.com/jquery-1.12.4.js"></script>-->
-            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
             
             <!-- bootpag pagination plugin-->
             <script src="'.BASE_URL.'/js/jquery.bootpag.min.js"></script>
@@ -7918,28 +7503,58 @@ class Ui {
     //@param3 the icon for the course
     //@param4 the total amount of mentees in the course
     //@return the contructed html start rating or an empty string if rating is zero 
-    public function create_basic_course_card($data = []){
+    public function create_basic_course_card($id, $name, $icon, $totalMentees){
+        
+        $menteeIcon = '';
 
+        if ($totalMentees != NULL){
+            $menteeIcon = '
+                <div class="progress-data text-center">
+                    <!--<div id="chart"></div>-->
+                    <!--<i class="icon-copy dw dw-suitcase h1"></i>-->
+                    <i class="'.$icon.'" style="font-size: 30px;"></i>
+                </div>
+                <div class="widget-data">
+                    <div class="h4 mb-0" data-toggle="tooltip" data-placement="top" title="Mentee total"><i class="fa fa-user"></i> '.$totalMentees.'</div>
+                    <div class="weight-600 font-14">'.$name.'</div>
+                </div>
+            ';
+        }else{
+            $menteeIcon = '
+                <div class="progress-data text-center">
+                    <i class="'.$icon.'" style="font-size: 35px;"></i>
+                </div>
+                <div class="widget-data text-center mt-auto">
+                    <div class="weight-600 font-14">'.$name.'</div>
+                </div>
+            ';
+        }
 
         $html = '
             <div class="col-xl-3 mb-30">
-                <a href="'.BASE_URL.'index.php/?page=programContent&programId='.$courseId.'">
+                <a href="'.BASE_URL.'index.php/?page=programContent&programId='.encrypt($id).'">
                     <div class="card-box height-100-p widget-style1 shadow-lg">
                         <div class="d-flex flex-wrap align-items-center">
-                            <div class="progress-data text-center">
-                                <!--<div id="chart"></div>-->
-                                <!--<i class="icon-copy dw dw-suitcase h1"></i>-->
-                                <i class="'.($data['coures_icon'] ?? '').' h1"></i>
-                            </div>
-                            <div class="widget-data">
-                                <div class="h4 mb-0" data-toggle="tooltip" data-placement="top" title="Mentee total"><i class="fa fa-user"></i> '.($data['mentee_total'] ?? 'N/a').'</div>
-                                <div class="weight-600 font-14">'.($data['coures_name'] ?? 'N/a').'</div>
-                            </div>
+                            '.$menteeIcon.'
+                            
                         </div>
                     </div>
                 </a>
             </div>  
+            
         ';
+    //     <div class="card-box height-100-p widget-style1">
+    //     <div class="row d-flex">
+    //         <div class="col-12 col-md-6">
+    //             <div class="fa fa-star fa-lg mt-3 ml-3" style="font-size: 30px;"></div>
+    //         </div>
+    //         <div class="col-12 col-md-6">
+    //             <div class="h4 mb-0">2020</div>
+    //             <div class="weight-600 font-14">Contact</div>
+    //         </div>
+    //     </div>
+    // </div>
+        return  $html;
     }
 
     //creates a card for the section in add course
@@ -7992,29 +7607,60 @@ class Ui {
 
         $rating = $data['rating'] ?? 0;
 
-        $starRating = $this->create_start_rating($rating);
+        $starRating = $this->create_start_rating($rating,'mb-2');
+        $bio = $this->make_text_shorter($data['about'] ?? '', 100);
+        
+        $socialIcons = '';
+
+        $occupation = '';
+        
+        if (!empty($data['professions']) && $data['professions'][0] != ''){
+            foreach($data['professions'] as $key => $profession){
+                $occupation .= ($key == 0 ? '': ', ').$data['professions'][$key];
+            }
+        }else{
+            $occupation = 'Mentor has not set his occupations yet....';
+        }
+
+        if($bio == ''){
+            $bio = 'Mentor has not set a bio as yet....';
+        }
+       
+        //getting social media links
+        if (!empty($data['social_networks'])){
+
+            foreach($data['social_networks'] as $key => $socialNetwork){
+
+                $socialIcons .= '
+                    <li><a href="'.$socialNetwork['sn_url'].'"><i class="'.$socialNetwork['sn_icon'].'"></i></a></li>
+                ';
+            }
+            $socialIcons = '
+                <div class="da-overlay da-slide-top">
+                    <div class="da-social">
+                        <ul class="clearfix">
+                        '.$socialIcons.'
+                        </ul>
+                    </div>
+                </div>
+            ';
+
+        }
 
         $html = '
-            <div class="col-lg-4 col-md-4 col-12 d-flex align-items-stretch">
-                <div class="da-card">
+            <div class="col-lg-4 col-md-4 col-12 d-flex align-items-stretch mt-3">
+                <div class="da-card shadow-lg">
                     <div class="da-card-photo">
-                        <img src="'.BASE_URL.'vendors/images/photo1.jpg" alt="">
-                        <div class="da-overlay da-slide-top">
-                            <div class="da-social">
-                                <ul class="clearfix">
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
+                        <img src="'.($data['profile_pic'] ?? BASE_URL."img/profileImg/default-profile-pic-4.png").'" alt="">
+                        '.$socialIcons.'
                     </div>
                     <div class="da-card-content text-center">
-                        <h5 class="h5 mb-0"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
-                        <p class="mb-0">Marketing</p>
+                        <h5 class="h5 mb-1"><a href="'.BASE_URL.'index.php/?page=mentorProfile">Don H. Rabon</a></h5>
                         '.$starRating.'
-                        <span>
-                            <a href="#" class="btn btn-success btn-sm"><i class="fa fa-paper-plane-o"></i> Request Mentorship</a>
+                        <p class="mb-2"><i>'.$occupation.'</i></p>
+                        '.$bio.'
+                        <span class="">
+                            <a href="'.BASE_URL.'index.php/?page=requestMentroship&mentorId='.encrypt($data['mentor_id']??'').'" class="btn btn-success btn-sm mt-3"><i class="fa fa-paper-plane-o"></i> Request Mentorship</a>
                         </span>
                     </div>
                 </div>
@@ -8029,25 +7675,20 @@ class Ui {
     public function create_course_card($data = []){
 
         $rating = $data['rating'] ?? 0;
-        $starRating = $this->create_start_rating($rating, 'justify-content-start align-items-center');
+        $starRating = $this->create_start_rating($rating, '', 'd-flex justify-content-start align-items-center');
+        $courseId = encrypt($data['course_id'] ?? '');
+        $summary = $this->make_text_shorter($data['course_summary']);
 
         $html = '
-        
-            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-2">
-                <div class="card shadow">
-                    <a href="'.BASE_URL.'index.php/?page=programDetails">
-                        <img src="'.($data['course_img'] ?? BASE_URL.'assets/img/course-1.jpg').'" class="img-fluid" alt="...">
+            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
+                <div class="card shadow-lg">
+                    <a href="'.BASE_URL.'index.php/?page=courseDetail='.$courseId.'">
+                        <img src="'.($data['image_src'] ?? BASE_URL.'assets/img/logos/fep_logo.png').'" class="card-img" alt="...">
                     </a>
                     <div class="card-body">
-                        <h5 class="mb-1"><a href="'.BASE_URL.'index.php/?page=programDetails">'.($data['course_name']??'N/a').'</a></h5>
-                        
+                        <h5 class="mb-2"><a href="'.BASE_URL.'index.php/?page=programDetails">'.($data['course_name']??'N/a').'</a></h5>
                         '.$starRating.'                
-
-                        <p class="">'.$data['course_about'].'</p>
-                        <!--<span class="d-flex justify-content-end">
-                            <a href="'.BASE_URL.'index.php/?page=" class="btn btn-success btn-sm"><i class="fa fa-paper-plane-o "></i> Request Mentorship</a>
-                        </span>-->
-                    
+                        <p class="mt-3">'.($summary?? 'N/a').'</p>
                     </div>
                 </div>
             </div> <!-- End Course Item-->
@@ -8056,6 +7697,36 @@ class Ui {
 
         return $html;
     }
+    public function create_program_card($data = []){
+
+        echo '<br><br><br><br>';
+        echo '<pre class="pt-5 d-flex justify-content-center" style="padding-left:700px;">';
+        print_r($data);
+        echo '</pre>';
+
+        $rating = $data['rating'] ?? 0;
+        $starRating = $this->create_start_rating($rating, '', 'd-flex justify-content-start align-items-center');
+        $courseId = encrypt($data['course_id'] ?? '');
+        $summary = $this->make_text_shorter($data['course_summary']);
+
+        $html = '
+            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-3">
+                <div class="card shadow-lg">
+                    <a href="'.BASE_URL.'index.php/?page=courseDetail='.$courseId.'">
+                        <img src="'.($data['image_src'] ?? BASE_URL.'assets/img/logos/fep_logo.png').'" class="card-img" alt="...">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="mb-2"><a href="'.BASE_URL.'index.php/?page=programDetails">'.($data['course_name']??'N/a').'</a></h5>
+                        '.$starRating.'                
+                        <p class="mt-3">'.($summary?? 'N/a').'</p>
+                    </div>
+                </div>
+            </div> <!-- End Course Item-->
+        
+        ';
+
+        return $html;
+    }    
 
     /***************************************************************************************
         Functions below can be used for Public and the  Portal/ Backend
@@ -8084,7 +7755,7 @@ class Ui {
     //@param the rating amount from 1 - 5
     //@param style classes for startrating
     //@return the contructed html start rating or an empty string if rating is zero 
-    public function create_start_rating($rating = 0, $classes = ''){
+    public function create_start_rating($rating = 0, $classes = '', $position = 'd-flex justify-content-center'){
 
         $starRating = '';
         $rating = sprintf("%.1f", $rating);
@@ -8105,7 +7776,7 @@ class Ui {
                 }
             }
             $starRating = '
-                <span class="d-flex justify-content-center '.$classes.'" data-toggle="tooltip" data-placement="top" title="'.$rating.'" >
+                <span class="'.$position.' '.$classes.'" data-toggle="tooltip" data-placement="top" title="'.$rating.'" >
                     '.$starRating.'
                 </span>
             ';

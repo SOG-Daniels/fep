@@ -303,6 +303,36 @@ class Process {
         
     }
 
+    //gets the programs a mentee is in by their ID
+    public function getMenteeCoursePrograms($menteeId){
+
+        $result = [];
+        $data = [];
+
+        $sql = $this->conn->prepare('
+            SELECT 
+                id as class_id,
+                program_id,
+                mentee_id
+            FROM 
+                class
+            WHERE 
+                status = 1 and 
+                mentee_id = ?
+            ;
+        ');
+        
+        $sql->execute(array($menteeId));
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($result as $key => $class){
+            $data['course'][$key]['program'] = $this->getProgramById($class['program_id']);
+            $data['course'][$key]['course_detail'] = $this->getCourseById($data['course'][$key]['program']['course_id']);
+        }
+
+        return $data['course'];
+
+    }
 
     //gets the course outline title and content
     public function getCourseOutline($courseId){
