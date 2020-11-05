@@ -335,7 +335,8 @@
 
 /* Css for buttons or links on cards that you want to stay positioned on the bottom of the card */
 .stay-bottom{
-    position:absolute; 
+    position:relative; 
+    /* position:absolute;  */
     margin-left:-100px;
     left:50%;
     width:100px;
